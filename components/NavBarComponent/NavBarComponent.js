@@ -1,29 +1,20 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import MailIcon from '@mui/icons-material/Mail';
+import { Menu, MenuItem, Badge, Typography, Toolbar, Stack, Box, AppBar, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Badge from '@mui/material/Badge';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 
-const drawerWidth = 240;
+import HomeIcon from '@mui/icons-material/Home';
+import ProposalIcon from '@mui/icons-material/Description';
+import ClientsIcon from '@mui/icons-material/People';
+import CategoriesIcon from '@mui/icons-material/Category';
+import ProductsServicesIcon from '@mui/icons-material/LocalMall';
+import ReportsIcon from '@mui/icons-material/Assessment';
+import LogoutIcon from '@mui/icons-material/ExitToApp';
+
+
+const drawerWidth = 200;
 
 function NavBarComponent(props) {
     const { window } = props;
@@ -33,6 +24,17 @@ function NavBarComponent(props) {
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+
+    const menuItems = [
+        { text: 'Home', icon: <HomeIcon /> },
+        { text: 'Proposal', icon: <ProposalIcon /> },
+        { text: 'Clients', icon: <ClientsIcon /> },
+        { text: 'Categories', icon: <CategoriesIcon /> },
+        { text: 'Products/Services', icon: <ProductsServicesIcon /> },
+        { text: 'Reports', icon: <ReportsIcon /> },
+        { text: 'Logout', icon: <LogoutIcon /> },
+    ];
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -58,11 +60,11 @@ function NavBarComponent(props) {
     };
     const handleMobileMenuClose = () => {
         setMobileMoreAnchorEl(null);
-      };
+    };
     const handleMenuClose = () => {
         setAnchorEl(null);
         handleMobileMenuClose();
-      };
+    };
 
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
@@ -81,8 +83,12 @@ function NavBarComponent(props) {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={handleMenuClose}>Home</MenuItem>
+            <MenuItem onClick={handleMenuClose}>My Proposals</MenuItem>
+            <MenuItem onClick={handleMenuClose}>Setup Customer Letter</MenuItem>
+            <Divider />
+            <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+
         </Menu>
     );
 
@@ -102,14 +108,15 @@ function NavBarComponent(props) {
             }}
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
+
         >
             <MenuItem>
                 <IconButton
                     size="large"
-                    aria-label="show 17 new notifications"
+                    aria-label="show 5 new notifications"
                     color="inherit"
                 >
-                    <Badge badgeContent={17} color="error">
+                    <Badge badgeContent={5} color="error">
                         <NotificationsIcon />
                     </Badge>
                 </IconButton>
@@ -131,39 +138,40 @@ function NavBarComponent(props) {
     );
 
     const drawer = (
-        <div>
-            <Toolbar />
-            <Divider />
-            <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem key={text} disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                            </ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
-            <Divider />
-            <List>
-                {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                    <ListItem key={text} disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                            </ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
-        </div>
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            {/* <Toolbar sx={{ marginTop:1 }} /> */}
+            {/* <Divider sx={{ backgroundColor: (mobileOpen ? '#405CAA' : 'transparent') }} /> */}
+            <Stack sx={{ backgroundColor: '#405CAA', height: '100%', marginTop: 9.3 }}>
+                <Box sx={{ overflow: 'auto' }}>
+                    <List>
+                        {menuItems.slice(0, -1).map((item) => ( // Exclude the logout item
+                            <ListItem key={item.text} disablePadding>
+                                <ListItemButton sx={{ flexDirection: 'column', alignItems: 'center', color: 'white', marginTop: '1rem' }}>
+                                    <ListItemIcon sx={{ fontSize: '3rem', color: 'white' }}>
+                                        {React.cloneElement(item.icon, { fontSize: 'large' })}
+                                    </ListItemIcon>
+                                    <ListItemText primary={item.text} sx={{ '& .MuiTypography-root': { fontSize: '1.25rem', color: 'white' } }} />
+                                </ListItemButton>
+                            </ListItem>
+                        ))}
+                    </List>
+                </Box>
+                <Box sx={{ mt: 'auto', width: '100%' }}>
+                    <Divider sx={{ backgroundColor: 'white' }} />
+                    <List>
+                        <ListItem key="Logout" disablePadding>
+                            <ListItemButton sx={{ flexDirection: 'column', alignItems: 'center', color: 'white' }}>
+                                <ListItemIcon sx={{ fontSize: '3rem', color: 'white' }}>
+                                    {React.cloneElement(menuItems[menuItems.length - 1].icon, { fontSize: 'large' })}
+                                </ListItemIcon>
+                                <ListItemText primary={menuItems[menuItems.length - 1].text} sx={{ '& .MuiTypography-root': { fontSize: '1.25rem', color: 'white' } }} />
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
+                </Box>
+            </Stack>
+        </Box>
     );
-
-    // Remove this const when copying and pasting into your project.
-    const container = window !== undefined ? () => window().document.body : undefined;
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -171,12 +179,11 @@ function NavBarComponent(props) {
             <AppBar
                 position="fixed"
                 sx={{
-                    //   width: { sm: `calc(100% - ${drawerWidth}px)` },
                     ml: { sm: `${drawerWidth}px` },
-                    backgroundColor: 'black'
+                    backgroundColor: 'black',
                 }}
             >
-                <Toolbar>
+                <Toolbar >
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
@@ -184,9 +191,9 @@ function NavBarComponent(props) {
                         onClick={handleDrawerToggle}
                         sx={{ mr: 2, display: { sm: 'none' } }}
                     >
-                        <MenuIcon />
+                        <MenuIcon sx={{ fontSize: 30 }} />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div">
+                    <Typography variant="h3" noWrap component="div">
                         MAYVIS
                     </Typography>
                     <Box sx={{ flexGrow: 1 }} />
@@ -196,8 +203,8 @@ function NavBarComponent(props) {
                             aria-label="show 17 new notifications"
                             color="inherit"
                         >
-                            <Badge badgeContent={17} color="error">
-                                <NotificationsIcon />
+                            <Badge badgeContent={5} color="error">
+                                <NotificationsIcon sx={{ fontSize: 30 }} />
                             </Badge>
                         </IconButton>
                         <IconButton
@@ -209,7 +216,7 @@ function NavBarComponent(props) {
                             onClick={handleProfileMenuOpen}
                             color="inherit"
                         >
-                            <AccountCircle />
+                            <AccountCircle sx={{ fontSize: 50 }} />
                         </IconButton>
                     </Box>
                     <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
@@ -221,21 +228,23 @@ function NavBarComponent(props) {
                             onClick={handleMobileMenuOpen}
                             color="inherit"
                         >
-                            <MoreIcon />
+                            <MoreIcon sx={{ fontSize: 50 }} />
                         </IconButton>
                     </Box>
                 </Toolbar>
             </AppBar>
+
             {renderMobileMenu}
             {renderMenu}
             <Box
                 component="nav"
                 sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+
                 aria-label="mailbox folders"
             >
                 {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Drawer
-                    container={container}
+                    // container={container}
                     variant="temporary"
                     open={mobileOpen}
                     onTransitionEnd={handleDrawerTransitionEnd}
@@ -245,7 +254,7 @@ function NavBarComponent(props) {
                     }}
                     sx={{
                         display: { xs: 'block', sm: 'none' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, backgroundColor: 'transparent' },
                     }}
                 >
                     {drawer}
@@ -261,49 +270,15 @@ function NavBarComponent(props) {
                     {drawer}
                 </Drawer>
             </Box>
-            <Box
-                component="main"
-                sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
-            >
-                <Toolbar />
-                <Typography paragraph>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-                    enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-                    imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-                    Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-                    Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-                    adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-                    nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-                    leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-                    feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-                    consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-                    sapien faucibus et molestie ac.
-                </Typography>
-                <Typography paragraph>
-                    Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
-                    eget nulla facilisi etiam dignissim diam. Pulvinar elementum integer enim
-                    neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus sed viverra
-                    tellus. Purus sit amet volutpat consequat mauris. Elementum eu facilisis
-                    sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi
-                    tincidunt ornare massa eget egestas purus viverra accumsan in. In hendrerit
-                    gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem
-                    et tortor. Habitant morbi tristique senectus et. Adipiscing elit duis
-                    tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-                    eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-                    posuere sollicitudin aliquam ultrices sagittis orci a.
-                </Typography>
-            </Box>
-        </Box>
-    );
-}
+            <br />
+            <br />
+            <br />
+            <br />
 
-// ResponsiveDrawer.propTypes = {
-//   /**
-//    * Injected by the documentation to work in an iframe.
-//    * Remove this when copying and pasting into your project.
-//    */
-//   window: PropTypes.func,
-// };
+        </Box>
+
+    );
+
+}
 
 export default NavBarComponent;
