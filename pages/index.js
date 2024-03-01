@@ -1,9 +1,9 @@
-import DashboardLayout from '../components/DashboardLayout';
+import Letter from "./letter.js";
 
 export default function Home() {
   return (
     <main>
-      <DashboardLayout />
+      <Letter />
     </main>
   );
 }
