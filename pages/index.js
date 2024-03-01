@@ -1,9 +1,9 @@
-import DashboardLayout from '../components/DashboardLayout';
+import ProposalClientDetails from './proposal-client-details';
 
 export default function Home() {
   return (
     <main>
-      <DashboardLayout />
+      <ProposalClientDetails />
     </main>
   );
 }
