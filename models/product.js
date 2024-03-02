@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 const ProductSchema = new Schema({
-    Pproduct_name: { type: String, required: true },
+    product_name: { type: String, required: true },
     description: { type: String },
     price: { type: mongoose.Types.Decimal128, required: true },
     recurring: { type: Boolean, default: false },
