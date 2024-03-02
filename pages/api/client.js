@@ -1,4 +1,4 @@
-import connectMongoDB from "@/libs/mongodb";
+import connectMongoDB from "@/lib/mongodb";
 import Client from "@/models/client";
 
 export default async function handler(req, res) {
