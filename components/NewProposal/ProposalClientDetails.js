@@ -5,7 +5,7 @@ import NewProposalStepper from '@/components/Stepper';
 
 export default function ProposalClientDetails() {
   const paperStyle = { padding: 50, height: '50vh', width: '75%', margin: "50px auto", borderRadius: 20 }
-  const btnstyle = { margin: '8px 0', borderRadius:5, height: 40 }
+  const btnstyle = { margin: '8px 0', borderRadius:5, height: 40, width: 250 }
 
     return (
       <div>
@@ -30,7 +30,7 @@ export default function ProposalClientDetails() {
               <TextField placeholder='Enter Comapany Name'
                   variant="outlined" fullWidth required margin='dense' />
 
-              <Button type='submit' color='primary' variant="contained" style={btnstyle} fullWidth size='small' sx={{ my: 20 }} >Save This Client</Button>
+              <Button type='submit' color='primary' variant="contained" style={btnstyle} fullWidth size='small' sx={{ my: 2, mx: 'auto', display: 'block' }} >Save This Client</Button>
             </Stack>
           </Stack>
         </Paper>
