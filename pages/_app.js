@@ -2,8 +2,8 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import DashboardLayout from '@/components/Dashboardlayout';
 
-import Dashboardlayout from '@/components/Dashboardlayout';
 import '@/styles/globals.css'
 
 export default function App({ Component, pageProps, ...appProps }) {
@@ -12,8 +12,8 @@ export default function App({ Component, pageProps, ...appProps }) {
     return <Component {...pageProps} />;
 
   return (
-    <Dashboardlayout>
+    <DashboardLayout>
       <Component {...pageProps} />
-    </Dashboardlayout>
+    </DashboardLayout>
   );
 }

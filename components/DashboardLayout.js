@@ -2,7 +2,7 @@ import { Box, Toolbar } from '@mui/material';
 import NavBarComponent from "./NavBarComponent";
 const drawerWidth = 240;
 
-export default function Dashboardlayout({ children }) {
+export default function DashboardLayout({ children }) {
   return (
     <Box sx={{ display: 'flex' }}>
       <NavBarComponent />
