@@ -1,11 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 
 const ContactPersonSchema = new Schema({
-    Contact_Firstname: { type: String, required: true },
-    Contact_Lastname: { type: String, required: true },
-    Contact_Department: { type: String, required: true },
-    Contact_Role: { type: String, required: true },
-    Client_ID: { type: Schema.Types.ObjectId, ref: 'Client' },
+    contact_firstname: { type: String, required: true },
+    contact_lastname: { type: String, required: true },
+    contact_department: { type: String, required: true },
+    contact_role: { type: String, required: true },
+    client_id: { type: Schema.Types.ObjectId, ref: 'Client' },
     }, { timestamps: true }
 );
 

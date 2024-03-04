@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 const ClientSchema = new Schema({
-    Client_Name: { type: String, required: true },
+    client_name: { type: String, required: true },
     }, { timestamps: true }
 );
 

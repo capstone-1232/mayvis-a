@@ -1,19 +1,19 @@
 import mongoose, { Schema } from "mongoose";
 
 const ProposalSchema = new Schema({
-    Proposal_Title: { type: String, required: true },
-    Message: { type: String, required: true },
-    Attachment: { type: String },
-    Suggestions: { type: String },
-    Project_Total: { type: mongoose.Types.Decimal128 },
-    Recurring_Total: { type: mongoose.Types.Decimal128 },
-    Proposal_Total: { type: mongoose.Types.Decimal128 },
-    Updated_By: { type: Schema.Types.ObjectId, ref: 'User' },
-    Status: { type: Schema.Types.ObjectId, ref: 'Status' },
-    Client_ID: { type: Schema.Types.ObjectId, ref: 'Client' },
-    Product_ID: { type: Schema.Types.ObjectId, ref: 'Product' },
-    Proposed_By: { type: Schema.Types.ObjectId, ref: 'User' },
-    Category_ID: { type: Schema.Types.ObjectId, ref: 'Category' }
+    proposal_title: { type: String, required: true },
+    message: { type: String, required: true },
+    attachment: { type: String },
+    suggestions: { type: String },
+    project_total: { type: mongoose.Types.Decimal128 },
+    recurring_total: { type: mongoose.Types.Decimal128 },
+    proposal_total: { type: mongoose.Types.Decimal128 },
+    updated_by: { type: Schema.Types.ObjectId, ref: 'User' },
+    status: { type: Schema.Types.ObjectId, ref: 'Status' },
+    client_id: { type: Schema.Types.ObjectId, ref: 'Client' },
+    product_id: { type: Schema.Types.ObjectId, ref: 'Product' },
+    proposed_by: { type: Schema.Types.ObjectId, ref: 'User' },
+    category_id: { type: Schema.Types.ObjectId, ref: 'Category' }
     }, { timestamps: true }
 );
 

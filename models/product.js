@@ -1,16 +1,16 @@
 import mongoose, { Schema } from "mongoose";
 
 const ProductSchema = new Schema({
-    Product_Name: { type: String, required: true },
-    Description: { type: String },
-    Price: { type: mongoose.Types.Decimal128, required: true },
-    Recurring: { type: Boolean, default: false },
-    Archived: { type: Boolean, default: false },
-    Notes: { type: String },
-    Quantity: { type: Number },
-    Category_ID: { type: Schema.Types.ObjectId, ref: 'Category' },
-    Created_By: { type: Schema.Types.ObjectId, ref: 'User' },
-    Updated_By: { type: Schema.Types.ObjectId, ref: 'User' }
+    Pproduct_name: { type: String, required: true },
+    description: { type: String },
+    price: { type: mongoose.Types.Decimal128, required: true },
+    recurring: { type: Boolean, default: false },
+    archived: { type: Boolean, default: false },
+    notes: { type: String },
+    quantity: { type: Number },
+    category_id: { type: Schema.Types.ObjectId, ref: 'Category' },
+    created_by: { type: Schema.Types.ObjectId, ref: 'User' },
+    updated_by: { type: Schema.Types.ObjectId, ref: 'User' }
     }, { timestamps: true }
 );
 

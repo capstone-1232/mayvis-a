@@ -1,13 +1,13 @@
 import mongoose, { Schema } from "mongoose";
 
 const CategorySchema = new Schema({
-    Category_Name: { type: String, required: true },
-    Description: { type: String },
-    Archived: { type: Boolean, default: false },
-    Notes: { type: String },
-    Product_ID: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
-    Created_By: { type: Schema.Types.ObjectId, ref: 'User' },
-    Updated_By: { type: Schema.Types.ObjectId, ref: 'User' },
+    category_name: { type: String, required: true },
+    description: { type: String },
+    archived: { type: Boolean, default: false },
+    notes: { type: String },
+    product_id: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
+    created_by: { type: Schema.Types.ObjectId, ref: 'User' },
+    updated_by: { type: Schema.Types.ObjectId, ref: 'User' },
     }, { timestamps: true }
 );
 

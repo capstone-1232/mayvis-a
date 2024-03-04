@@ -3,8 +3,8 @@ import mongoose, { Schema } from "mongoose";
 const AutoIncrementModelID = require('./increment');
 
 const StatusSchema = new Schema({
-    Status_ID: { type: Number, unique: true },
-    Status_Name: { type: String, required: true }
+    status_id: { type: Number, unique: true },
+    status_name: { type: String, required: true }
 });
 
 StatusSchema.pre('save', function (next) {
