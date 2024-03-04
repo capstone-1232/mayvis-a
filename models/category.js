@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 const CategorySchema = new Schema({
     category_name: { type: String, required: true },
     description: { type: String },
-    archived: { type: Boolean, default: false },
+    is_archived: { type: Boolean, default: false },
     notes: { type: String },
     product_id: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
     created_by: { type: Schema.Types.ObjectId, ref: 'User' },

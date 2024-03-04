@@ -5,6 +5,7 @@ const ProposalSchema = new Schema({
     message: { type: String, required: true },
     attachment: { type: String },
     suggestions: { type: String },
+    is_archived: { type: Boolean, default: false },
     project_total: { type: mongoose.Types.Decimal128 },
     recurring_total: { type: mongoose.Types.Decimal128 },
     proposal_total: { type: mongoose.Types.Decimal128 },
