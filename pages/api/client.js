@@ -7,8 +7,8 @@ export default async function handler(req, res) {
     switch (req.method) {
         case 'POST':
             try {
-                const { Client_Name } = req.body;
-                const client = await Client.create({ Client_Name });
+                const { client_name } = req.body;
+                const client = await Client.create({ client_name });
                 return res.status(201).json({ message: "Client created successfully.", client });
             } catch (error) {
                 return res.status(500).json({ message: "Error creating client", error: error.message });
@@ -37,8 +37,8 @@ export default async function handler(req, res) {
         case 'PUT':
             try {
                 const { id } = req.query;
-                const { Client_Name } = req.body;
-                const updatedClient = await Client.findByIdAndUpdate(id, { Client_Name }, { new: true });
+                const { client_name } = req.body;
+                const updatedClient = await Client.findByIdAndUpdate(id, { client_name }, { new: true });
                 if (!updatedClient) {
                     return res.status(404).json({ message: "Client not found." });
                 }
