@@ -110,7 +110,7 @@ const Client = () => {
                         .slice((page - 1) * itemsPerPage, page * itemsPerPage)
                         .map((c, index) => (
                             <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-                                <Card elevation={12} sx={{ padding: 2 }}>
+                                <Card elevation={12} sx={{ padding: 2,  minHeight: '250px'}}>
                                     <Stack spacing={1}>
                                         <Typography variant="h5" component="div" gutterBottom>
                                             {c.client_name}
@@ -130,8 +130,8 @@ const Client = () => {
                                                 </>
                                             ))}
                                             : null} */}
-                                        <Typography variant="body2">
-                                            {c.description}
+                                        <Typography variant="body2" sx={{minHeight:'150px'}}>
+                                            Description:<br/>{c.description}
                                         </Typography>
                                     </Stack>
                                     <Stack alignItems="center">
