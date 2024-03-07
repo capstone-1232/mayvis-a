@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useRouter } from 'next/router';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -20,7 +21,12 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function DashboardComponent() {
+    const router = useRouter();
     const elevationValue = 12;
+
+    const navigateToClientDetails = () => {
+        router.push('/new-proposal/client-details');
+    };
 
     return (
         <React.Fragment>
@@ -37,7 +43,12 @@ export default function DashboardComponent() {
                                 </Typography>
                             </CardContent>
                             <CardActions className={"justifyContentCenter"}>
-                                <Button sx={{ backgroundColor: '#405CAA', color: 'white', margin: '0 1rem 1rem', alignItems: 'center', width: '20rem' }} variant='contained' size="large">
+                                <Button 
+                                    sx={{ backgroundColor: '#405CAA', color: 'white', margin: '0 1rem 1rem', alignItems: 'center', width: '20rem' }} 
+                                    variant='contained' 
+                                    size="large"
+                                    onClick={navigateToClientDetails}
+                                >
                                     + Create New Proposal
                                 </Button>
                             </CardActions>
