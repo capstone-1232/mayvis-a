@@ -40,11 +40,11 @@ const ClientDetails = () => {
         elevation={5} 
         sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2 }}
       >
-        <Typography variant='h5' gutterBottom>
+        <Typography variant='h5' sx={{ mb: 5 }} gutterBottom>
           Input your client's information
         </Typography>
         <form onSubmit={handleSubmit}>
-          <Stack spacing={2} sx={{ mb: 2 }}>
+          <Stack spacing={5} sx={{ mb: 5 }}>
             <TextField
               label="Client Company Name"
               name="companyName"

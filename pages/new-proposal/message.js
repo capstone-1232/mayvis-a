@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { Container, Typography, TextField, Button, Paper, Stack, Box } from '@mui/material';
 
 import NewProposalStepper from '@/components/Stepper';
+import RTextEditor from '@/components/RTextEditor';
 
 const Message = () => {
   const [activeStep, setActiveStep] = useState(2);
@@ -54,7 +55,7 @@ const Message = () => {
         </Typography>
         <form onSubmit={handleSubmit}>
           <Stack spacing={2} sx={{ mb: 2 }}>
-            {/* <RTextEditor /> */}
+            <RTextEditor />
           </Stack>
         </form>
       </Paper>

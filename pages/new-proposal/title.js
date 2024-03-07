@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Container, Typography, TextField, Button, Paper, Stack, Box } from '@mui/material';
 
+import SelectDate from '@/components/SelectDate';
 import NewProposalStepper from '@/components/Stepper';
 
 const Title = () => {
@@ -46,11 +47,11 @@ const Title = () => {
         elevation={5} 
         sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2 }}
       >
-        <Typography variant='h5' gutterBottom>
+        <Typography variant='h5' sx={{ mb: 5 }} gutterBottom>
           What is the project about?
         </Typography>
         <form onSubmit={handleSubmit}>
-          <Stack spacing={2} sx={{ mb: 2 }}>
+          <Stack spacing={5} sx={{ mb: 2 }}>
             <TextField
               label="Proposal Title"
               name="proposalTitle"
@@ -60,15 +61,7 @@ const Title = () => {
               fullWidth
               required
             />
-            <TextField
-              label="Date"
-              name="proposalDate"
-              value={clientDetails.firstName}
-              onChange={handleChange}
-              variant="outlined"
-              fullWidth
-              required
-            />
+            <SelectDate />
           </Stack>
         </form>
       </Paper>
