@@ -18,7 +18,7 @@ const Client = () => {
 
     const getClients = async () => {
         try {
-            const res = await fetch('http://localhost:3000/api/client', { cache: 'no-store' });
+            const res = await fetch('https://mayvis-a.vercel.app/api/client', { cache: 'no-store' });
             if (!res.ok) {
                 throw new Error('Failed to fetch clients');
             }
