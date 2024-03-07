@@ -7,8 +7,8 @@ export default async function handler(req, res) {
     switch (req.method) {
         case 'POST':
             try {
-                const { client_name } = req.body;
-                const client = await Client.create({ client_name });
+                const { client_name, is_active, description } = req.body;
+                const client = await Client.create({ client_name, is_active, description });
                 return res.status(201).json({ message: "Client created successfully.", client });
             } catch (error) {
                 return res.status(500).json({ message: "Error creating client", error: error.message });
@@ -16,8 +16,15 @@ export default async function handler(req, res) {
 
         case 'GET':
             try {
-                const clients = await Client.find({});
-                return res.status(200).json(clients);
+                const { id } = req.query;
+                if (id) {
+                    const client = await Client.find({ _id: id });
+                    return res.status(200).json(client);
+                }
+                else {
+                    const clients = await Client.find({});
+                    return res.status(200).json(clients);
+                }
             } catch (error) {
                 return res.status(500).json({ message: "Error fetching clients", error: error.message });
             }
