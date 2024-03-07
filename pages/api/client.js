@@ -44,8 +44,8 @@ export default async function handler(req, res) {
         case 'PUT':
             try {
                 const { id } = req.query;
-                const { Client_Name } = req.body;
-                const updatedClient = await Client.findByIdAndUpdate(id, { Client_Name }, { new: true });
+                const { client_name } = req.body;
+                const updatedClient = await Client.findByIdAndUpdate(id, { client_name }, { new: true });
                 if (!updatedClient) {
                     return res.status(404).json({ message: "Client not found." });
                 }

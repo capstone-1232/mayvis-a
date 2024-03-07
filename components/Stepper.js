@@ -1,53 +1,63 @@
-import * as React from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
-import StepIcon from '@mui/material/StepIcon';
+import Check from '@mui/icons-material/Check';
+import { StepConnector, styled } from '@mui/material/';
 
-const steps = [
-  'Client Details',
-  'Title',
-  'Message',
-  'Deliverables',
-  'Summary',
-];
+const ColorlibStepIconRoot = styled('div')(({ theme, ownerState }) => ({
+  backgroundColor: '#3AC6ED',
+  zIndex: 1,
+  color: '#fff',
+  width: 40,
+  height: 40,
+  display: 'flex',
+  borderRadius: '50%',
+  justifyContent: 'center',
+  alignItems: 'center',
+  ...(ownerState.active && {
+    backgroundColor: '#2A987A',
+  }),
+  ...(ownerState.completed && {
+    backgroundColor: '#2A987A',
+  }),
+}));
 
-export default function NewProposalStepper() {
+const StyledStepConnector = styled(StepConnector)(({ theme }) => ({
+  '& .MuiStepConnector-line': {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    marginTop: theme.spacing(1),
+  },
+}));
+
+function ColorlibStepIcon(props) {
+  const { active, completed, icon } = props;
+
+  const ownerState = { active, completed };
+
+  return (
+    <ColorlibStepIconRoot ownerState={{ active, completed }}>
+      {completed ? <Check /> : icon}
+    </ColorlibStepIconRoot>
+  );
+}
+
+const steps = ['Client Details', 'Title', 'Message', 'Deliverables', 'Summary'];
+
+const NewProposalStepper = ({ activeStep }) => {
   return (
     <Box sx={{ width: '100%' }}>
-      <Stepper activeStep={0} alternativeLabel>
+      <Stepper alternativeLabel connector={<StyledStepConnector />} activeStep={activeStep}>
         {steps.map((label) => (
           <Step key={label}>
-            <StepLabel
-              StepIconProps={{
-                sx: {
-                  color: '#3AC6ED',
-                  '&.MuiStepIcon-active': {
-                    color: '#2A987A',
-                  },
-                  '&.MuiStepIcon-completed': {
-                    color: '#3AC6ED',
-                  },
-                },
-              }}
-              sx={{
-                '& .MuiStepLabel-label': {
-                  color: '#000000',
-                  '&.Mui-active': {
-                    color: '#000000',
-                  },
-                  '&.Mui-completed': {
-                    color: '#000000',
-                  },
-                },
-              }}
-            >
-              {label}
-            </StepLabel>
+            <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
           </Step>
         ))}
       </Stepper>
     </Box>
   );
-}
+};
+
+export default NewProposalStepper;
