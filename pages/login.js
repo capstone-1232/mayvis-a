@@ -7,6 +7,7 @@ import Checkbox from '@mui/material/Checkbox';
 import loginLogo from "../public/assets/images/login_head.png";
 import { GoogleLogin } from '@react-oauth/google';
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { useRouter } from 'next/router';
 
 const slideshowImages = [
     "/assets/images/login-slideshow-one.webp",
@@ -21,6 +22,15 @@ const LoginSignup = () => {
 
     const [currentImage, setCurrentImage] = useState(0);
     const [activeTab, setActiveTab] = useState(0);
+
+    const router = useRouter();
+    const AuthLogin = () => {
+        let isAuth = true;
+        // do authentication here
+        if (isAuth) {
+            router.push('/');
+        }
+    }
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -106,10 +116,10 @@ const LoginSignup = () => {
                             <Typography variant='h4' style={{ margin: '20px 0' }}>Login to get started</Typography>
                         </Grid>
                         <Stack spacing={2}>
-                            <TextField label='Username' placeholder='Enter username' variant="outlined" fullWidth required />
+                            <TextField label='Email' placeholder='Enter email' variant="outlined" fullWidth required />
                             <TextField label='Password' placeholder='Enter password' type='password' variant="outlined" fullWidth required />
                             <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label="Remember me" />
-                            <Button type='submit' color='primary' variant="contained" style={btnstyle} fullWidth>Sign in</Button>
+                            <Button type='submit' color='primary' variant="contained" style={btnstyle} fullWidth onClick={() => AuthLogin()}>Sign in</Button>
                             <Typography>
                                 <Link href="#">Forgot password?</Link>
                             </Typography>
@@ -138,11 +148,8 @@ const LoginSignup = () => {
                             <Typography variant='h4' style={{ margin: '20px 0' }}>Sign up</Typography>
                         </Grid>
                         <Stack spacing={2}>
-                            <Box sx={{ display: 'flex', gap: 2 }}>
-                                <TextField label='First Name' placeholder='Enter first name' variant="outlined" fullWidth required />
-                                <TextField label='Last Name' placeholder='Enter last name' variant="outlined" fullWidth required />
-                            </Box>
-                            <TextField label='Username' placeholder='Enter username' variant="outlined" fullWidth required />
+                            <TextField label='First Name' placeholder='Enter first name' variant="outlined" fullWidth required />
+                            <TextField label='Last Name' placeholder='Enter last name' variant="outlined" fullWidth required />
                             <TextField label='Email Address' placeholder='Enter email' variant="outlined" fullWidth required />
                             <TextField label='Password' placeholder='Enter password' type='password' variant="outlined" fullWidth required />
                             <TextField label='Confirm Password' placeholder='Confirm password' type='password' variant="outlined" fullWidth required />
