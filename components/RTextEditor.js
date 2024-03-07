@@ -29,7 +29,7 @@ function RTextEditor() {
         className="myQuillContainer"
         sx={{
             height: "35vh",
-            py: "30px"
+            py: "30px",
         }}
     >
         <ReactQuill

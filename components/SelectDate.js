@@ -13,6 +13,9 @@ function SelectDate() {
                 label="Date Created *"
                 required
                 value={value}
+                sx={{
+                    bgcolor: 'grey.100'
+                  }}
                 onChange={(newValue) => {
                     setValue(newValue);
                 }}
