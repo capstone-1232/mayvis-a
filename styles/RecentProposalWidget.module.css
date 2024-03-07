@@ -1,0 +1,14 @@
+.cardHeight{
+    height: 42rem;
+}
+
+.justifyContentCenter{
+    display: flex;
+    justify-content: center;
+}
+.cardContentHeight{
+    height: 80%;
+}
+.content {
+    margin-top: 5rem;
+}

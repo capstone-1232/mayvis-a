@@ -12,6 +12,7 @@ import CategoriesIcon from '@mui/icons-material/Category';
 import ProductsServicesIcon from '@mui/icons-material/LocalMall';
 import ReportsIcon from '@mui/icons-material/Assessment';
 import LogoutIcon from '@mui/icons-material/ExitToApp';
+import Link from 'next/link';
 
 
 const drawerWidth = 200;
@@ -27,13 +28,13 @@ function NavBarComponent(props) {
 
 
     const menuItems = [
-        { text: 'Home', icon: <HomeIcon /> },
-        { text: 'Proposal', icon: <ProposalIcon /> },
-        { text: 'Clients', icon: <ClientsIcon /> },
-        { text: 'Categories', icon: <CategoriesIcon /> },
-        { text: 'Products/Services', icon: <ProductsServicesIcon /> },
-        { text: 'Reports', icon: <ReportsIcon /> },
-        { text: 'Logout', icon: <LogoutIcon /> },
+        { text: 'Home', icon: <HomeIcon />, href: '/' },
+        { text: 'Proposal', icon: <ProposalIcon />, href: '/proposal' },
+        { text: 'Clients', icon: <ClientsIcon />, href: '/client' },
+        { text: 'Categories', icon: <CategoriesIcon />, href: '/category' },
+        { text: 'Products/Services', icon: <ProductsServicesIcon />, href: '/products' },
+        { text: 'Reports', icon: <ReportsIcon />, href: '/' },
+        { text: 'Logout', icon: <LogoutIcon />, href: '/' },
     ];
 
     const handleDrawerClose = () => {
@@ -89,7 +90,7 @@ function NavBarComponent(props) {
             <Divider />
             <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
 
-        </Menu>
+        </Menu >
     );
 
     const mobileMenuId = 'primary-search-account-menu-mobile';
@@ -145,28 +146,33 @@ function NavBarComponent(props) {
                 <Box sx={{ overflow: 'auto' }}>
                     <List>
                         {menuItems.slice(0, -1).map((item) => ( // Exclude the logout item
-                            <ListItem key={item.text} disablePadding>
-                                <ListItemButton sx={{ flexDirection: 'column', alignItems: 'center', color: 'white', marginTop: '1rem' }}>
-                                    <ListItemIcon sx={{ fontSize: '3rem', color: 'white' }}>
-                                        {React.cloneElement(item.icon, { fontSize: 'large' })}
-                                    </ListItemIcon>
-                                    <ListItemText primary={item.text} sx={{ '& .MuiTypography-root': { fontSize: '1.25rem', color: 'white' } }} />
-                                </ListItemButton>
-                            </ListItem>
+                            <Link href={item.href}>
+                                <ListItem key={item.text} disablePadding>
+
+                                    <ListItemButton sx={{ flexDirection: 'column', alignItems: 'center', color: 'white', marginTop: '1rem' }}>
+                                        <ListItemIcon sx={{ fontSize: '3rem', color: 'white' }}>
+                                            {React.cloneElement(item.icon, { fontSize: 'large' })}
+                                        </ListItemIcon>
+                                        <ListItemText primary={item.text} sx={{ '& .MuiTypography-root': { fontSize: '1.25rem', color: 'white' } }} />
+                                    </ListItemButton>
+
+                                </ListItem> </Link>
                         ))}
                     </List>
                 </Box>
                 <Box sx={{ mt: 'auto', width: '100%' }}>
                     <Divider sx={{ backgroundColor: 'white' }} />
-                    <List>
+                    <List><Link href={'./login'}>
                         <ListItem key="Logout" disablePadding>
+
                             <ListItemButton sx={{ flexDirection: 'column', alignItems: 'center', color: 'white' }}>
                                 <ListItemIcon sx={{ fontSize: '3rem', color: 'white' }}>
                                     {React.cloneElement(menuItems[menuItems.length - 1].icon, { fontSize: 'large' })}
                                 </ListItemIcon>
                                 <ListItemText primary={menuItems[menuItems.length - 1].text} sx={{ '& .MuiTypography-root': { fontSize: '1.25rem', color: 'white' } }} />
                             </ListItemButton>
-                        </ListItem>
+
+                        </ListItem> </Link>
                     </List>
                 </Box>
             </Stack>
@@ -274,6 +280,8 @@ function NavBarComponent(props) {
             <br />
             <br />
             <br />
+
+
 
         </Box>
 
