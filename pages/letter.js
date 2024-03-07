@@ -37,7 +37,8 @@ export default function Letter() {
        <h1 style={{ textAlign: 'left' }}>My Letter</h1>
       <Paper elevation={3} style={paperStyle}
             sx={{
-              maxWidth: '60%',
+              maxWidth: '80%',
+              maxWidth:'720px',
               mx: 'auto',
               mt: 'auto',
             }}>
@@ -45,7 +46,7 @@ export default function Letter() {
         <QuillEditor
           value={content}
           onChange={handleContentChange}  
-          style={{ height: '350px' }} // You can adjust the height as needed
+          style={{ height: '350px' }}
         />
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: '5rem' }}>
           <button onClick={saveContent} style={{ padding: '0.5rem 1rem', borderRadius: '5px', border: 'none', backgroundColor: '#405CAA', color: 'white', cursor: 'pointer' }}>
