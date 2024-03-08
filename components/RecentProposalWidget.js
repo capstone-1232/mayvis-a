@@ -4,12 +4,13 @@ import {
 } from "@mui/material";
 import React from "react";
 import styles from '@/styles/RecentProposalWidget.module.css';
+import Link from "next/link";
 
 const RecentProposalWidget = ({ elev }) => {
     return (
         <Card elevation={elev} className={styles.cardHeight}>
             <CardContent className={styles.cardContentHeight}>
-                <Typography gutterBottom variant="h4" component="div">
+                <Typography gutterBottom variant="h4" component="div" sx={{fontWeight:"bold"}}>
                     Recent Proposal
                 </Typography>
                 <div className={`${styles.justifyContentCenter} ${styles.content}`}>
@@ -113,9 +114,11 @@ const RecentProposalWidget = ({ elev }) => {
                 </div>
             </CardContent>
             <CardActions className={"justifyContentCenter"}>
+                <Link href={"/proposal"}>
                 <Button variant='contained' sx={{ backgroundColor: '#405CAA', color: 'white', margin: '0 1rem 1rem', alignItems: 'center', width: '15rem' }} size="large">
                     View All Proposals
                 </Button>
+                </Link>
             </CardActions>
         </Card>
     );

@@ -2,47 +2,60 @@ import { Search } from "@mui/icons-material";
 import { Box, FormControlLabel, Grid, Paper, Switch, TextField, Button, Typography, Snackbar, Slide, Alert, Autocomplete } from "@mui/material";
 import Link from "next/link";
 import SearchIcon from '@mui/icons-material/Search';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import React, { useState } from "react"
 import { useRouter } from "next/router";
 
-const ClientDetail = () => {
-    const route = useRouter();
+export async function getStaticProps({ params }) {
+    try {
+        const id = params.id;
+        const res = await fetch(`http://localhost:3000/api/client/${id}`, { cache: 'no-store' });
+        if (!res.ok) {
+            throw new Error('Failed to fetch client');
+        }
+        const clientData = await res.json();
+        return { props: { clientData } };
+    }
+    catch (error) {
+        console.log('Error loading clients', error);
+    }
+}
 
-    console.log(route.query);
-    // const getClients = async (id) => {
-    //     try {
-    //         const res = await fetch('http://localhost:3000/api/client');
-    //         if (!res.ok) {
-    //             throw new Error('Failed to fetch clients');
-    //         }
-    //         const json = await res.json();
+export async function getStaticPaths() {
+    const res = await fetch('http://localhost:3000/api/client', { cache: 'no-store' });
+    const clients = await res.json();
+    console.log(clients);
+    const paths = clients.map((c) => ({
+        params: { id: c._id.toString()},
+    }))
 
-    //         setClientsData(json);
-    //         setFilteredData(json);
-    //     }
-    //     catch (error) {
-    //         console.log('Error loading clients', error);
-    //     }
-    // }
+    return { paths, fallback: false }
+}
 
-    // getClients();
+const ViewClient = ({ clientData }) => {
+    const [filteredData, setFilteredData] = useState(clientData);
+    //const [searchTerm, setSearchTerm] = useState('');
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     await postData();
-    // }
-
+    // const handleSearchChange = (event, newValue) => {
+    //     // setSearchTerm(newValue);
+    //     // const lowercasedValue = newValue.toLowerCase();
+    //     // const filtered = clientData?.contact.filter(item =>
+    //     //     item.contact_firstname.toLowerCase().includes(lowercasedValue)
+    //     // );
+    //     // setFilteredData(filtered);
+    //     //setPage(1);
+    // };
     return (
         <Box sx={{ flexGrow: 1, padding: 2 }}>
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
                     <Typography variant="h4" component="div" gutterBottom>
-                        Client Name
+                        {filteredData[0].client_name}
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
-                        <Button variant="contained">
+                        <Button variant="contained" sx={{minHeight:'150px'}}>
                             Edit
                         </Button>
                     </Grid>
@@ -52,9 +65,9 @@ const ClientDetail = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={8} md={6}>
                         <Autocomplete
-                            id="searchClient"
+                            id="searchContact"
                             freeSolo
-                            // options={clientsData.map((client) => client.client_name)}
+                            // options={clientData?.contact.map((contact) => contact.contact_firstname)}
                             // value={searchTerm}
                             // onInputChange={handleSearchChange}
                             renderInput={(params) => (
@@ -73,9 +86,14 @@ const ClientDetail = () => {
                             )}
                         />
                     </Grid>
-                    <Grid item xs={6} sm={4} md={2} container justifyContent="flex-end">
-                        <Button variant="outlined">
+                    <Grid item xs={6} sm={4} md={2} container justifyContent="flex-start">
+                        <Button variant="outlined" startIcon={<FilterAltIcon />}>
                             Filter
+                        </Button>
+                    </Grid>
+                    <Grid item xs={6} sm={4} md={3} container justifyContent="flex-start">
+                        <Button variant="contained" fullWidth>
+                            Add New Contact
                         </Button>
                     </Grid>
                 </Grid>
@@ -122,6 +140,6 @@ const ClientDetail = () => {
 
         </Box>
     );
-}
+};
 
-export default ClientDetail;
+export default ViewClient;

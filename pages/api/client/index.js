@@ -16,15 +16,8 @@ export default async function handler(req, res) {
 
         case 'GET':
             try {
-                const { id } = req.query;
-                if (id) {
-                    const client = await Client.find({ _id: id });
-                    return res.status(200).json(client);
-                }
-                else {
-                    const clients = await Client.find({});
-                    return res.status(200).json(clients);
-                }
+                const clients = await Client.find({});
+                return res.status(200).json(clients);
             } catch (error) {
                 return res.status(500).json({ message: "Error fetching clients", error: error.message });
             }
