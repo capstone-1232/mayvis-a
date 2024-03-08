@@ -1,5 +1,5 @@
 import connectMongoDB from "@/lib/mongodb";
-import ContactPerson from "@/models/ContactPerson";
+import ContactPerson from "@/models/contact";
 
 export default async function handler(req, res) {
     await connectMongoDB();
