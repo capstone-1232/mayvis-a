@@ -30,8 +30,9 @@ const Deliverables = () => {
             top: 75, 
             zIndex: 2, 
             backgroundColor: 'white', 
-            maxWidth: '80%', 
-            width: '80%' 
+            maxWidth: '100%',
+            width: '100%',
+            paddingBottom: '20px'
         }}
     >
         <Typography 
@@ -44,10 +45,12 @@ const Deliverables = () => {
         >
             New Proposal
         </Typography>
-        <NewProposalStepper activeStep={activeStep} />
+        <Box sx={{width: '87.1%'}}>
+          <NewProposalStepper activeStep={activeStep} />
+        </Box>
     </Box>
-    <Container maxWidth="md" position="relative">
-      <Box sx={{ display: 'flex', gap: '25px', alignItems: 'start', marginTop: '200px' }}>
+    <Container maxWidth="lg" position="relative">
+      <Box sx={{ display: 'flex', gap: '25px', alignItems: 'start', marginTop: '200px', justifyContent: 'center' }}>
         <Paper
             elevation={5} 
             sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2 }}

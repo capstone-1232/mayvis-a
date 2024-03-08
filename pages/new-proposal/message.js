@@ -40,7 +40,7 @@ const Message = () => {
         New Proposal
       </Typography>
       <NewProposalStepper activeStep={activeStep} />
-      <Container maxWidth="md" sx={{ mt: 4 }}>
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
         <Paper
           elevation={5} 
           sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2 }}

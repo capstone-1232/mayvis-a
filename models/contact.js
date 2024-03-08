@@ -11,6 +11,6 @@ const ContactPersonSchema = new Schema({
     }, { timestamps: true }
 );
 
-const ContactPerson = mongoose.model('ContactPerson', ContactPersonSchema);
+const ContactPerson = mongoose.models.ContactPerson || mongoose.model('ContactPerson', ContactPersonSchema);
 
 module.exports = ContactPerson;

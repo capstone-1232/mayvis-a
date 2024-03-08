@@ -11,6 +11,6 @@ StatusSchema.pre('save', function (next) {
     AutoIncrementModelID('statusId', this, next);
 });
 
-const Status = mongoose.model('Status', StatusSchema);
+const Status = mongoose.models.Status || mongoose.model('Status', StatusSchema);
 
 module.exports = Status;
