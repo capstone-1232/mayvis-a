@@ -2,7 +2,7 @@ import {
     Autocomplete, Box, Button, Card, Grid, Paper,
     TextField, Typography, Stack, Pagination
 } from "@mui/material";
-import React, { useState, useEffect } from 'react';
+import React, { useState, use } from 'react';
 
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
@@ -10,29 +10,25 @@ import Link from "next/link";
 
 const itemsPerPage = 8;
 
-const Client = () => {
-    const [clientsData, setClientsData] = useState([]);
-    const [page, setPage] = useState(1);
-    const [filteredData, setFilteredData] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
-
-    const getClients = async () => {
-        try {
-            const res = await fetch('http://localhost:3000/api/client', { cache: 'no-store' });
-            if (!res.ok) {
-                throw new Error('Failed to fetch clients');
-            }
-            const json = await res.json();
-
-            setClientsData(json);
-            setFilteredData(json);
+export async function getStaticProps() {
+    try {
+        const res = await fetch('http://localhost:3000/api/client', { cache: 'no-store' });
+        if (!res.ok) {
+            throw new Error('Failed to fetch clients');
         }
-        catch (error) {
-            console.log('Error loading clients', error);
-        }
+        const clientsData = await res.json();
+        return { props: { clientsData } };
     }
+    catch (error) {
+        console.log('Error loading clients', error);
+    }
+}
 
-    getClients();
+const Client = ({ clientsData }) => {
+    console.log(clientsData);
+    const [page, setPage] = useState(1);
+    const [filteredData, setFilteredData] = useState(clientsData);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -61,14 +57,14 @@ const Client = () => {
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
 
-                        <Link href={'/client/newclient'} >
-                            <Button variant="contained">
+                        <Link href={'/client/addclient'} >
+                            <Button variant="contained" sx={{ backgroundColor: '#405CAA' }}>
                                 Create New Client +
                             </Button>
                         </Link>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<FilterAltIcon />}>
+                        <Button variant="contained" startIcon={<FilterAltIcon />} sx={{ backgroundColor: '#405CAA' }}>
                             Archival
                         </Button>
                     </Grid>
@@ -100,7 +96,7 @@ const Client = () => {
                         />
                     </Grid>
                     <Grid item xs={6} sm={4} md={2} container justifyContent="flex-end">
-                        <Button variant="outlined" startIcon={<FilterAltIcon />}>
+                        <Button variant="outlined" startIcon={<FilterAltIcon />} >
                             Filter
                         </Button>
                     </Grid>
@@ -110,9 +106,9 @@ const Client = () => {
                         .slice((page - 1) * itemsPerPage, page * itemsPerPage)
                         .map((c, index) => (
                             <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-                                <Card elevation={12} sx={{ padding: 2,  minHeight: '250px'}}>
+                                <Card elevation={12} sx={{ padding: 2, minHeight: '250px' }}>
                                     <Stack spacing={1}>
-                                        <Typography variant="h5" component="div" gutterBottom>
+                                        <Typography variant="h5" component="div" gutterBottom sx={{ fontWeight: "bold" }}>
                                             {c.client_name}
                                         </Typography>
                                         <Typography variant="body1">
@@ -130,17 +126,16 @@ const Client = () => {
                                                 </>
                                             ))}
                                             : null} */}
-                                        <Typography variant="body2" sx={{minHeight:'150px'}}>
-                                            Description:<br/>{c.description}
+                                        <Typography variant="body2" sx={{ minHeight: '150px' }}>
+                                            Description:<br />{c.description}
                                         </Typography>
                                     </Stack>
                                     <Stack alignItems="center">
-                                        <Link href={`/client/${c._id}`}>
-                                        <Button variant="contained">
-                                            View
-                                        </Button>
+                                        <Link href={`/client/viewclient/${c._id}`} style={{width:"100%", textAlign:"center"}}>
+                                            <Button variant="contained" sx={{ backgroundColor: "#405CAA", width:"30%"}}>
+                                                View
+                                            </Button>
                                         </Link>
-
                                     </Stack>
                                 </Card>
                             </Grid>
