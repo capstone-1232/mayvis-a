@@ -1,3 +1,4 @@
+"use client";
 import ViewClientComponent from "@/components/ViewClientComponent";
 const ViewClient = () => {
   <ViewClientComponent />

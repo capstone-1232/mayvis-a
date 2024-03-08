@@ -23,16 +23,16 @@ export async function getServerProps({ params }) {
     }
 }
 
-export async function getStaticPaths() {
-    const res = await fetch('http://localhost:3000/api/client', { cache: 'no-store' });
-    const clients = await res.json();
-    console.log(clients);
-    const paths = clients.map((c) => ({
-        params: { id: c._id.toString()},
-    }))
+// export async function getStaticPaths() {
+//     const res = await fetch('http://localhost:3000/api/client', { cache: 'no-store' });
+//     const clients = await res.json();
+//     console.log(clients);
+//     const paths = clients.map((c) => ({
+//         params: { id: c._id.toString()},
+//     }))
 
-    return { paths, fallback: false }
-}
+//     return { paths, fallback: false }
+// }
 
 const ViewClientComponent = ({ clientData }) => {
     const [filteredData, setFilteredData] = useState(clientData);
