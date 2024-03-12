@@ -16,15 +16,8 @@ export default async function handler(req, res) {
 
         case 'GET':
             try {
-                const { id } = req.query;
-                if (id) {
-                    const contact = await Contact.find({ _id: id });
-                    return res.status(200).json(contact);
-                }
-                else {
-                    const contacts = await Contact.find({});
-                    return res.status(200).json(contacts);
-                }
+                const contacts = await Contact.find({});
+                return res.status(200).json(contacts);
             } catch (error) {
                 return res.status(500).json({ message: "Error fetching contacts", error: error.message });
             }
@@ -39,19 +32,6 @@ export default async function handler(req, res) {
                 return res.status(204).json({ message: "Contact deleted successfully." });
             } catch (error) {
                 return res.status(500).json({ message: "Error deleting contact", error: error.message });
-            }
-
-        case 'PUT':
-            try {
-                const { id } = req.query;
-                const { contact_firstname, contact_lastname, is_active, is_primary, contact_department, contact_role, client_id } = req.body;
-                const updatedContact = await Contact.findByIdAndUpdate(id, { contact_firstname, contact_lastname, is_active, is_primary, contact_department, contact_role, client_id }, { new: true });
-                if (!updatedContact) {
-                    return res.status(404).json({ message: "Contact not found." });
-                }
-                return res.status(200).json({ message: "Contact updated successfully.", contact: updatedContact });
-            } catch (error) {
-                return res.status(500).json({ message: "Error updating contact", error: error.message });
             }
 
         default:
