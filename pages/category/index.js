@@ -11,17 +11,20 @@ import Link from "next/link";
 const itemsPerPage = 8;
 
 export async function getStaticProps() {
+    let props = {};
     try {
         const res = await fetch('http://localhost:3000/api/category', { cache: 'no-store' });
         if (!res.ok) {
             throw new Error('Failed to fetch categories');
         }
         const categoriesData = await res.json();
-        return { props: { categoriesData } };
+        props =  { categoriesData };
     }
     catch (error) {
         console.log('Error loading categories', error);
     }
+
+    return {props};
 }
 
 const Category = ({ categoriesData }) => {
@@ -44,7 +47,7 @@ const Category = ({ categoriesData }) => {
         setPage(1);
     };
 
-    const noOfPages = Math.ceil(filteredData.length / itemsPerPage);
+    const noOfPages = Math.ceil(filteredData ? filteredData.length / itemsPerPage : 0);
 
     return (
         <Box sx={{ flexGrow: 1, padding: 2 }}>
@@ -76,7 +79,7 @@ const Category = ({ categoriesData }) => {
                         <Autocomplete
                             id="searchCategory"
                             freeSolo
-                            options={categoriesData.map((category) => category.category_name)}
+                            options={categoriesData?.map((category) => category.category_name)}
                             value={searchTerm}
                             onInputChange={handleSearchChange}
                             renderInput={(params) => (
@@ -102,9 +105,9 @@ const Category = ({ categoriesData }) => {
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
-                    {filteredData
-                        .slice((page - 1) * itemsPerPage, page * itemsPerPage)
-                        .map((c, index) => (
+                    {filteredData 
+                        ?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+                        ?.map((c, index) => (
                             <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
                                 <Card elevation={12} sx={{ padding: 2, minHeight: '250px' }}>
                                     <Stack spacing={1}>

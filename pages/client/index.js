@@ -2,30 +2,35 @@ import {
     Autocomplete, Box, Button, Card, Grid, Paper,
     TextField, Typography, Stack, Pagination
 } from "@mui/material";
-import React, { useState, use } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
 
-const itemsPerPage = 8;
-
-export async function getStaticProps() {
+export async function getServerSideProps() {
+    let clientsData = [{}];
     try {
-        const res = await fetch('http://localhost:3000/api/client', { cache: 'no-store' });
+        const res = await fetch('http://localhost:3000/api/client', { cache: "no-store" });
+        // res.setHeader(
+        //     'Cache-Control',
+        //     'public, s-maxage=10, stale-while-revalidate=59'
+        //   )
         if (!res.ok) {
             throw new Error('Failed to fetch clients');
         }
-        const clientsData = await res.json();
-        return { props: { clientsData } };
+        clientsData = await res.json();
+
     }
     catch (error) {
         console.log('Error loading clients', error);
     }
+    return { props: { clientsData } };
 }
 
+const itemsPerPage = 8;
+
 const Client = ({ clientsData }) => {
-    console.log(clientsData);
     const [page, setPage] = useState(1);
     const [filteredData, setFilteredData] = useState(clientsData);
     const [searchTerm, setSearchTerm] = useState('');
@@ -37,7 +42,7 @@ const Client = ({ clientsData }) => {
     const handleSearchChange = (event, newValue) => {
         setSearchTerm(newValue);
         const lowercasedValue = newValue.toLowerCase();
-        const filtered = clientsData.filter(item =>
+        const filtered = clientsData?.filter(item =>
             item.client_name.toLowerCase().includes(lowercasedValue)
         );
         setFilteredData(filtered);
@@ -58,13 +63,13 @@ const Client = ({ clientsData }) => {
                     <Grid item>
 
                         <Link href={'/client/addclient'} >
-                            <Button variant="contained" sx={{ backgroundColor: '#405CAA' }}>
+                            <Button variant="contained">
                                 Create New Client +
                             </Button>
                         </Link>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<FilterAltIcon />} sx={{ backgroundColor: '#405CAA' }}>
+                        <Button variant="contained" startIcon={<FilterAltIcon />}>
                             Archival
                         </Button>
                     </Grid>
@@ -76,7 +81,7 @@ const Client = ({ clientsData }) => {
                         <Autocomplete
                             id="searchClient"
                             freeSolo
-                            options={clientsData.map((client) => client.client_name)}
+                            options={clientsData?.map((client) => client.client_name)}
                             value={searchTerm}
                             onInputChange={handleSearchChange}
                             renderInput={(params) => (
@@ -96,21 +101,34 @@ const Client = ({ clientsData }) => {
                         />
                     </Grid>
                     <Grid item xs={6} sm={4} md={2} container justifyContent="flex-end">
-                        <Button variant="outlined" startIcon={<FilterAltIcon />} >
+                        <Button variant="outlined" startIcon={<FilterAltIcon />}>
                             Filter
                         </Button>
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                     {filteredData
-                        .slice((page - 1) * itemsPerPage, page * itemsPerPage)
-                        .map((c, index) => (
+                        ?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+                        ?.map((c, index) => (
                             <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-                                <Card elevation={12} sx={{ padding: 2, minHeight: '250px' }}>
-                                    <Stack spacing={1}>
-                                        <Typography variant="h5" component="div" gutterBottom sx={{ fontWeight: "bold" }}>
+                                <Card elevation={12} sx={{ padding: 2 }}>
+                                    <Stack spacing={1} sx={{maxHeight:'250px',minHeight: '250px', overflow:'hidden'}}>
+                                        <Typography variant="h5" component="div" gutterBottom sx={{fontWeight: 'bold'}}>
                                             {c.client_name}
                                         </Typography>
+                                        {c.contact_info?.filter(contact=>contact.is_primary == true)?.map((contact, index) =>
+                                            <React.Fragment key={index}>
+                                                <Typography variant="body1">
+                                                    Name : {`${contact.contact_firstname} ${contact.contact_lastname}`}
+                                                </Typography>
+                                                <Typography variant="body1">
+                                                    Email:
+                                                </Typography>
+                                                <Typography variant="body1">
+                                                    Contact No:
+                                                </Typography>
+                                            </React.Fragment>
+                                        )}
                                         <Typography variant="body1">
                                             Active: {(c.is_active) ? 'Yes' : 'No'}
                                         </Typography>
@@ -126,16 +144,17 @@ const Client = ({ clientsData }) => {
                                                 </>
                                             ))}
                                             : null} */}
-                                        <Typography variant="body2" sx={{ minHeight: '150px' }}>
+                                        <Typography variant="body2" sx={{overflow: 'hidden' }}>
                                             Description:<br />{c.description}
                                         </Typography>
                                     </Stack>
-                                    <Stack alignItems="center">
-                                        <Link href={`/client/viewclient/${c._id}`} style={{width:"100%", textAlign:"center"}}>
-                                            <Button variant="contained" sx={{ backgroundColor: "#405CAA", width:"30%"}}>
+                                    <Stack alignItems="center" marginTop={'20px'}>
+                                        <Link href={`/client/viewclient/${c._id}`} className="link">
+                                            <Button variant="contained">
                                                 View
                                             </Button>
                                         </Link>
+
                                     </Stack>
                                 </Card>
                             </Grid>
