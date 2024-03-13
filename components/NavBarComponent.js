@@ -32,7 +32,7 @@ function NavBarComponent(props) {
         { text: 'Proposal', icon: <ProposalIcon />, href: '/proposal' },
         { text: 'Clients', icon: <ClientsIcon />, href: '/client' },
         { text: 'Categories', icon: <CategoriesIcon />, href: '/category' },
-        { text: 'Products/Services', icon: <ProductsServicesIcon />, href: '/products' },
+        { text: <>Products/<br />Services</>, icon: <ProductsServicesIcon />, href: '/products' },
         { text: 'Reports', icon: <ReportsIcon />, href: '/' },
         { text: 'Logout', icon: <LogoutIcon />, href: '/' },
     ];
@@ -146,33 +146,68 @@ function NavBarComponent(props) {
                 <Box sx={{ overflow: 'auto' }}>
                     <List>
                         {menuItems.slice(0, -1).map((item) => ( // Exclude the logout item
-                            <Link href={item.href}>
-                                <ListItem key={item.text} disablePadding>
-
-                                    <ListItemButton sx={{ flexDirection: 'column', alignItems: 'center', color: 'white', marginTop: '1rem' }}>
-                                        <ListItemIcon sx={{ fontSize: '3rem', color: 'white' }}>
-                                            {React.cloneElement(item.icon, { fontSize: 'large' })}
-                                        </ListItemIcon>
-                                        <ListItemText primary={item.text} sx={{ '& .MuiTypography-root': { fontSize: '1.25rem', color: 'white' } }} />
-                                    </ListItemButton>
-
-                                </ListItem> </Link>
+                            <Link href={item.href} legacyBehavior>
+                                <a style={{ textDecoration: 'none' }}>
+                                    <ListItem key={item.text} disablePadding sx={{ justifyContent: 'center' }}>
+                                    
+                                        <ListItemButton
+                                            sx={{ 
+                                                flexDirection: 'column', 
+                                                alignItems: 'center', 
+                                                color: 'white', 
+                                                marginTop: '1rem',
+                                            }}>
+                                            <ListItemIcon sx={{ fontSize: '3rem', color: 'white', minWidth: 'auto' }}>
+                                                {React.cloneElement(item.icon, { fontSize: 'large' })}
+                                            </ListItemIcon>
+                                            <ListItemText 
+                                                primary={item.text} 
+                                                sx={{ 
+                                                    '& .MuiTypography-root': { 
+                                                        fontSize: '1.25rem', 
+                                                        color: 'white',
+                                                        textAlign: 'center',
+                                                    } 
+                                                }} 
+                                            />
+                                        </ListItemButton>
+                                    
+                                    </ListItem>
+                                </a>
+                            </Link>
                         ))}
                     </List>
                 </Box>
                 <Box sx={{ mt: 'auto', width: '100%' }}>
                     <Divider sx={{ backgroundColor: 'white' }} />
-                    <List><Link href={'./login'}>
-                        <ListItem key="Logout" disablePadding>
-
-                            <ListItemButton sx={{ flexDirection: 'column', alignItems: 'center', color: 'white' }}>
-                                <ListItemIcon sx={{ fontSize: '3rem', color: 'white' }}>
-                                    {React.cloneElement(menuItems[menuItems.length - 1].icon, { fontSize: 'large' })}
-                                </ListItemIcon>
-                                <ListItemText primary={menuItems[menuItems.length - 1].text} sx={{ '& .MuiTypography-root': { fontSize: '1.25rem', color: 'white' } }} />
-                            </ListItemButton>
-
-                        </ListItem> </Link>
+                    <List>
+                        <Link href={'./login'} legacyBehavior>
+                            <a style={{ textDecoration: 'none' }}>
+                                <ListItem key="Logout" disablePadding sx={{ justifyContent: 'center' }}>
+                                
+                                    <ListItemButton 
+                                        sx={{ 
+                                            flexDirection: 'column', 
+                                            alignItems: 'center', 
+                                            color: 'white' 
+                                        }}>
+                                        <ListItemIcon sx={{ fontSize: '3rem', color: 'white', minWidth: 'auto' }}>
+                                            {React.cloneElement(menuItems[menuItems.length - 1].icon, { fontSize: 'large' })}
+                                        </ListItemIcon>
+                                        <ListItemText 
+                                            primary={menuItems[menuItems.length - 1].text} 
+                                            sx={{ 
+                                                '& .MuiTypography-root': { 
+                                                    fontSize: '1.25rem', 
+                                                    color: 'white' 
+                                                } 
+                                            }} 
+                                        />
+                                    </ListItemButton>
+                                
+                                </ListItem> 
+                            </a>
+                        </Link>
                     </List>
                 </Box>
             </Stack>

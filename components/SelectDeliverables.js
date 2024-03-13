@@ -29,6 +29,23 @@ const SelectDeliverables = () => {
   }
 
   getCategories();
+
+  const sampleCategories = [
+    {
+      name: 'Web Development',
+      products: [
+        { name: 'Website Redesign', price: 3500.00, description: 'Complete overhaul of your current website to improve user experience.' },
+        { name: 'SEO Optimization Package', price: 1000.00, description: 'Audit and enhancement of your website SEO to improve search engine.' },
+      ],
+    },
+    {
+      name: 'Digital Marketing',
+      products: [
+        { name: 'Digital Marketing Strategy', price: 2000.00, description: 'Comprehensive digital marketing plan to increase online visibility.' },
+        { name: 'Social Media Management', price: 1500.00, description: 'Monthly management of social media accounts to increase engagement.' },
+      ],
+    },
+  ];
   
   return (
     <Container>
@@ -38,7 +55,7 @@ const SelectDeliverables = () => {
         </Typography>
       </Box>
       <SearchBarWithButton/>
-      <CategoriesAccordion categories={categoriesData} />
+      <CategoriesAccordion categories={sampleCategories} />
     </Container>
   );
 };

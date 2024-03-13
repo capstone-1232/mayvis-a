@@ -63,7 +63,7 @@ const Message = () => {
             sx={{
               py: 1.5,
               borderRadius: 2,
-              width: '20%',
+              width: '15%',
             }}
             onClick={handleBack}
           >
@@ -76,7 +76,12 @@ const Message = () => {
               py: 1.5,
               ml: 3,
               borderRadius: 2,
-              width: '20%',
+              width: '15%',
+              bgcolor: '#2A987A',
+              '&:hover': {
+                bgcolor: '#238b6a',
+                boxShadow: 'none'
+              }
             }}
             onClick={handleNext}
           >

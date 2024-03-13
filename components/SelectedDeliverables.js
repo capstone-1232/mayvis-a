@@ -1,8 +1,15 @@
 import { useState } from 'react';
-import { Box, Typography, List, ListItem, ListItemText, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Box, Typography, List, ListItem, ListItemText, IconButton, Stack } from '@mui/material';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 
-const DeliverablesComponent = ({ deliverables, projectTotal, recurringTotal, proposalTotal, onDelete }) => {
+const DeliverablesComponent = ({ deliverables, onDelete, onEdit }) => {
+
+  const handleEdit = (e) => {
+    e.preventDefault();
+    // To Do Logic to handle form data...
+  };
+
   return (
     <Box sx={{ bgcolor: 'background.paper', p: 1 }}>
       <Typography variant="h6" gutterBottom>
@@ -13,22 +20,65 @@ const DeliverablesComponent = ({ deliverables, projectTotal, recurringTotal, pro
           <ListItem
             key={index}
             secondaryAction={
-              <IconButton edge="end" aria-label="delete" onClick={() => onDelete(index)}>
-                <CloseIcon />
-              </IconButton>
+              <Stack>
+                <IconButton 
+                  edge="end" 
+                  aria-label="delete" 
+                  onClick={() => onDelete(index)}
+                  sx={{ 
+                    position: 'absolute', 
+                    top: -50, 
+                    right: -17,
+                  }}
+                >
+                  <RemoveCircleIcon
+                    sx={{
+                      color: 'red'
+                    }}
+                  />
+                </IconButton>
+
+                <IconButton 
+                  edge="end" 
+                  aria-label="delete" 
+                  onClick={handleEdit}
+                  sx={{ 
+                    position: 'absolute', 
+                    top: -20, 
+                    right: 5,
+                  }}
+                >
+                  <ModeEditIcon
+                    sx={{
+                      color: '#dedede'
+                    }}
+                  />
+                </IconButton>
+              </Stack>
             }
             divider
-            sx={{ bgcolor: 'grey.100', mb: 1 }}
+            sx={{ 
+              bgcolor: '#405caa', 
+              mb: 1,
+              borderRadius: 3
+            }}
           >
-            <ListItemText primary={item.name} secondary={`$${item.price.toFixed(2)}`} />
+            <ListItemText
+              primary={item.name} 
+              secondary={`$${item.price.toFixed(2)}`}
+              sx={{
+                '& .MuiListItemText-primary': {
+                  color: '#ffffff',
+                  fontWeight: 'bold'
+                },
+                '& .MuiListItemText-secondary': {
+                  color: '#ffffff',
+                }
+              }}
+            />
           </ListItem>
         ))}
       </List>
-      <Box sx={{ mt: 2 }}>
-        <Typography variant="body1">Project Total: ${projectTotal.toFixed(2)}</Typography>
-        <Typography variant="body1">Recurring Total: ${recurringTotal.toFixed(2)}</Typography>
-        <Typography variant="h6">Proposal Total: ${proposalTotal.toFixed(2)}</Typography>
-      </Box>
     </Box>
   );
 };
@@ -41,9 +91,6 @@ const deliverablesData = [
 
 const SelectedDeliverables = () => {
   const [deliverables, setDeliverables] = useState(deliverablesData);
-  const projectTotal = deliverables.reduce((acc, item) => acc + item.price, 0);
-  const recurringTotal = 1500;
-  const proposalTotal = projectTotal + recurringTotal;
 
   const handleDelete = (index) => {
     const newDeliverables = deliverables.filter((_, i) => i !== index);
@@ -53,9 +100,6 @@ const SelectedDeliverables = () => {
   return (
     <DeliverablesComponent
       deliverables={deliverables}
-      projectTotal={projectTotal}
-      recurringTotal={recurringTotal}
-      proposalTotal={proposalTotal}
       onDelete={handleDelete}
     />
   );
