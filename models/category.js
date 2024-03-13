@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const CategorySchema = new Schema({
+const CategoriesSchema = new Schema({
     category_name: { type: String, required: true },
     description: { type: String },
     is_archived: { type: Boolean, default: false },
@@ -11,6 +11,6 @@ const CategorySchema = new Schema({
     }, { timestamps: true }
 );
 
-const Category = mongoose.models.Category || mongoose.model('Category', CategorySchema);
+const Categories = mongoose.models.Categories || mongoose.model('Categories', CategoriesSchema);
 
-module.exports = Category;
+module.exports = Categories;

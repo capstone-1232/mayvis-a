@@ -34,11 +34,11 @@ export default function DashboardComponent() {
                 <Grid item xs={12} md={8}>
                     <Item>
                         <Card elevation={elevationValue} className={styles.cardHeight}>
-                            <CardContent>
-                                <Typography gutterBottom variant="h4" component="div">
+                            <CardContent sx={{textAlign:"center", marginTop:"60px"}}>
+                                <Typography gutterBottom variant="h3" component="div" sx={{fontWeight:"bold"}}>
                                     Welcome back, Nina
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography variant="h5" color="text.secondary">
                                     Streamline your proposal process with our easy-to-use estimating tools
                                 </Typography>
                             </CardContent>
