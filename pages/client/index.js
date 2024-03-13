@@ -11,7 +11,7 @@ import Link from "next/link";
 export async function getServerSideProps() {
     let clientsData = [{}];
     try {
-        const res = await fetch('http://localhost:3000/api/client', { cache: "no-store" });
+        const res = await fetch('https://mayvis-bye0eap18-techcoders-projects.vercel.app/api/client', { cache: "no-store" });
         // res.setHeader(
         //     'Cache-Control',
         //     'public, s-maxage=10, stale-while-revalidate=59'

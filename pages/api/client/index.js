@@ -17,16 +17,23 @@ export default async function handler(req, res) {
         case 'GET':
             try {
                 const clients = await Client//.find({});
-                .aggregate([
-                    {
-                        $lookup: {
-                            localField: "_id",
-                            from: "contacts",
-                            foreignField: "client_id",
-                            as: "contact_info"
+                    .aggregate([
+                        {
+                            $lookup: {
+                                localField: "_id",
+                                from: "contacts",
+                                foreignField: "client_id",
+                                as: "contact_info"
+                            }
                         }
-                    }
-                ]);
+                        ,
+                        {
+                            $match: {
+                                is_active: true
+                            }
+                        }
+
+                    ]);
                 return res.status(200).json(clients);
             } catch (error) {
                 return res.status(500).json({ message: "Error fetching clients", error: error.message });
