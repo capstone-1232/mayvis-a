@@ -10,27 +10,40 @@ import Link from "next/link";
 
 const itemsPerPage = 8;
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context) {
+    const { req } = context;
+    // Determine the base URL based on the environment (Vercel or local)
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    const host = req ? req.headers.host : window.location.hostname;
+    const baseURL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
+    const apiRoute = `${baseURL}/api/category`;
+  
     let categoriesData = [];
     try {
-        const res = await fetch('/api/category', {
-            method: 'GET', // or 'POST', 'PUT', 'DELETE', etc.
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            cache: "no-store"
-        });
-        if (!res.ok) {
-            const errorBody = await res.text();
-            throw new Error(`Failed to fetch clients: ${errorBody}`);
-        }
-        categoriesData = await res.json();
+      const res = await fetch(apiRoute, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          // Include Authorization header if needed
+        },
+        // Additional options if needed
+      });
+  
+      if (!res.ok) {
+        const errorText = await res.text(); // or use `res.json()` if your API returns a JSON response
+        throw new Error(`Failed to fetch clients: ${errorText}`);
+      }
+  
+      categoriesData = await res.json();
+    } catch (error) {
+      console.error('Error loading clients', error);
+      // Pass the error message to the page's props or handle it as needed
+      return { props: { categoriesData, error: error.message } };
     }
-    catch (error) {
-        console.log('Error loading clients', error);
-    }
+  
     return { props: { categoriesData } };
-}
+  }
+  
 
 const Category = ({ categoriesData }) => {
     console.log(categoriesData);
