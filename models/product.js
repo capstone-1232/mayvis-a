@@ -8,12 +8,11 @@ const ProductSchema = new Schema({
     is_archived: { type: Boolean, default: false },
     notes: { type: String },
     quantity: { type: Number },
-    category_id: { type: Schema.Types.ObjectId, ref: 'Category' },
     created_by: { type: Schema.Types.ObjectId, ref: 'User' },
     updated_by: { type: Schema.Types.ObjectId, ref: 'User' }
     }, { timestamps: true }
 );
 
-const Product = mongoose.model('Product', ProductSchema);
+const Product = mongoose.models.Product || mongoose.model('Product', ProductSchema);
 
 module.exports = Product;

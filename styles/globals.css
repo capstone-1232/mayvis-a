@@ -39,3 +39,7 @@ body {
 .myQuillContainer .quill {
   height: 95%;
 }
+
+.link {
+  display: contents;
+}

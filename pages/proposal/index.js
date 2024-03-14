@@ -3,6 +3,7 @@ import {
     TextField, Typography, Stack, Pagination
 } from "@mui/material";
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
@@ -41,12 +42,14 @@ const Proposal = () => {
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
-                        <Button variant="contained">
-                            Create New Proposal +
-                        </Button>
+                        <Link href="/new-proposal/client-details" passHref>
+                            <Button variant="contained" component="a" sx={{backgroundColor: '#405CAA'}}>
+                                Create New Proposal +
+                            </Button>
+                        </Link>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<FilterAltIcon />}>
+                        <Button variant="contained" startIcon={<FilterAltIcon />} sx={{backgroundColor: '#405CAA'}}>
                             Archival
                         </Button>
                     </Grid>
@@ -90,7 +93,7 @@ const Proposal = () => {
                             <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
                                 <Card elevation={12} sx={{ padding: 2 }}>
                                     <Stack spacing={1}>
-                                        <Typography variant="h5" component="div" gutterBottom>
+                                        <Typography variant="h5" component="div" gutterBottom sx={{fontWeight:"bold"}}>
                                             {p.name}
                                         </Typography>
                                         <Typography variant="body1">
@@ -102,12 +105,12 @@ const Proposal = () => {
                                         <Typography variant="body1">
                                             Status: {p.status}
                                         </Typography>
-                                        <Typography variant="body2">
+                                        <Typography variant="body2" sx={{minHeight:"180px"}}>
                                             {p.Description}
                                         </Typography>
                                     </Stack>
                                     <Stack alignItems="center">
-                                        <Button variant="contained">
+                                        <Button variant="contained"  sx={{backgroundColor: '#405CAA', width:'30%', marginBottom:"10px"}}>
                                             View
                                         </Button>
                                     </Stack>

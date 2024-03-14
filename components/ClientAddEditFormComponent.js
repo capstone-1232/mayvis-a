@@ -1,51 +1,58 @@
 import { Box, FormControlLabel, Grid, Paper, Switch, TextField, Button, Typography, Snackbar, Slide, Alert } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 
-const NewClient = () => {
-    const [clientName, setClientName] = useState('');
-    const [active, setActive] = useState(true);
-    const [description, setDescription] = useState('');
-    const [isLoading, setIsLoading] = useState(false)
-    const [showMsg, setShowMsg] = useState(false);
-    const [msg, setMsg] = useState('');
+const ClientAddEditFormComponent = ({ client }) => {
+    const [clientName, setClientName] = useState(client.clientName);
+    const [active, setActive] = useState(client.active);
+    const [description, setDescription] = useState(client.description);
+    const [isLoading, setIsLoading] = useState(client.isLoading)
+    const [showMsg, setShowMsg] = useState(client.showMsg);
+    const [msg, setMsg] = useState(client.msg);
+    const [severity, setSeverity] = useState('error')
     const router = useRouter();
 
-    const handleError = (msg) => {
+    const handleMsg = (msg) => {
         setMsg(msg);
         setShowMsg(true);
     }
 
-    const postData = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
         try {
             if (!clientName || !description) {
-                handleError('Client Name and Description are required!');
+                setSeverity('error');
+                handleMsg('Client Name and Description are required!');
+                return;
             }
 
-            const res = await fetch('http://localhost:3000/api/client',
-                {
-                    method: 'POST',
-                    headers: { "Content-type": "application/json" },
-                    body: JSON.stringify({ 'client_name': clientName, 'is_active': active, description })
-                });
-            const data = await res.json();
+            const data = await client.processClient({
+                clientName: clientName,
+                active: active,
+                description: description,
+            })
+
             if (data.error) {
-                handleError(data.error);
+                setSeverity('error');
+                handleMsg(data.error);
             }
-            else
-                router.push('/client');
+            else {
+                setTimeout(() => {
+                    setSeverity('success');
+                    handleMsg('Client has been saved');
+                    setTimeout(() => {
+                        setIsLoading(false);
+                        router.push('/client');
+                    }, 1500);
+                }, 500);
+            }
+
         }
         catch (e) {
             throw e;
         }
-
-        setIsLoading(false);
-    }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        await postData();
     }
 
     return (
@@ -62,11 +69,11 @@ const NewClient = () => {
                             <FormControlLabel control={<Switch checked={active} onChange={(e) => setActive(e.target.checked)} />} label="Active Client" />
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField label="Client Name" fullWidth value={clientName} onChange={(e) => setClientName(e.target.value)} />
+                            <TextField label="Client Name" fullWidth value={clientName} onChange={(e) => setClientName(e.target.value)} required />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField label="Description" fullWidth multiline
-                                rows={15} value={description} onChange={(e) => setDescription(e.target.value)} />
+                                rows={15} value={description} onChange={(e) => setDescription(e.target.value)} required />
                         </Grid>
                         <Grid item xs={12} container justifyContent="flex-end" spacing={2}>
                             <Grid item>
@@ -92,7 +99,7 @@ const NewClient = () => {
                 TransitionComponent={(props) => <Slide {...props} direction="up" />}>
                 <Alert
 
-                    severity="error"
+                    severity={severity}
                     variant="filled"
                     sx={{ width: '100%' }}
                 >
@@ -103,4 +110,4 @@ const NewClient = () => {
     );
 }
 
-export default NewClient;
+export default ClientAddEditFormComponent;

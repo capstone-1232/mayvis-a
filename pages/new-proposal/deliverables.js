@@ -5,6 +5,7 @@ import { Container, Typography, Button, Paper, Stack, Box } from '@mui/material'
 import NewProposalStepper from '@/components/Stepper';
 import SelectedDeliverables from '@/components/SelectedDeliverables';
 import SelectDeliverables from '@/components/SelectDeliverables';
+import ProposalTotal from '@/components/ProposalTotal';
 
 const Deliverables = () => {
   const [activeStep, setActiveStep] = useState(3);
@@ -16,7 +17,7 @@ const Deliverables = () => {
   };
 
   const handleNext = () => {
-    // To Do Update the activeStep state here
+    router.push('/new-proposal/summary');
   };
 
   const handleBack = () => {
@@ -30,8 +31,9 @@ const Deliverables = () => {
             top: 75, 
             zIndex: 2, 
             backgroundColor: 'white', 
-            maxWidth: '80%', 
-            width: '80%' 
+            maxWidth: '100%',
+            width: '100%',
+            paddingBottom: '20px'
         }}
     >
         <Typography 
@@ -44,24 +46,33 @@ const Deliverables = () => {
         >
             New Proposal
         </Typography>
-        <NewProposalStepper activeStep={activeStep} />
+        <Box sx={{width: '87.1%'}}>
+          <NewProposalStepper activeStep={activeStep} />
+        </Box>
     </Box>
-    <Container maxWidth="md" position="relative">
-      <Box sx={{ display: 'flex', gap: '25px', alignItems: 'start', marginTop: '200px' }}>
-        <Paper
-            elevation={5} 
-            sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2 }}
-        >
-            <Box sx={{ flex: '30%' }}>
-                <SelectedDeliverables />
-            </Box>
-        </Paper>
+    <Container maxWidth="xl" position="relative">
+      <Box sx={{ display: 'flex', gap: '25px', alignItems: 'start', marginTop: '200px', justifyContent: 'center' }}>
+        <Box sx={{ flex: '40%' }}>
+          <Paper
+              elevation={5} 
+              sx={{ p: 4, mt: 10, mb: 1, borderRadius: 2 }}
+          >
+            <SelectedDeliverables />
+          </Paper>
+          
+          <Paper
+              elevation={5} 
+              sx={{ p: 4, mb: 5, borderRadius: 2 }}
+          >
+            <ProposalTotal />
+          </Paper>
+        </Box>
 
         <Paper
             elevation={5} 
             sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2 }}
         >
-            <Box sx={{ flex: '70%' }}>
+            <Box sx={{ flex: '60%' }}>
                 <SelectDeliverables />
             </Box>
         </Paper>
@@ -73,7 +84,7 @@ const Deliverables = () => {
           sx={{
             py: 1.5,
             borderRadius: 2,
-            width: '20%',
+            width: '15%',
           }}
           onClick={handleBack}
         >
@@ -86,7 +97,12 @@ const Deliverables = () => {
             py: 1.5,
             ml: 3,
             borderRadius: 2,
-            width: '20%',
+            width: '15%',
+            bgcolor: '#2A987A',
+            '&:hover': {
+              bgcolor: '#238b6a',
+              boxShadow: 'none'
+            }
           }}
           onClick={handleNext}
         >
