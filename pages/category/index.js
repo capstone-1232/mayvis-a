@@ -24,6 +24,7 @@ export async function getServerSideProps(context) {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Basic ${Buffer.from('techcoders.nait@gmail.com:techCoders1234').toString('base64')}`,
           // Include Authorization header if needed
         },
         // Additional options if needed
