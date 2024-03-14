@@ -13,7 +13,14 @@ const itemsPerPage = 8;
 export async function getServerSideProps() {
     let categoriesData = [{}];
     try {
-        const res = await fetch('https://' + process.env.VERCEL_URL + '/api/category', { cache: "no-store" });
+        const res = await fetch('https://' + process.env.VERCEL_URL + '/api/category', {
+            method: 'GET', // or 'POST', 'PUT', 'DELETE', etc.
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer LPofvqLfu5UJDiAaWTtO3Hku'
+            },  
+            cache: "no-store"
+        });
         // res.setHeader(
         //     'Cache-Control',
         //     'public, s-maxage=10, stale-while-revalidate=59'
@@ -108,7 +115,7 @@ const Category = ({ categoriesData }) => {
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
-                    {filteredData 
+                    {filteredData
                         ?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
                         ?.map((c, index) => (
                             <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
@@ -137,8 +144,8 @@ const Category = ({ categoriesData }) => {
                                         </Typography>
                                     </Stack>
                                     <Stack alignItems="center">
-                                        <Link href={`/category/viewcategory/${c._id}`} style={{width:"100%", textAlign:"center"}}>
-                                            <Button variant="contained" sx={{ backgroundColor: "#405CAA", width:"30%"}}>
+                                        <Link href={`/category/viewcategory/${c._id}`} style={{ width: "100%", textAlign: "center" }}>
+                                            <Button variant="contained" sx={{ backgroundColor: "#405CAA", width: "30%" }}>
                                                 View
                                             </Button>
                                         </Link>
