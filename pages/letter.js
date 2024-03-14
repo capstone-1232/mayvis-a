@@ -3,6 +3,8 @@ import dynamic from 'next/dynamic';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 
+import RTextEditor from '@/components/RTextEditor';
+
 // Import 'react-quill' dynamically without SSR
 const QuillEditor = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -43,11 +45,12 @@ export default function Letter() {
               mt: 'auto',
             }}>
         <h2 style={{ textAlign: 'left' }}>Customize Message</h2>
-        <QuillEditor
+        {/* <QuillEditor
           value={content}
           onChange={handleContentChange}  
           style={{ height: '350px' }}
-        />
+        /> */}
+        <RTextEditor />
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: '5rem' }}>
           <button onClick={saveContent} style={{ padding: '0.5rem 1rem', borderRadius: '5px', border: 'none', backgroundColor: '#405CAA', color: 'white', cursor: 'pointer' }}>
             Save

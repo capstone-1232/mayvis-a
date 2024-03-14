@@ -86,7 +86,7 @@ function NavBarComponent(props) {
         >
             <MenuItem onClick={handleMenuClose}>Home</MenuItem>
             <MenuItem onClick={handleMenuClose}>My Proposals</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Setup Customer Letter</MenuItem>
+            <MenuItem component={Link} href="/letter">Setup Customer Letter</MenuItem>
             <Divider />
             <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
 
