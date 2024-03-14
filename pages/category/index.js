@@ -10,21 +10,24 @@ import Link from "next/link";
 
 const itemsPerPage = 8;
 
-export async function getStaticProps() {
-    let props = {};
+export async function getServerSideProps() {
+    let categoriesData = [{}];
     try {
-        const res = await fetch('https://' + process.env.VERCEL_URL + '/api/category', { cache: 'no-store' });
+        const res = await fetch(process.env.VERCEL_URL + '/api/category', { cache: "no-store" });
+        // res.setHeader(
+        //     'Cache-Control',
+        //     'public, s-maxage=10, stale-while-revalidate=59'
+        //   )
         if (!res.ok) {
-            throw new Error('Failed to fetch categories');
+            throw new Error('Failed to fetch clients');
         }
-        const categoriesData = await res.json();
-        props =  { categoriesData };
+        categoriesData = await res.json();
+
     }
     catch (error) {
-        console.log('Error loading categories', error);
+        console.log('Error loading clients', error);
     }
-
-    return {props};
+    return { props: { categoriesData } };
 }
 
 const Category = ({ categoriesData }) => {
