@@ -11,25 +11,20 @@ import Link from "next/link";
 const itemsPerPage = 8;
 
 export async function getServerSideProps() {
-    let categoriesData = [{}];
+    let categoriesData = [];
     try {
-        const res = await fetch('https://' + process.env.VERCEL_URL + '/api/category', {
+        const res = await fetch('/api/category', {
             method: 'GET', // or 'POST', 'PUT', 'DELETE', etc.
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer LPofvqLfu5UJDiAaWTtO3Hku'
-            },  
+            },
             cache: "no-store"
         });
-        // res.setHeader(
-        //     'Cache-Control',
-        //     'public, s-maxage=10, stale-while-revalidate=59'
-        //   )
         if (!res.ok) {
-            throw new Error('Failed to fetch clients');
+            const errorBody = await res.text();
+            throw new Error(`Failed to fetch clients: ${errorBody}`);
         }
         categoriesData = await res.json();
-
     }
     catch (error) {
         console.log('Error loading clients', error);
