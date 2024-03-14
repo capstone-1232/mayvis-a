@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 
 import SearchBarWithButton from './SearchField';
-import CategoriesAccordion from './CategoriesAccordion';
+import CategoriesAccordion from './CustomAccordion';
 
 const SelectDeliverables = () => {
   const [categoriesData, setCategoriesData] = useState([]);

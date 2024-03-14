@@ -1,11 +1,18 @@
 import React from 'react';
+import { useState } from 'react';
 import { Typography, Button, Box } from '@mui/material';
+import CustomModal from '@/components/CustomModal';
 
 const ProposalSummary = () => {
+  const [modalOpen, setModalOpen] = useState(false);
 //   if (!proposal) {
 //       return <Typography>Proposal data is loading or not available.</Typography>;
 //   }
 //   const { title, status, dateCreated, clientName, clientContact, createdBy } = proposal;
+
+  const handleClose = () => {
+    setModalOpen(false);
+  }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -27,7 +34,8 @@ const ProposalSummary = () => {
 
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
         <Button 
-          variant="contained" 
+          variant="contained"
+          onClick={() => setModalOpen(true)}
           sx={{ 
               width: '75%', 
               mt: 2, 
@@ -37,6 +45,26 @@ const ProposalSummary = () => {
         >
           Send to Client
         </Button>
+        <CustomModal
+          // icon={<ProposalIcon style={{ fontSize: '4rem' }} />}
+          title="Proposal Summary"
+          message="By selecting this option, you agree to generate a link."
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          buttons={[
+            {
+              label: "Cancel",
+              color: "primary",
+              onClick: () => setModalOpen(false)
+            },
+            {
+              label: "Proceed",
+              color: "success",
+              onClick: () => console.log("Proceed clicked"),
+              sx: { bgcolor: "#238b6a" }
+            },
+          ]}
+        />
       </Box >
     </Box>
   );
