@@ -13,7 +13,7 @@ const itemsPerPage = 8;
 export async function getServerSideProps() {
     let categoriesData = [{}];
     try {
-        const res = await fetch(process.env.VERCEL_URL + '/api/category', { cache: "no-store" });
+        const res = await fetch('https://' + process.env.VERCEL_URL + '/api/category', { cache: "no-store" });
         // res.setHeader(
         //     'Cache-Control',
         //     'public, s-maxage=10, stale-while-revalidate=59'
