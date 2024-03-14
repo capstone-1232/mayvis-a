@@ -10,22 +10,41 @@ import Link from "next/link";
 
 const itemsPerPage = 8;
 
-export async function getStaticProps() {
-    let props = {};
+export async function getServerSideProps(context) {
+    const { req } = context;
+    // Determine the base URL based on the environment (Vercel or local)
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    const host = req ? req.headers.host : window.location.hostname;
+    const baseURL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
+    const apiRoute = `${baseURL}/api/category`;
+  
+    let categoriesData = [];
     try {
-        const res = await fetch('http://localhost:3000/api/category', { cache: 'no-store' });
-        if (!res.ok) {
-            throw new Error('Failed to fetch categories');
-        }
-        const categoriesData = await res.json();
-        props =  { categoriesData };
+      const res = await fetch(apiRoute, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${Buffer.from('techcoders.nait@gmail.com:techCoders1234').toString('base64')}`,
+          // Include Authorization header if needed
+        },
+        // Additional options if needed
+      });
+  
+      if (!res.ok) {
+        const errorText = await res.text(); // or use `res.json()` if your API returns a JSON response
+        throw new Error(`Failed to fetch clients: ${errorText}`);
+      }
+  
+      categoriesData = await res.json();
+    } catch (error) {
+      console.error('Error loading clients', error);
+      // Pass the error message to the page's props or handle it as needed
+      return { props: { categoriesData, error: error.message } };
     }
-    catch (error) {
-        console.log('Error loading categories', error);
-    }
-
-    return {props};
-}
+  
+    return { props: { categoriesData } };
+  }
+  
 
 const Category = ({ categoriesData }) => {
     console.log(categoriesData);
@@ -105,7 +124,7 @@ const Category = ({ categoriesData }) => {
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
-                    {filteredData 
+                    {filteredData
                         ?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
                         ?.map((c, index) => (
                             <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
@@ -134,8 +153,8 @@ const Category = ({ categoriesData }) => {
                                         </Typography>
                                     </Stack>
                                     <Stack alignItems="center">
-                                        <Link href={`/category/viewcategory/${c._id}`} style={{width:"100%", textAlign:"center"}}>
-                                            <Button variant="contained" sx={{ backgroundColor: "#405CAA", width:"30%"}}>
+                                        <Link href={`/category/viewcategory/${c._id}`} style={{ width: "100%", textAlign: "center" }}>
+                                            <Button variant="contained" sx={{ backgroundColor: "#405CAA", width: "30%" }}>
                                                 View
                                             </Button>
                                         </Link>

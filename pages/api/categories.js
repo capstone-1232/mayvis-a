@@ -14,7 +14,7 @@ export default async function handler(req, res) {
                   description,
                   is_archived,
                   notes,
-                  product_id, // This expects an array of product IDs
+                  product_id,
                   created_by,
                   updated_by,
                 });
