@@ -13,7 +13,7 @@ const itemsPerPage = 8;
 export async function getStaticProps() {
     let props = {};
     try {
-        const res = await fetch('http://localhost:3000/api/category', { cache: 'no-store' });
+        const res = await fetch('https://' + process.env.VERCEL_URL + '/api/category', { cache: 'no-store' });
         if (!res.ok) {
             throw new Error('Failed to fetch categories');
         }
