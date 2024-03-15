@@ -1,10 +1,12 @@
 import React from 'react';
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import { Typography, Button, Box } from '@mui/material';
 import CustomModal from '@/components/CustomModal';
 
 const ProposalSummary = () => {
   const [modalOpen, setModalOpen] = useState(false);
+  const router = useRouter();
 //   if (!proposal) {
 //       return <Typography>Proposal data is loading or not available.</Typography>;
 //   }
@@ -14,6 +16,10 @@ const ProposalSummary = () => {
     setModalOpen(false);
   }
 
+  const handleProceed = () => {
+    router.push('/new-proposal/access-for-approval');
+  }
+  
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Typography variant="h5" component="h3" align="center" sx={{ marginBottom: 3 }}>
@@ -60,8 +66,8 @@ const ProposalSummary = () => {
             {
               label: "Proceed",
               color: "success",
-              onClick: () => console.log("Proceed clicked"),
-              sx: { bgcolor: "#238b6a" }
+              sx: { bgcolor: "#238b6a" },
+              onClick: handleProceed
             },
           ]}
         />

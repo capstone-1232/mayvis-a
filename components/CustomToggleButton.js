@@ -25,6 +25,10 @@ export default function CustomToggleButton({label}) {
                 '&.Mui-checked': {
                   transform: 'translateX(27px)',
                   color: '#2A987A',
+                  '+ .MuiSwitch-track': {
+                    backgroundColor: 'black',
+                    opacity: 1,
+                  },
                 },
                 '& + .MuiSwitch-track': {
                   backgroundColor: 'black',
