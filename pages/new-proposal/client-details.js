@@ -105,6 +105,11 @@ const ClientDetails = () => {
               py: 1.5,
               borderRadius: 2,
               width: '25%',
+              bgcolor: '#2A987A',
+              '&:hover': {
+                bgcolor: '#238b6a',
+                boxShadow: 'none'
+              }
             }}
             onClick={handleNext}
           >
