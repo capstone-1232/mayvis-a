@@ -17,7 +17,7 @@ export async function getServerSideProps(context) {
     const host = req ? req.headers.host : window.location.hostname;
     const baseURL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
     const apiRoute = `${baseURL}/api/category`;
-    console.log('apiRoute:' + apiRoute);
+    
     let categoriesData = [];
     try {
       const res = await fetch(apiRoute, {
@@ -42,11 +42,12 @@ export async function getServerSideProps(context) {
       return { props: { categoriesData, error: error.message } };
     }
   
-    return { props: { categoriesData } };
+    return { props: { categoriesData, apiRoute } };
   }
   
 
-const Category = ({ categoriesData }) => {
+const Category = ({ categoriesData, apiRoute }) => {
+    console.log('apiRoute:' + apiRoute);
     console.log(categoriesData);
     const [page, setPage] = useState(1);
     const [filteredData, setFilteredData] = useState(categoriesData);
