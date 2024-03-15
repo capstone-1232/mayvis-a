@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
 import productsData from "@/public/data/productsData.json";
+import Link from "next/link";
 
 
 
@@ -43,9 +44,12 @@ const Products = () => {
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
+                    <Link href={'/products/addproduct'} >
                         <Button variant="contained">
                             Add New Products +
                         </Button>
+                    </Link>
+
                     </Grid>
                     <Grid item>
                         <Button variant="contained" startIcon={<FilterAltIcon />}>
