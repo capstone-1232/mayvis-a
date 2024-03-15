@@ -2,7 +2,7 @@ import {
     Autocomplete, Box, Button, Card, Grid, Paper,
     TextField, Typography, Stack, Pagination
 } from "@mui/material";
-import React, { useState, use } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
@@ -10,48 +10,72 @@ import Link from "next/link";
 
 const itemsPerPage = 8;
 
-export async function getServerSideProps(context) {
-    const { req } = context;
-    // Determine the base URL based on the environment (Vercel or local)
-    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-    const host = req ? req.headers.host : window.location.hostname;
-    const baseURL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
-    const apiRoute = `${baseURL}/api/category`;
+// export async function getServerSideProps(context) {
+//     const { req } = context;
+//     // Determine the base URL based on the environment (Vercel or local)
+//     const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+//     const host = req ? req.headers.host : window.location.hostname;
+//     const baseURL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
+//     const apiRoute = `${baseURL}/api/category`;
     
-    let categoriesData = [];
-    try {
-      const res = await fetch(apiRoute, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          //'Authorization': `Basic ${Buffer.from('techcoders.nait@gmail.com:techCoders1234').toString('base64')}`,
-          // Include Authorization header if needed
-        },
-        // Additional options if needed
-      });
+//     let categoriesData = [];
+//     try {
+//       const res = await fetch(apiRoute, {
+//         method: 'GET',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           //'Authorization': `Basic ${Buffer.from('techcoders.nait@gmail.com:techCoders1234').toString('base64')}`,
+//           // Include Authorization header if needed
+//         },
+//         // Additional options if needed
+//       });
       
-      if (!res.ok) {
-        const errorText = await res.text(); // or use `res.json()` if your API returns a JSON response
-        throw new Error(`Failed to fetch clients: ${errorText}`);
-      }
+//       if (!res.ok) {
+//         const errorText = await res.text(); // or use `res.json()` if your API returns a JSON response
+//         throw new Error(`Failed to fetch clients: ${errorText}`);
+//       }
   
-      categoriesData = await res.json();
-    } catch (error) {
-      console.error('Error loading clients', error);
-      // Pass the error message to the page's props or handle it as needed
-      return { props: { categoriesData, error: error.message } };
-    }
+//       categoriesData = await res.json();
+//     } catch (error) {
+//       console.error('Error loading clients', error);
+//       // Pass the error message to the page's props or handle it as needed
+//       return { props: { categoriesData, error: error.message } };
+//     }
   
-    return { props: { categoriesData, apiRoute } };
-  }
+//     return { props: { categoriesData, apiRoute } };
+//   }
   
 
-const Category = ({ categoriesData, apiRoute }) => {
-    console.log('apiRoute:' + apiRoute);
-    console.log(categoriesData);
+
+//const Category = ({ categoriesData, apiRoute }) => {
+const Category = () => {
+    //console.log('apiRoute:' + apiRoute);
+    //console.log(categoriesData);
     const [page, setPage] = useState(1);
-    const [filteredData, setFilteredData] = useState(categoriesData);
+    const [categoriesData, setCategoriesData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+
+    useEffect(() => {
+        const fetchData = async () => {
+          const apiRoute = 'https://mayvis-a-git-dev-nina-techcoders-projects.vercel.app/api/category';
+          console.log('apiRoute : ' + apiRoute);
+          try {
+            const res = await fetch(apiRoute);
+            if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
+            const data = await res.json();
+
+            console.log(data);
+
+            setCategoriesData(data);
+            setFilteredData(data);
+          } catch (error) {
+            console.error('Error fetching categories:', error);
+          }
+        };
+        
+        fetchData();
+      }, []);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
