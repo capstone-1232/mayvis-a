@@ -17,19 +17,19 @@ export async function getServerSideProps(context) {
     const host = req ? req.headers.host : window.location.hostname;
     const baseURL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
     const apiRoute = `${baseURL}/api/category`;
-  
+    console.log('apiRoute:' + apiRoute);
     let categoriesData = [];
     try {
       const res = await fetch(apiRoute, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Basic ${Buffer.from('techcoders.nait@gmail.com:techCoders1234').toString('base64')}`,
+          //'Authorization': `Basic ${Buffer.from('techcoders.nait@gmail.com:techCoders1234').toString('base64')}`,
           // Include Authorization header if needed
         },
         // Additional options if needed
       });
-  
+      
       if (!res.ok) {
         const errorText = await res.text(); // or use `res.json()` if your API returns a JSON response
         throw new Error(`Failed to fetch clients: ${errorText}`);
