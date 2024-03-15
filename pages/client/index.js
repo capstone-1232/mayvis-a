@@ -1,17 +1,22 @@
 import {
     Autocomplete, Box, Button, Card, Grid, Paper,
-    TextField, Typography, Stack, Pagination
+    TextField, Typography, Stack, Pagination, ListItemAvatar
 } from "@mui/material";
 import React, { useState, useEffect } from 'react';
 
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
+import ViewListIcon from '@mui/icons-material/ViewList';
+import GridViewIcon from '@mui/icons-material/GridView';
 
 export async function getServerSideProps() {
     let clientsData = [{}];
     try {
-        const res = await fetch('https://mayvis-bye0eap18-techcoders-projects.vercel.app/api/client', { cache: "no-store" });
+        console.log(process.env.VERCEL_URL);
+        // const res = await fetch(process.env.VERCEL_URL + '/api/client', { cache: "no-store" });
+        const res = await fetch('http://localhost:3000/api/client', { cache: "no-store" }); 
+        
         // res.setHeader(
         //     'Cache-Control',
         //     'public, s-maxage=10, stale-while-revalidate=59'
@@ -100,11 +105,12 @@ const Client = ({ clientsData }) => {
                             )}
                         />
                     </Grid>
-                    <Grid item xs={6} sm={4} md={2} container justifyContent="flex-end">
-                        <Button variant="outlined" startIcon={<FilterAltIcon />}>
-                            Filter
-                        </Button>
-                    </Grid>
+
+                    <Box display="flex" justifyContent="flex-start">
+                        <ViewListIcon sx={{ fontSize: '40px', marginTop: 3 }} />
+                        <GridViewIcon sx={{ fontSize: '40px', marginTop: 3 }} />
+                    </Box>
+
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                     {filteredData
@@ -112,11 +118,11 @@ const Client = ({ clientsData }) => {
                         ?.map((c, index) => (
                             <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
                                 <Card elevation={12} sx={{ padding: 2 }}>
-                                    <Stack spacing={1} sx={{maxHeight:'250px',minHeight: '250px', overflow:'hidden'}}>
-                                        <Typography variant="h5" component="div" gutterBottom sx={{fontWeight: 'bold'}}>
+                                    <Stack spacing={1} sx={{ maxHeight: '250px', minHeight: '250px', overflow: 'hidden' }}>
+                                        <Typography variant="h5" component="div" gutterBottom sx={{ fontWeight: 'bold' }}>
                                             {c.client_name}
                                         </Typography>
-                                        {c.contact_info?.filter(contact=>contact.is_primary == true)?.map((contact, index) =>
+                                        {c.contact_info?.filter(contact => contact.is_primary == true)?.map((contact, index) =>
                                             <React.Fragment key={index}>
                                                 <Typography variant="body1">
                                                     Name : {`${contact.contact_firstname} ${contact.contact_lastname}`}
@@ -144,7 +150,7 @@ const Client = ({ clientsData }) => {
                                                 </>
                                             ))}
                                             : null} */}
-                                        <Typography variant="body2" sx={{overflow: 'hidden' }}>
+                                        <Typography variant="body2" sx={{ overflow: 'hidden' }}>
                                             Description:<br />{c.description}
                                         </Typography>
                                     </Stack>

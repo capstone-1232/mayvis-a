@@ -8,75 +8,32 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
 
+export async function getServerSideProps() {
+    let clientsData = [{}];
+    try {
+        const res = await fetch('http://localhost:3000/api/client', { cache: "no-store" });
+        // res.setHeader(
+        //     'Cache-Control',
+        //     'public, s-maxage=10, stale-while-revalidate=59'
+        //   )
+        if (!res.ok) {
+            throw new Error('Failed to fetch clients');
+        }
+        clientsData = await res.json();
+
+    }
+    catch (error) {
+        console.log('Error loading clients', error);
+    }
+    return { props: { clientsData } };
+}
+
 const itemsPerPage = 8;
 
-// export async function getServerSideProps(context) {
-//     const { req } = context;
-//     // Determine the base URL based on the environment (Vercel or local)
-//     const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-//     const host = req ? req.headers.host : window.location.hostname;
-//     const baseURL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
-//     const apiRoute = `${baseURL}/api/category`;
-    
-//     let categoriesData = [];
-//     try {
-//       const res = await fetch(apiRoute, {
-//         method: 'GET',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           //'Authorization': `Basic ${Buffer.from('techcoders.nait@gmail.com:techCoders1234').toString('base64')}`,
-//           // Include Authorization header if needed
-//         },
-//         // Additional options if needed
-//       });
-      
-//       if (!res.ok) {
-//         const errorText = await res.text(); // or use `res.json()` if your API returns a JSON response
-//         throw new Error(`Failed to fetch clients: ${errorText}`);
-//       }
-  
-//       categoriesData = await res.json();
-//     } catch (error) {
-//       console.error('Error loading clients', error);
-//       // Pass the error message to the page's props or handle it as needed
-//       return { props: { categoriesData, error: error.message } };
-//     }
-  
-//     return { props: { categoriesData, apiRoute } };
-//   }
-  
-
-
-//const Category = ({ categoriesData, apiRoute }) => {
-const Category = () => {
-    //console.log('apiRoute:' + apiRoute);
-    //console.log(categoriesData);
+const Client = ({ clientsData }) => {
     const [page, setPage] = useState(1);
-    const [categoriesData, setCategoriesData] = useState([]);
-    const [filteredData, setFilteredData] = useState([]);
+    const [filteredData, setFilteredData] = useState(clientsData);
     const [searchTerm, setSearchTerm] = useState('');
-
-    useEffect(() => {
-        const fetchData = async () => {
-        //   const apiRoute = 'https://mayvis-a-git-dev-nina-techcoders-projects.vercel.app/api/category';
-        const apiRoute = 'http://localhost:3000/api/category';
-          console.log('apiRoute : ' + apiRoute);
-          try {
-            const res = await fetch(apiRoute);
-            if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
-            const data = await res.json();
-
-            console.log(data);
-
-            setCategoriesData(data);
-            setFilteredData(data);
-          } catch (error) {
-            console.error('Error fetching categories:', error);
-          }
-        };
-        
-        fetchData();
-      }, []);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -85,34 +42,34 @@ const Category = () => {
     const handleSearchChange = (event, newValue) => {
         setSearchTerm(newValue);
         const lowercasedValue = newValue.toLowerCase();
-        const filtered = categoriesData.filter(item =>
-            item.category_name.toLowerCase().includes(lowercasedValue)
+        const filtered = clientsData?.filter(item =>
+            item.client_name.toLowerCase().includes(lowercasedValue)
         );
         setFilteredData(filtered);
         setPage(1);
     };
 
-    const noOfPages = Math.ceil(filteredData ? filteredData.length / itemsPerPage : 0);
+    const noOfPages = Math.ceil(filteredData.length / itemsPerPage);
 
     return (
         <Box sx={{ flexGrow: 1, padding: 2 }}>
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
                     <Typography variant="h4" component="div" gutterBottom>
-                        Category
+                        Client
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
 
-                        <Link href={'/category/addcategory'} >
-                            <Button variant="contained" sx={{ backgroundColor: '#405CAA' }}>
-                                Create New Category +
+                        <Link href={'/client/addclient'} >
+                            <Button variant="contained">
+                                Create New Client +
                             </Button>
                         </Link>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<FilterAltIcon />} sx={{ backgroundColor: '#405CAA' }}>
+                        <Button variant="contained" startIcon={<FilterAltIcon />}>
                             Archival
                         </Button>
                     </Grid>
@@ -122,15 +79,15 @@ const Category = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={8} md={6}>
                         <Autocomplete
-                            id="searchCategory"
+                            id="searchClient"
                             freeSolo
-                            options={categoriesData?.map((category) => category.category_name)}
+                            options={clientsData?.map((client) => client.client_name)}
                             value={searchTerm}
                             onInputChange={handleSearchChange}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label="Search Category"
+                                    label="Search Client"
                                     variant="outlined"
                                     fullWidth
                                     InputProps={{
@@ -143,17 +100,35 @@ const Category = () => {
                             )}
                         />
                     </Grid>
+                    <Grid item xs={6} sm={4} md={2} container justifyContent="flex-end">
+                        <Button variant="outlined" startIcon={<FilterAltIcon />}>
+                            Filter
+                        </Button>
+                    </Grid>
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                     {filteredData
                         ?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
                         ?.map((c, index) => (
                             <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-                                <Card elevation={12} sx={{ padding: 2, minHeight: '250px' }}>
-                                    <Stack spacing={1}>
-                                        <Typography variant="h5" component="div" gutterBottom sx={{ fontWeight: "bold" }}>
-                                            {c.category_name}
+                                <Card elevation={12} sx={{ padding: 2 }}>
+                                    <Stack spacing={1} sx={{maxHeight:'250px',minHeight: '250px', overflow:'hidden'}}>
+                                        <Typography variant="h5" component="div" gutterBottom sx={{fontWeight: 'bold'}}>
+                                            {c.client_name}
                                         </Typography>
+                                        {c.contact_info?.filter(contact=>contact.is_primary == true)?.map((contact, index) =>
+                                            <React.Fragment key={index}>
+                                                <Typography variant="body1">
+                                                    Name : {`${contact.contact_firstname} ${contact.contact_lastname}`}
+                                                </Typography>
+                                                <Typography variant="body1">
+                                                    Email:
+                                                </Typography>
+                                                <Typography variant="body1">
+                                                    Contact No:
+                                                </Typography>
+                                            </React.Fragment>
+                                        )}
                                         <Typography variant="body1">
                                             Active: {(c.is_active) ? 'Yes' : 'No'}
                                         </Typography>
@@ -169,16 +144,17 @@ const Category = () => {
                                                 </>
                                             ))}
                                             : null} */}
-                                        <Typography variant="body2" sx={{ minHeight: '150px' }}>
+                                        <Typography variant="body2" sx={{overflow: 'hidden' }}>
                                             Description:<br />{c.description}
                                         </Typography>
                                     </Stack>
-                                    <Stack alignItems="center">
-                                        <Link href={`/category/viewcategory/${c._id}`} style={{ width: "100%", textAlign: "center" }}>
-                                            <Button variant="contained" sx={{ backgroundColor: "#405CAA", width: "30%" }}>
+                                    <Stack alignItems="center" marginTop={'20px'}>
+                                        <Link href={`/client/viewclient/${c._id}`} className="link">
+                                            <Button variant="contained">
                                                 View
                                             </Button>
                                         </Link>
+
                                     </Stack>
                                 </Card>
                             </Grid>
@@ -203,4 +179,4 @@ const Category = () => {
     );
 };
 
-export default Category;
+export default Client;

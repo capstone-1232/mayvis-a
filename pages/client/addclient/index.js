@@ -4,7 +4,7 @@ import ClientAddEditFormComponent from "@/components/ClientAddEditFormComponent"
 const NewClient = () => {
     const addClient = async (dataFromChild) => {
         try {
-            const res = await fetch('http://localhost:3000/api/client',
+            const res = await fetch(process.env.VERCEL_URL + '/ api/client',
                 {
                     method: 'POST',
                     headers: { "Content-type": "application/json" },
