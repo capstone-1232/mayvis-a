@@ -58,7 +58,8 @@ const Category = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-          const apiRoute = 'https://mayvis-a-git-dev-nina-techcoders-projects.vercel.app/api/category';
+        //   const apiRoute = 'https://mayvis-a-git-dev-nina-techcoders-projects.vercel.app/api/category';
+        const apiRoute = 'http://localhost:3000/api/category';
           console.log('apiRoute : ' + apiRoute);
           try {
             const res = await fetch(apiRoute);
@@ -141,11 +142,6 @@ const Category = () => {
                                 />
                             )}
                         />
-                    </Grid>
-                    <Grid item xs={6} sm={4} md={2} container justifyContent="flex-end">
-                        <Button variant="outlined" startIcon={<FilterAltIcon />} >
-                            Filter
-                        </Button>
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
