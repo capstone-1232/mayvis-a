@@ -28,7 +28,7 @@ function RTextEditor() {
     <Box
         className="myQuillContainer"
         sx={{
-            height: "35vh",
+            height: "100%",
             py: "30px",
         }}
     >
