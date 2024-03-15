@@ -146,7 +146,7 @@ function NavBarComponent(props) {
                 <Box sx={{ overflow: 'auto' }}>
                     <List>
                         {menuItems.slice(0, -1).map((item) => ( // Exclude the logout item
-                            <Link href={item.href} passHref key={item.text}>
+                            <Link href={item.href} passHref key={item.text} >
                                 <ListItem disablePadding>
                                     <ListItemButton
                                         sx={{
@@ -190,7 +190,7 @@ function NavBarComponent(props) {
                 </Box>
                 <Box sx={{ mt: 'auto', width: '100%' }}>
                     <Divider sx={{ backgroundColor: 'white' }} />
-                    <List><Link href={'./login'}>
+                    <List><Link href={'./login/'}>
                         <ListItem key="Logout" disablePadding>
 
                             <ListItemButton sx={{
