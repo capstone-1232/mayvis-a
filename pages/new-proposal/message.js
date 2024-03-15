@@ -40,7 +40,7 @@ const Message = () => {
         New Proposal
       </Typography>
       <NewProposalStepper activeStep={activeStep} />
-      <Container maxWidth="md" sx={{ mt: 4 }}>
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
         <Paper
           elevation={5} 
           sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2 }}
@@ -63,7 +63,7 @@ const Message = () => {
             sx={{
               py: 1.5,
               borderRadius: 2,
-              width: '20%',
+              width: '15%',
             }}
             onClick={handleBack}
           >
@@ -76,7 +76,12 @@ const Message = () => {
               py: 1.5,
               ml: 3,
               borderRadius: 2,
-              width: '20%',
+              width: '15%',
+              bgcolor: '#2A987A',
+              '&:hover': {
+                bgcolor: '#238b6a',
+                boxShadow: 'none'
+              }
             }}
             onClick={handleNext}
           >

@@ -3,6 +3,7 @@ import {
     TextField, Typography, Stack, Pagination
 } from "@mui/material";
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
@@ -41,9 +42,11 @@ const Proposal = () => {
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
-                        <Button variant="contained" sx={{backgroundColor: '#405CAA'}}>
-                            Create New Proposal +
-                        </Button>
+                        <Link href="/new-proposal/client-details" passHref>
+                            <Button variant="contained" component="a" sx={{backgroundColor: '#405CAA'}}>
+                                Create New Proposal +
+                            </Button>
+                        </Link>
                     </Grid>
                     <Grid item>
                         <Button variant="contained" startIcon={<FilterAltIcon />} sx={{backgroundColor: '#405CAA'}}>
