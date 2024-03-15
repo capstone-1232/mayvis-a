@@ -45,12 +45,9 @@ export default function Letter() {
               mt: 'auto',
             }}>
         <h2 style={{ textAlign: 'left' }}>Customize Message</h2>
-        {/* <QuillEditor
-          value={content}
-          onChange={handleContentChange}  
-          style={{ height: '350px' }}
-        /> */}
-        <RTextEditor />
+
+        <Box sx={{height:'350px'}}><RTextEditor /></Box>
+
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: '5rem' }}>
           <button onClick={saveContent} style={{ padding: '0.5rem 1rem', borderRadius: '5px', border: 'none', backgroundColor: '#405CAA', color: 'white', cursor: 'pointer' }}>
             Save
