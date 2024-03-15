@@ -1,7 +1,14 @@
-import { useState } from 'react';
+import { useRouter } from 'next/router';
 import { Box, Modal, Typography, Button } from '@mui/material';
+import Link from 'next/link';
 
-function CustomModal({ icon, title, message, buttons, open, onClose }) {
+function CustomModal({ icon, title, message, buttons, link, open, onClose }) {
+  const router = useRouter();
+
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
     <Modal open={open} onClose={onClose} >
       <Box
@@ -53,6 +60,22 @@ function CustomModal({ icon, title, message, buttons, open, onClose }) {
             </Button>
           ))}
         </Box>
+        {link && (
+          <Box
+            sx={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              mt: 2,
+            }}
+          >
+            <Link href={'../new-proposal/summary'}>
+                <Typography>
+                  {link}
+                </Typography>
+            </Link>
+          </Box>
+        )}
       </Box>
     </Modal>
   );

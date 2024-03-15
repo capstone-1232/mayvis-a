@@ -19,6 +19,10 @@ const ProposalSummary = () => {
   const handleProceed = () => {
     router.push('/new-proposal/access-for-approval');
   }
+
+  const handleUrlLink = () => {
+    router.push('/new-proposal/access-for-approval');
+  }
   
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -53,23 +57,29 @@ const ProposalSummary = () => {
         </Button>
         <CustomModal
           // icon={<ProposalIcon style={{ fontSize: '4rem' }} />}
-          title="Proposal Summary"
-          message="By selecting this option, you agree to generate a link."
+          title="Sending Options"
+          message={
+            <>
+              Choose Your Preferred Document Delivery:
+              <br />
+              Print the PDF file or Convenient Online Link to be send directly to Your Inbox?
+            </>
+          }
           open={modalOpen}
           onClose={() => setModalOpen(false)}
           buttons={[
             {
-              label: "Cancel",
+              label: "PDF Copy",
               color: "primary",
               onClick: () => setModalOpen(false)
             },
             {
-              label: "Proceed",
+              label: "URL Link",
               color: "success",
-              sx: { bgcolor: "#238b6a" },
-              onClick: handleProceed
+              onClick: handleUrlLink
             },
           ]}
+          link={'Go Back'}
         />
       </Box >
     </Box>
