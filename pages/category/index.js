@@ -5,8 +5,8 @@ import {
 import React, { useState, useEffect } from 'react';
 
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
+import SearchField from "@/components/SearchField";
 
 const itemsPerPage = 8;
 
@@ -121,27 +121,18 @@ const Category = () => {
             <Paper elevation={12} sx={{ marginTop: 2, padding: 2 }}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={8} md={6}>
-                        <Autocomplete
-                            id="searchCategory"
-                            freeSolo
-                            options={categoriesData?.map((category) => category.category_name)}
-                            value={searchTerm}
-                            onInputChange={handleSearchChange}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Search Category"
-                                    variant="outlined"
-                                    fullWidth
-                                    InputProps={{
-                                        ...params.InputProps,
-                                        startAdornment: (
-                                            <SearchIcon sx={{ mr: 2 }} />
-                                        ),
-                                    }}
-                                />
-                            )}
-                        />
+                        <Box
+                            sx={{
+                                width: '70%'
+                            }}
+                        >
+                            <SearchField 
+                                id={"searchCategory"}
+                                options={categoriesData?.map((category) => category.category_name)}
+                                value={searchTerm}
+                                onInputChange={handleSearchChange}
+                            />
+                        </Box>
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>

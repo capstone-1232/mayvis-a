@@ -7,7 +7,7 @@ import {
   Container
 } from '@mui/material';
 
-import SearchBarWithButton from './SearchField';
+import SearchField from './SearchField';
 import CategoriesAccordion from './CustomAccordion';
 
 const SelectDeliverables = () => {
@@ -54,7 +54,14 @@ const SelectDeliverables = () => {
           Select Deliverables
         </Typography>
       </Box>
-      <SearchBarWithButton/>
+      <Box
+        sx={{
+          width: '76%'
+      }}
+      >
+        <SearchField/>
+      </Box>
+
       <CategoriesAccordion categories={sampleCategories} />
     </Container>
   );
