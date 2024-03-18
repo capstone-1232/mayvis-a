@@ -8,7 +8,7 @@ export async function getServerSideProps({ params }) {
     try {
         const id = params.id;
         const resContact = await fetch(`http://localhost:3000/api/contact/${id}`, { cache: "no-store" });
-
+        
         if (!resContact.ok) {
             throw new Error('Failed to fetch contact');
         }
@@ -37,8 +37,14 @@ const EditContact = ({ contact, contacts }) => {
                     method: 'PUT',
                     headers: { "Content-type": "application/json" },
                     body: JSON.stringify({
-                        'contact_firstname': newdata.FName, 'contact_lastname': newdata.LName, 'is_active': newdata.active,
-                        'is_primary': newdata.primary, 'contact_department': newdata.department, 'contact_role': newdata.role, 
+                        'contact_firstname': newdata.FName,
+                        'contact_lastname': newdata.LName,
+                        'email' : newdata.email,
+                        'contact_no' : newdata.contactNo,
+                        'is_active': newdata.active,
+                        'is_primary': newdata.primary,
+                        'contact_department': newdata.department,
+                        'contact_role': newdata.role, 
                         'client_id': newdata.clientId
                     })
                 });
@@ -54,8 +60,11 @@ const EditContact = ({ contact, contacts }) => {
         <ContactAddEditFormComponent
             contactData={{
                 processContact: updateContact,
+                id: data._id,
                 FName: data.contact_firstname,
                 LName: data.contact_lastname,
+                email: data.email,
+                contactNo: data.contact_no,
                 active: data.is_active,
                 primary: data.is_primary,
                 department: data.contact_department,

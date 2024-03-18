@@ -9,14 +9,16 @@ import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
 import ViewListIcon from '@mui/icons-material/ViewList';
 import GridViewIcon from '@mui/icons-material/GridView';
+import ModuleViewComponent from "@/components/ModuleViewComponent";
+import ListViewComponent from "@/components/ListViewComponent";
 
 export async function getServerSideProps() {
     let clientsData = [{}];
     try {
-        console.log(process.env.VERCEL_URL);
+        //console.log(process.env.VERCEL_URL);
         // const res = await fetch(process.env.VERCEL_URL + '/api/client', { cache: "no-store" });
-        const res = await fetch('http://localhost:3000/api/client', { cache: "no-store" }); 
-        
+        const res = await fetch('http://localhost:3000/api/client', { cache: "no-store" });
+
         // res.setHeader(
         //     'Cache-Control',
         //     'public, s-maxage=10, stale-while-revalidate=59'
@@ -39,6 +41,8 @@ const Client = ({ clientsData }) => {
     const [page, setPage] = useState(1);
     const [filteredData, setFilteredData] = useState(clientsData);
     const [searchTerm, setSearchTerm] = useState('');
+    const [propsData, setPropsData] = useState([]);
+    const [viewMode, setViewMode] = useState('module');
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -51,10 +55,34 @@ const Client = ({ clientsData }) => {
             item.client_name.toLowerCase().includes(lowercasedValue)
         );
         setFilteredData(filtered);
+        setPropsData(tranformPropData(filtered));
         setPage(1);
     };
 
-    const noOfPages = Math.ceil(filteredData.length / itemsPerPage);
+    const noOfPages = Math.ceil(filteredData?.length / itemsPerPage);
+
+    const tranformPropData = (data) => {
+        return data
+            ?.map(c => {
+                const primaryContact = c.contact_info?.find(contact => contact.is_primary === true);
+
+                return [
+                    { key: 'Title', value: c.client_name, show: true },
+                    { key: 'Contact Name', value: primaryContact ? `${primaryContact.contact_firstname} ${primaryContact.contact_lastname}` : 'N/A', show: true },
+                    { key: 'Contact Email', value: primaryContact?.email || 'N/A', show: true },
+                    { key: 'Contact No', value: primaryContact?.contact_no || 'N/A', show: true },
+                    { key: 'Active', value: c.is_active ? 'Yes' : 'No', show: true },
+                    { key: 'Description', value: c.description, show: viewMode === 'module' ? true : false },
+                    { key: '_id', value: c._id, show: false },
+                    { key: 'editUrlPath', value: 'client/editclient', show: false },
+                    { key: 'viewUrlPath', value: 'client/viewclient', show: false },
+                ];
+            });
+    }
+
+    useEffect(() => {
+        setPropsData(tranformPropData(filteredData));
+    }, [viewMode]);
 
     return (
         <Box sx={{ flexGrow: 1, padding: 2 }}>
@@ -107,64 +135,77 @@ const Client = ({ clientsData }) => {
                     </Grid>
 
                     <Box display="flex" justifyContent="flex-start">
-                        <ViewListIcon sx={{ fontSize: '40px', marginTop: 3 }} />
-                        <GridViewIcon sx={{ fontSize: '40px', marginTop: 3 }} />
+                        <Button onClick={() => setViewMode('list')}>
+                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1 }} />
+                        </Button>
+                        <Button onClick={() => setViewMode('module')}>
+                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1 }} />
+                        </Button>
                     </Box>
 
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
-                    {filteredData
-                        ?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
-                        ?.map((c, index) => (
-                            <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-                                <Card elevation={12} sx={{ padding: 2 }}>
-                                    <Stack spacing={1} sx={{ maxHeight: '250px', minHeight: '250px', overflow: 'hidden' }}>
-                                        <Typography variant="h5" component="div" gutterBottom sx={{ fontWeight: 'bold' }}>
-                                            {c.client_name}
+                    {propsData ?
+                        viewMode === 'list' ?
+                            <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                                <Grid container spacing={2} sx={{ margin: 10 }}>
+                                    <Grid item xs>
+                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
+                                            Client Name
                                         </Typography>
-                                        {c.contact_info?.filter(contact => contact.is_primary == true)?.map((contact, index) =>
-                                            <React.Fragment key={index}>
-                                                <Typography variant="body1">
-                                                    Name : {`${contact.contact_firstname} ${contact.contact_lastname}`}
-                                                </Typography>
-                                                <Typography variant="body1">
-                                                    Email:
-                                                </Typography>
-                                                <Typography variant="body1">
-                                                    Contact No:
-                                                </Typography>
-                                            </React.Fragment>
-                                        )}
-                                        <Typography variant="body1">
-                                            Active: {(c.is_active) ? 'Yes' : 'No'}
+                                    </Grid>
+                                    <Grid item xs>
+                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
+                                            Contact Name
                                         </Typography>
-                                        {/* {c.contact_id.length > 0 ?
-                                            {c.contact_id.map((contact) => (
-                                                <>
-                                                    <Typography variant="body1">
-                                                        Date: {p.proposeDate}
-                                                    </Typography>
-                                                    <Typography variant="body1">
-                                                        Status: {p.status}
-                                                    </Typography>
-                                                </>
-                                            ))}
-                                            : null} */}
-                                        <Typography variant="body2" sx={{ overflow: 'hidden' }}>
-                                            Description:<br />{c.description}
+                                    </Grid>
+                                    <Grid item xs>
+                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
+                                            Contact Email
                                         </Typography>
-                                    </Stack>
-                                    <Stack alignItems="center" marginTop={'20px'}>
-                                        <Link href={`/client/viewclient/${c._id}`} className="link">
-                                            <Button variant="contained">
-                                                View
-                                            </Button>
-                                        </Link>
-
-                                    </Stack>
-                                </Card>
+                                    </Grid>
+                                    <Grid item xs>
+                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
+                                            Contact No
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs>
+                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
+                                            Active
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs>
+                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
+                                            Edit
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs>
+                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
+                                            View
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                {propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+                                    ?.map((data, index) =>
+                                    (
+                                        <Grid container spacing={2} sx={{ marginLeft: 10, marginRight: 10, }}>
+                                            <ListViewComponent key={index} data={data} />
+                                        </Grid>
+                                    ))}
                             </Grid>
-                        ))}
+                            :
+                            propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+                                ?.map((data, index) =>
+                                (
+                                    <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
+                                        <ModuleViewComponent key={index} data={data} />
+                                    </Grid>
+                                ))
+                        :
+                        <Grid item xs={12}>
+                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center' }}>No Record(s) Found</Card>
+                        </Grid>
+                    }
                 </Grid>
                 <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
                     <Pagination
@@ -181,7 +222,7 @@ const Client = ({ clientsData }) => {
                 </Box>
             </Paper>
 
-        </Box>
+        </Box >
     );
 };
 

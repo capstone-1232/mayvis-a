@@ -145,8 +145,8 @@ function NavBarComponent(props) {
             <Stack sx={{ backgroundColor: '#405CAA', height: '100%', marginTop: 9.3 }}>
                 <Box sx={{ overflow: 'auto' }}>
                     <List>
-                        {menuItems.slice(0, -1).map((item) => ( // Exclude the logout item
-                            <Link href={item.href} legacyBehavior>
+                        {menuItems.slice(0, -1).map((item,index) => ( // Exclude the logout item
+                            <Link href={item.href} legacyBehavior key={index}>
                                 <a style={{ textDecoration: 'none' }}>
                                     <ListItem key={item.text} disablePadding sx={{ justifyContent: 'center' }}>
                                     

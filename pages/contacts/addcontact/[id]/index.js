@@ -28,8 +28,14 @@ const AddContact = ({ contactData }) => {
                     method: 'POST',
                     headers: { "Content-type": "application/json" },
                     body: JSON.stringify({
-                        'contact_firstname': newdata.FName, 'contact_lastname': newdata.LName, 'is_active': newdata.active,
-                        'is_primary': newdata.primary, 'contact_department': newdata.department, 'contact_role': newdata.role, 
+                        'contact_firstname': newdata.FName,
+                        'contact_lastname': newdata.LName,
+                        'email' : newdata.email,
+                        'contact_no' : newdata.contactNo,
+                        'is_active': newdata.active,
+                        'is_primary': newdata.primary, 
+                        'contact_department': newdata.department, 
+                        'contact_role': newdata.role, 
                         'client_id': newdata.clientId
                     })
                 });
@@ -45,8 +51,11 @@ const AddContact = ({ contactData }) => {
         <ContactAddEditFormComponent
             contactData={{
                 processContact: addNewContact,
+                id: contactData._id,
                 FName: '',
                 LName: '',
+                email: '',
+                contactNo: '',
                 active: true,
                 primary: false,
                 department: '',

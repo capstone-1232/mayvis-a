@@ -17,8 +17,8 @@ export default async function handler(req, res) {
         case 'PUT':
             try {
                 const { id } = req.query;
-                const { contact_firstname, contact_lastname, is_active, is_primary, contact_department, contact_role, client_id } = req.body;
-                const updatedContact = await Contact.findByIdAndUpdate(id, { contact_firstname, contact_lastname, is_active, is_primary, contact_department, contact_role, client_id }, { new: true });
+                const { contact_firstname, contact_lastname, email, contact_no, is_active, is_primary, contact_department, contact_role, client_id } = req.body;
+                const updatedContact = await Contact.findByIdAndUpdate(id, { contact_firstname, contact_lastname, email, contact_no, is_active, is_primary, contact_department, contact_role, client_id }, { new: true });
                 if (!updatedContact) {
                     return res.status(404).json({ message: "Contact not found." });
                 }
