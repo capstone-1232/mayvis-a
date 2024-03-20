@@ -9,11 +9,14 @@ const ContactAddEditFormComponent = ({ contactData }) => {
     const [active, setActive] = useState(contactData.active);
     const [primary, setPrimary] = useState(contactData.primary);
     const [department, setDepartment] = useState(contactData.department);
+    const [email, setEmail] = useState(contactData.email);
+    const [contactNo, setContactNo] = useState(contactData.contactNo);
     const [role, setRole] = useState(contactData.role);
     const [isLoading, setIsLoading] = useState(false)
     const [showMsg, setShowMsg] = useState(false);
     const [msg, setMsg] = useState('');
     const [severity, setSeverity] = useState('error')
+    const contactId = contactData.id 
     const clientId = contactData.clientId;
     const contacts = contactData.contacts;
     const router = useRouter();
@@ -24,14 +27,14 @@ const ContactAddEditFormComponent = ({ contactData }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            if (!FName || !LName || !department || !role) {
+            if (!FName || !LName || !email || !contactNo) {
                 setSeverity('error');
-                handleMsg('Required: First Name, Last Name, Department and Role!');
+                handleMsg('Required: First Name, Last Name, Email and Contact Number!');
                 return;
             }
-
+            
             //We need to check if primary has already been assigned.
-            if ((contacts?.filter(c => c.is_primary == true).length > 0) && primary) {
+            if ((contacts?.filter(c => c.is_primary == true && c._id != contactId).length > 0) && primary) {
                 setSeverity('error');
                 handleMsg('Primary contact has already been assigned to this client.');
                 return;
@@ -46,6 +49,8 @@ const ContactAddEditFormComponent = ({ contactData }) => {
                 primary: primary,
                 department: department,
                 role: role,
+                email: email,
+                contactNo: contactNo,
                 clientId: clientId
             });
             
@@ -64,6 +69,8 @@ const ContactAddEditFormComponent = ({ contactData }) => {
                         setActive(true);
                         setPrimary(false);
                         setDepartment('');
+                        setContactNo('');
+                        setEmail('');
                         setRole('');
                         router.push(`/client/viewclient/${clientId}`)
                     }, 1000);
@@ -96,6 +103,12 @@ const ContactAddEditFormComponent = ({ contactData }) => {
                         </Grid>
                         <Grid item xs={6}>
                             <TextField label="Last Name" fullWidth value={LName} onChange={(e) => setLName(e.target.value)} required />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField label="Email Address" fullWidth value={email} onChange={(e) => setEmail(e.target.value)} required />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField label="Contact Number" fullWidth value={contactNo} onChange={(e) => setContactNo(e.target.value)} required />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField label="Department" fullWidth value={department} onChange={(e) => setDepartment(e.target.value)} required />
