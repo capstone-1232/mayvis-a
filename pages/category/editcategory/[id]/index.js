@@ -6,7 +6,6 @@ export async function getServerSideProps({ params }) {
   let categoryData = [{}];
   try {
     const id = params.id;
-    console.log(id);
     const res = await fetch(`http://localhost:3000/api/category/${id}`, { cache: "no-store" });
     // res.setHeader(
     //   'Cache-Control',

@@ -26,9 +26,7 @@ export async function getServerSideProps({ params }) {
 
 
 const ViewCategory = ({categoryData}) => {
-  const data = categoryData[0];
-  console.log(categoryData);
-  
+  const data = categoryData[0];  
     return (
         <CategoryAddEditFormComponent
             category={{

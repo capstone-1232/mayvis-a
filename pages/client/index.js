@@ -67,15 +67,15 @@ const Client = ({ clientsData }) => {
                 const primaryContact = c.contact_info?.find(contact => contact.is_primary === true);
 
                 return [
-                    { key: 'Title', value: c.client_name, show: true },
-                    { key: 'Contact Name', value: primaryContact ? `${primaryContact.contact_firstname} ${primaryContact.contact_lastname}` : 'N/A', show: true },
-                    { key: 'Contact Email', value: primaryContact?.email || 'N/A', show: true },
-                    { key: 'Contact No', value: primaryContact?.contact_no || 'N/A', show: true },
-                    { key: 'Active', value: c.is_active ? 'Yes' : 'No', show: true },
-                    { key: 'Description', value: c.description, show: viewMode === 'module' ? true : false },
-                    { key: '_id', value: c._id, show: false },
-                    { key: 'editUrlPath', value: 'client/editclient', show: false },
-                    { key: 'viewUrlPath', value: 'client/viewclient', show: false },
+                    { key: 'Title', column: 'Client Name', value: c.client_name, show: true },
+                    { key: 'Contact Name', column: 'Contact Name', value: primaryContact ? `${primaryContact.contact_firstname} ${primaryContact.contact_lastname}` : 'N/A', show: true },
+                    { key: 'Contact Email', column: 'Contact Email', value: primaryContact?.email || 'N/A', show: true },
+                    { key: 'Contact No', column: 'Contact No', value: primaryContact?.contact_no || 'N/A', show: true },
+                    { key: 'Active', column: 'Active', value: c.is_active ? 'Yes' : 'No', show: true },
+                    { key: 'Description', column: 'Description', value: c.description, show: viewMode === 'module' ? true : false },
+                    { key: '_id', column: '_id', value: c._id, show: false },
+                    { key: 'editUrlPath', column: 'Edit', value: 'client/editclient', show: viewMode === 'module' ? false : true },
+                    { key: 'viewUrlPath', column: 'View', value: 'client/viewclient', show: viewMode === 'module' ? false : true },
                 ];
             });
     }
@@ -147,52 +147,7 @@ const Client = ({ clientsData }) => {
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                     {propsData ?
                         viewMode === 'list' ?
-                            <Grid container spacing={2} sx={{ marginTop: 2 }}>
-                                <Grid container spacing={2} sx={{ margin: 10 }}>
-                                    <Grid item xs>
-                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
-                                            Client Name
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs>
-                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
-                                            Contact Name
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs>
-                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
-                                            Contact Email
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs>
-                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
-                                            Contact No
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs>
-                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
-                                            Active
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs>
-                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
-                                            Edit
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs>
-                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
-                                            View
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                                {propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
-                                    ?.map((data, index) =>
-                                    (
-                                        <Grid container spacing={2} sx={{ marginLeft: 10, marginRight: 10, }}>
-                                            <ListViewComponent key={index} data={data} />
-                                        </Grid>
-                                    ))}
-                            </Grid>
+                            <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
                             :
                             propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
                                 ?.map((data, index) =>

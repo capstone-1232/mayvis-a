@@ -78,15 +78,13 @@ const Category = ({ categoriesData }) => {
     const tranformPropData = (data) => {
         return data
             ?.map(c => {
-                const primaryContact = c.contact_info?.find(contact => contact.is_primary === true);
-
                 return [
-                    { key: 'Title', value: c.category_name, show: true },
-                    { key: 'Description', value: c.description, show: true },
-                    { key: 'Archived', value: c.is_archived ? 'Yes' : 'No', show: true },
-                    { key: '_id', value: c._id, show: false },
-                    { key: 'editUrlPath', value: 'category/editcategory', show: false },
-                    { key: 'viewUrlPath', value: 'category/viewcategory', show: false },
+                    { key: 'Title', column: 'Category Name', value: c.category_name, show: true },
+                    { key: 'Description', column: 'Description', value: c.description, show: true },
+                    { key: 'Archived', column: 'Archived Name', value: c.is_archived ? 'Yes' : 'No', show: true },
+                    { key: '_id', column: '_id', value: c._id, show: false },
+                    { key: 'editUrlPath', column: 'Edit', value: 'category/editcategory', show: viewMode === 'module' ? false : true },
+                    { key: 'viewUrlPath', column: 'View', value: 'category/viewcategory', show: viewMode === 'module' ? false : true },
                 ];
             });
     }
@@ -157,42 +155,7 @@ const Category = ({ categoriesData }) => {
                     {propsData ?
                         viewMode === 'list' ?
                             <Grid container spacing={2} sx={{ marginTop: 2 }}>
-                                <Grid container spacing={2} sx={{ margin: 10 }}>
-                                    <Grid item xs>
-                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
-                                            Category Name
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs>
-                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
-                                            Description
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs>
-                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
-                                            Archived?
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs>
-                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
-                                            Edit
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs>
-                                        <Typography gutterBottom fontSize={25} component="div" sx={{ fontWeight: "bold" }}>
-                                            View
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-
-                                {propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
-                                    ?.map((data, index) =>
-                                    (
-                                        <Grid container spacing={2} sx={{ marginLeft: 10, marginRight: 10, }}>
-                                            <ListViewComponent key={index} data={data} />
-                                        </Grid>
-                                    ))}
-
+                                <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
                             </Grid>
                             :
                             propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)

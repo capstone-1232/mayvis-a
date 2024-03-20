@@ -33,15 +33,47 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
+const columnSwitch = (param, value, data, key, index) => {
+    //console.log(data.find(item => item.key === '_id')?.value);
+    switch (param.toLowerCase()) {
+        case 'edit':
+            return <StyledTableCell align="center">
+                <Link href={`/${value}/${data.find(item => item.key === '_id')?.value}`}>
+                    <Tooltip title={param} placement="right-start">
+                        <IconButton>
+                            <EditIcon fontSize="large"></EditIcon>
+                        </IconButton>
+                    </Tooltip>
+                </Link>
+            </StyledTableCell>
+        case 'view':
+            return <StyledTableCell align="center">
+                <Link href={`/${value}/${data.find(item => item.key === '_id')?.value}`}>
+                    <Tooltip title={param} placement="right-start">
+                        <IconButton>
+                            <PreviewIcon fontSize="large"></PreviewIcon>
+                        </IconButton>
+                    </Tooltip>
+                </Link>
+            </StyledTableCell>
+        default:
+            return <StyledTableCell key={key + index} align="center">
+                <Typography gutterBottom component="div" fontSize={20}>
+                    {value}
+                </Typography>
+            </StyledTableCell>
+    }
+};
+
 const ListViewComponent = ({ data }) => {
     return (
-        <><TableContainer component={Paper}>
-            <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <><TableContainer component={Paper} sx={{ padding: 10 }}>
+            <Table aria-label="customized table">
                 <TableHead>
                     <TableRow>
-                        {data?.map(({ column, show }, index) => (
+                        {data[0].map(({ column, show }, index) => (
                             show ?
-                                <StyledTableCell component="th" scope="row">
+                                <StyledTableCell key={index} align="center">
                                     <Typography gutterBottom component="div" fontSize={20}>
                                         {column}
                                     </Typography>
@@ -51,66 +83,27 @@ const ListViewComponent = ({ data }) => {
                                 ''
                         ))}
                     </TableRow>
-                    {/* <TableRow>
-                        <StyledTableCell>Dessert (100g serving)</StyledTableCell>
-                        <StyledTableCell align="right">Calories</StyledTableCell>
-                        <StyledTableCell align="right">Fat&nbsp;(g)</StyledTableCell>
-                        <StyledTableCell align="right">Carbs&nbsp;(g)</StyledTableCell>
-                        <StyledTableCell align="right">Protein&nbsp;(g)</StyledTableCell>
-                    </TableRow> */}
                 </TableHead>
                 <TableBody>
-                    {/* {rows.map((row) => (
-                        <StyledTableRow key={row.name}>
-                            <StyledTableCell component="th" scope="row">
-                                {row.name}
-                            </StyledTableCell>
-                            <StyledTableCell align="right">{row.calories}</StyledTableCell>
-                            <StyledTableCell align="right">{row.fat}</StyledTableCell>
-                            <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-                            <StyledTableCell align="right">{row.protein}</StyledTableCell>
+                    {data?.map((col, index) =>
+                        <StyledTableRow key={index}>
+                            {col?.map(({ key, value, show, column }, index) => (
+                                show ?
+                                    key == 'Active'
+                                        ?
+                                        <StyledTableCell key={key + index} align="center">
+                                            <CircleIcon fontSize="large" color={value === 'Yes' ? "success" : "disabled"}>{" "}</CircleIcon>
+                                        </StyledTableCell>
+                                        :
+                                        columnSwitch(column,value,col, key, index)
+                                    :
+                                    ''
+                            ))}
                         </StyledTableRow>
-                    ))} */}
-                    {data?.map(({ key, value, show }, index) => (
-                        show ?
-                            key == 'Active'
-                                ?
-                                <StyledTableCell component="th" scope="row">
-                                    <CircleIcon fontSize="large" color={value === 'Yes' ? "success" : "disabled"}>{" "}</CircleIcon>
-                                </StyledTableCell>
-                                :
-                                <StyledTableCell component="th" scope="row">
-                                    <Typography gutterBottom component="div" fontSize={20}>
-                                        {value}
-                                    </Typography>
-                                </StyledTableCell>
-                            :
-                            ''
-                    ))}
+                    )}
                 </TableBody>
             </Table>
         </TableContainer>
-
-
-
-            <Grid item xs>
-                <Link href={`/${data.find(item => item.key === 'editUrlPath')?.value}/${data.find(item => item.key === '_id')?.value}`}>
-                    <Tooltip title="Edit" placement="right-start">
-                        <IconButton>
-                            <EditIcon fontSize="large"></EditIcon>
-                        </IconButton>
-                    </Tooltip>
-                </Link>
-            </Grid>
-            <Grid item xs>
-                <Link href={`/${data.find(item => item.key === 'viewUrlPath')?.value}/${data.find(item => item.key === '_id')?.value}`}>
-                    <Tooltip title="View" placement="right-start">
-                        <IconButton>
-                            <PreviewIcon fontSize="large"></PreviewIcon>
-                        </IconButton>
-                    </Tooltip>
-                </Link>
-            </Grid>
         </>
     )
 }
