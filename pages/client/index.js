@@ -5,12 +5,12 @@ import {
 import React, { useState, useEffect } from 'react';
 
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
 import ViewListIcon from '@mui/icons-material/ViewList';
 import GridViewIcon from '@mui/icons-material/GridView';
 import ModuleViewComponent from "@/components/ModuleViewComponent";
 import ListViewComponent from "@/components/ListViewComponent";
+import SearchField from "@/components/SearchField";
 
 export async function getServerSideProps() {
     let clientsData = [{}];
@@ -111,7 +111,20 @@ const Client = ({ clientsData }) => {
             <Paper elevation={12} sx={{ marginTop: 2, padding: 2 }}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={8} md={6}>
-                        <Autocomplete
+                        <Box
+                            mt={1}
+                            sx={{
+                                width: '70%',
+                            }}
+                        >
+                            <SearchField 
+                                id={"searchClient"}
+                                options={clientsData?.map((client) => client.client_name)}
+                                value={searchTerm}
+                                onInputChange={handleSearchChange}
+                            />
+                        </Box>
+                        {/* <Autocomplete
                             id="searchClient"
                             freeSolo
                             options={clientsData?.map((client) => client.client_name)}
@@ -131,7 +144,7 @@ const Client = ({ clientsData }) => {
                                     }}
                                 />
                             )}
-                        />
+                        /> */}
                     </Grid>
 
                     <Box display="flex" justifyContent="flex-start">

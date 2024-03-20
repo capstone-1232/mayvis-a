@@ -12,6 +12,7 @@ import GridViewIcon from '@mui/icons-material/GridView';
 import ModuleViewComponent from "@/components/ModuleViewComponent";
 import ListViewComponent from "@/components/ListViewComponent";
 
+import SearchField from "@/components/SearchField";
 const itemsPerPage = 8;
 
 export async function getServerSideProps(context) {
@@ -120,27 +121,18 @@ const Category = ({ categoriesData }) => {
             <Paper elevation={12} sx={{ marginTop: 2, padding: 2 }}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={8} md={6}>
-                        <Autocomplete
-                            id="searchCategory"
-                            freeSolo
-                            options={categoriesData?.map((category) => category.category_name)}
-                            value={searchTerm}
-                            onInputChange={handleSearchChange}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Search Category"
-                                    variant="outlined"
-                                    fullWidth
-                                    InputProps={{
-                                        ...params.InputProps,
-                                        startAdornment: (
-                                            <SearchIcon sx={{ mr: 2 }} />
-                                        ),
-                                    }}
-                                />
-                            )}
-                        />
+                        <Box
+                            sx={{
+                                width: '70%'
+                            }}
+                        >
+                            <SearchField 
+                                id={"searchCategory"}
+                                options={categoriesData?.map((category) => category.category_name)}
+                                value={searchTerm}
+                                onInputChange={handleSearchChange}
+                            />
+                        </Box>
                     </Grid>
                     <Box display="flex" justifyContent="flex-start">
                         <Button onClick={() => setViewMode('list')}>

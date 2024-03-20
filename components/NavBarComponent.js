@@ -85,8 +85,10 @@ function NavBarComponent(props) {
             onClose={handleMenuClose}
         >
             <MenuItem onClick={handleMenuClose}>Home</MenuItem>
+            <MenuItem component={Link} href="/profile/edit-profile">My Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My Proposals</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Setup Customer Letter</MenuItem>
+            <MenuItem component={Link} href="/profile/letter">Setup Custom Letter</MenuItem>
+            <MenuItem component={Link} href="/profile/email">Setup Email Template</MenuItem>
             <Divider />
             <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
 
