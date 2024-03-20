@@ -6,6 +6,7 @@ import CustomModal from '@/components/CustomModal';
 
 const ProposalSummary = () => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [urlModalOpen, setUrlModalOpen] = useState(false);
   const router = useRouter();
 //   if (!proposal) {
 //       return <Typography>Proposal data is loading or not available.</Typography>;
@@ -21,7 +22,9 @@ const ProposalSummary = () => {
   }
 
   const handleUrlLink = () => {
-    router.push('/new-proposal/access-for-approval');
+    // router.push('/new-proposal/access-for-approval');
+    setModalOpen(false);
+    setUrlModalOpen(true);
   }
   
   return (
@@ -75,11 +78,35 @@ const ProposalSummary = () => {
             },
             {
               label: "URL Link",
-              color: "success",
+              color: "primary",
               onClick: handleUrlLink
             },
           ]}
-          link={'Go Back'}
+          linkText={'Go Back'}
+        />
+        <CustomModal
+          message={
+            <>
+              By selecting this option, you agree to generate a link.
+              <br />
+              <br />
+              Once the link is generated, you will no longer be able to edit this proposal.
+            </>
+          }
+          open={urlModalOpen}
+          onClose={() => setUrlModalOpen(false)}
+          buttons={[
+            {
+              label: "Cancel",
+              color: "primary",
+              onClick: () => setUrlModalOpen(false),
+            },
+            {
+              label: "Proceed",
+              sx: { bgcolor: "#2A987A", '&:hover': { bgcolor: '#238b6a' } },
+              onClick: handleProceed,
+            },
+          ]}
         />
       </Box >
     </Box>

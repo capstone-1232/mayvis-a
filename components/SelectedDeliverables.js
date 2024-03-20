@@ -3,12 +3,7 @@ import { Box, Typography, List, ListItem, ListItemText, IconButton, Stack } from
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 
-const DeliverablesComponent = ({ deliverables, onDelete, onEdit }) => {
-
-  const handleEdit = (e) => {
-    e.preventDefault();
-    // To Do Logic to handle form data...
-  };
+const SelectedDeliverables = ({ deliverables = [], onDelete }) => {
 
   return (
     <Box sx={{ bgcolor: 'background.paper', p: 1 }}>
@@ -16,92 +11,80 @@ const DeliverablesComponent = ({ deliverables, onDelete, onEdit }) => {
         Deliverables
       </Typography>
       <List>
-        {deliverables.map((item, index) => (
-          <ListItem
-            key={index}
-            secondaryAction={
-              <Stack>
-                <IconButton 
-                  edge="end" 
-                  aria-label="delete" 
-                  onClick={() => onDelete(index)}
-                  sx={{ 
-                    position: 'absolute', 
-                    top: -50, 
-                    right: -17,
-                  }}
-                >
-                  <RemoveCircleIcon
-                    sx={{
-                      color: 'red'
-                    }}
-                  />
-                </IconButton>
+      {deliverables.map((item, index) => {
+          let price = item.price;
 
-                <IconButton 
-                  edge="end" 
-                  aria-label="delete" 
-                  onClick={handleEdit}
-                  sx={{ 
-                    position: 'absolute', 
-                    top: -20, 
-                    right: 5,
-                  }}
-                >
-                  <ModeEditIcon
-                    sx={{
-                      color: '#dedede'
+          if (price && typeof price === 'object' && price.$numberDecimal) {
+            price = parseFloat(price.$numberDecimal);
+          } else {
+            price = parseFloat(price);
+          }
+          
+          return (
+            <ListItem
+              key={index}
+              secondaryAction={
+                <Stack>
+                  <IconButton 
+                    edge="end" 
+                    aria-label="delete" 
+                    onClick={() => onDelete(index)}
+                    sx={{ 
+                      position: 'absolute', 
+                      top: -50, 
+                      right: -17,
                     }}
-                  />
-                </IconButton>
-              </Stack>
-            }
-            divider
-            sx={{ 
-              bgcolor: '#405caa', 
-              mb: 1,
-              borderRadius: 3
-            }}
-          >
-            <ListItemText
-              primary={item.name} 
-              secondary={`$${item.price.toFixed(2)}`}
-              sx={{
-                '& .MuiListItemText-primary': {
-                  color: '#ffffff',
-                  fontWeight: 'bold'
-                },
-                '& .MuiListItemText-secondary': {
-                  color: '#ffffff',
-                }
+                  >
+                    <RemoveCircleIcon
+                      sx={{
+                        color: 'red'
+                      }}
+                    />
+                  </IconButton>
+
+                  <IconButton 
+                    edge="end" 
+                    aria-label="delete" 
+                    // onClick={handleEdit}
+                    sx={{ 
+                      position: 'absolute', 
+                      top: -20, 
+                      right: 5,
+                    }}
+                  >
+                    <ModeEditIcon
+                      sx={{
+                        color: '#dedede'
+                      }}
+                    />
+                  </IconButton>
+                </Stack>
+              }
+              divider
+              sx={{ 
+                bgcolor: '#405caa', 
+                mb: 1,
+                borderRadius: 3
               }}
-            />
-          </ListItem>
-        ))}
+            >
+              <ListItemText
+                primary={item.product_name} 
+                secondary={`${isNaN(price) ? "N/A" : `$${price.toFixed(2)}`}`}
+                sx={{
+                  '& .MuiListItemText-primary': {
+                    color: '#ffffff',
+                    fontWeight: 'bold'
+                  },
+                  '& .MuiListItemText-secondary': {
+                    color: '#ffffff',
+                  }
+                }}
+              />
+            </ListItem>
+          );
+        })}
       </List>
     </Box>
-  );
-};
-
-const deliverablesData = [
-  { name: 'Digital Ads and Marketing', price: 1500 },
-  { name: 'Face Photoshoot', price: 2000 },
-  { name: 'Logo Branding', price: 2000 },
-];
-
-const SelectedDeliverables = () => {
-  const [deliverables, setDeliverables] = useState(deliverablesData);
-
-  const handleDelete = (index) => {
-    const newDeliverables = deliverables.filter((_, i) => i !== index);
-    setDeliverables(newDeliverables);
-  };
-
-  return (
-    <DeliverablesComponent
-      deliverables={deliverables}
-      onDelete={handleDelete}
-    />
   );
 };
 

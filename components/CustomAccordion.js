@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import {
   Accordion,
@@ -7,78 +7,72 @@ import {
   Typography,
   Box,
   Card,
+  CardActionArea,
   CardContent,
   CardActions,
   Button
 } from '@mui/material';
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-function CategoriesAccordion({ categories }) {
-    const [expandedPanel, setExpandedPanel] = useState(false);
+function CategoriesAccordion({ categories, onAddToDeliverables }) {
+    const [expandedPanel, setExpandedPanel] = useState(null);
+
+    useEffect(() => {
+      if (categories.length > 0) {
+          setExpandedPanel(categories[0]._id);
+      }
+    }, [categories]);
 
     const handleChange = (panel) => (event, isExpanded) => {
-        setExpandedPanel(isExpanded ? panel : false);
+        setExpandedPanel(isExpanded ? panel : null);
     };
 
-    const renderProductCard = (product) => (
-        <Card sx={{ flexGrow: 1, m: 1 }}>
+    const renderProductCard = (product) => {
+      const price = product.price?.$numberDecimal ? parseFloat(product.price.$numberDecimal) : product.price;
+      
+      return (
+        <Card sx={{ flexGrow: 1, m: 1 }} key={product.id}>
+          <CardActionArea onClick={() => onAddToDeliverables(product)}>
             <CardContent>
-            <Typography variant="h6" component="div">
-                {product.name}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-                ${product.price.toFixed(2)}
-            </Typography>
-            <Typography variant="body1">
+              <Typography variant="h6" component="div">
+                {product.product_name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                ${isNaN(price) ? "N/A" : price.toFixed(2)}
+              </Typography>
+              <Typography variant="body1">
                 {product.description}
-            </Typography>
+              </Typography>
             </CardContent>
-            {/* If you have actions to add to the card, uncomment and use the CardActions component
-            <CardActions>
-            <Button size="small">Learn More</Button>
-            </CardActions>
-            */}
+          </CardActionArea>
         </Card>
-    );
+      );
+    };
   
     return (
       <Box sx={{ my: 2 }}>
         {categories.map((category, index) => (
           <Accordion 
-            key={category.name} 
-            expanded={expandedPanel === category.name} 
-            onChange={handleChange(category.name)}
+            key={category._id} 
+            expanded={expandedPanel === category._id} 
+            onChange={handleChange(category._id)}
           >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon sx={{ color: 'white' }}/>}
-              aria-controls={`panel-${category.name}-content`}
-              id={`panel-${category.name}-header`}
+              aria-controls={`panel-${category._id}-content`}
+              id={`panel-${category._id}-header`}
               sx={{
                 bgcolor: '#405caa',
                 color: 'white',
                 marginBottom: (index === categories.length - 1 || index === categories.findIndex(cat => cat.name === expandedPanel) - 1) ? 0 : 0.5,
               }}
             >
-              <Typography>{category.name}</Typography>
+              <Typography>{category.category_name}</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Box sx={{ display: 'flex', gap: 2, flexWrap: 'no-wrap' }}>
-                  {category.products.map((product, index) => (
-                    <Card key={index} sx={{ flexGrow: 1, m: 1 }}>
-                        <CardContent>
-                          <Typography variant="h6" component="div">
-                            {product.name}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            ${product.price.toFixed(2)}
-                          </Typography>
-                          <Typography variant="body1">
-                            {product.description.length > 60 ? product.description.substring(0, 60) + "..." : product.description}
-                          </Typography>
-                        </CardContent>
-                        {/* Optional CardActions */}
-                    </Card>
-                  ))}
+                {category.products.map(renderProductCard)}
               </Box>
             </AccordionDetails>
           </Accordion>
