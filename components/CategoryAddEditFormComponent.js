@@ -5,7 +5,7 @@ import React, { useState } from "react"
 
 const CategoryAddEditFormComponent = ({ category }) => {
     const [categoryName, setCategoryName] = useState(category.categoryName);
-    const [archive, setArchive] = useState(category.archive);
+    const [archive, setArchive] = useState(category.archived);
     const [description, setDescription] = useState(category.description);
     const [isLoading, setIsLoading] = useState(category.isLoading)
     const [showMsg, setShowMsg] = useState(category.showMsg);
@@ -30,7 +30,7 @@ const CategoryAddEditFormComponent = ({ category }) => {
 
             const data = await category.processCategory({
                 categoryName: categoryName,
-                archive: archive,
+                archived: archive,
                 description: description,
             })
 
@@ -62,29 +62,31 @@ const CategoryAddEditFormComponent = ({ category }) => {
                     <Grid container spacing={5} alignItems="center">
                         <Grid item xs={12}>
                             <Typography variant="h4" component="div" gutterBottom>
-                                Add New Category
+                                Add/Update Category
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                            <FormControlLabel control={<Switch checked={archive} onChange={(e) => setArchive(e.target.checked)} />} label="Archive Category" />
+                            <FormControlLabel control={<Switch checked={archive} onChange={(e) => setArchive(e.target.checked)} disabled = {(category.disableFields ? true: false)}/>} label="Archive Category" />
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField label="Category Name" fullWidth value={categoryName} onChange={(e) => setCategoryName(e.target.value)} required />
+                            <TextField label="Category Name" fullWidth value={categoryName} onChange={(e) => setCategoryName(e.target.value)} required 
+                            disabled = {(category.disableFields ? true: false)}/>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField label="Description" fullWidth multiline
-                                rows={15} value={description} onChange={(e) => setDescription(e.target.value)} required />
+                                rows={15} value={description} onChange={(e) => setDescription(e.target.value)} required 
+                                disabled = {(category.disableFields ? true: false)}/>
                         </Grid>
                         <Grid item xs={12} container justifyContent="flex-end" spacing={2}>
                             <Grid item>
                                 <Link href={'/category'} >
-                                    <Button variant="contained">
-                                        Cancel
+                                    <Button variant="contained" >
+                                    {(category.disableFields ? "Back": "Cancel")} 
                                     </Button>
                                 </Link>
                             </Grid>
                             <Grid item>
-                                <Button variant="contained" type="submit" disabled={isLoading}>
+                                <Button variant="contained" type="submit" disabled={isLoading || (category.disableFields ? true: false)}>
                                     {isLoading ? 'Saving...' : 'Save'}
                                 </Button>
                             </Grid>

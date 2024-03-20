@@ -7,8 +7,8 @@ export default async function handler(req, res) {
     switch (req.method) {
         case 'POST':
             try {
-                const { contact_firstname, contact_lastname, is_active, is_primary, contact_department, contact_role, client_id } = req.body;
-                const contact = await Contact.create({ contact_firstname, contact_lastname, is_active, is_primary, contact_department, contact_role, client_id });
+                const { contact_firstname, contact_lastname, email, contact_no, is_active, is_primary, contact_department,  contact_role, client_id } = req.body;
+                const contact = await Contact.create({ contact_firstname, contact_lastname, email, contact_no, is_active, is_primary, contact_department, contact_role, client_id });
                 return res.status(201).json({ message: "Contact created successfully.", contact });
             } catch (error) {
                 return res.status(500).json({ message: "Error creating contact", error: error.message });

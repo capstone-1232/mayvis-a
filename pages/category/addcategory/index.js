@@ -33,6 +33,7 @@ const NewCategory = () => {
                 isLoading: false,
                 showMsg: false,
                 msg: '',
+                disableFields: false
             }}
         />
     );

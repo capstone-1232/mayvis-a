@@ -1,38 +1,44 @@
 import React from "react"
 import CategoryAddEditFormComponent from "@/components/CategoryAddEditFormComponent";
 
-export async function getServerSideProps({ params }) {
-    let clientData = [{}];
-    try {
-      const id = params.id;
-      const res = await fetch(`http://localhost:3000/api/client/${id}`, { cache: "no-store" });
-      // res.setHeader(
-      //   'Cache-Control',
-      //   'public, s-maxage=10, stale-while-revalidate=59'
-      // )
-  
-      if (!res.ok) {
-        throw new Error('Failed to fetch client');
-      }
-      clientData = await res.json();
-    }
-    catch (error) {
-      console.log('Error loading clients', error);
-    }
-    return { props: { clientData } };
-  }
 
-const EditClient = ({clientData}) => {
-    const data = clientData[0];
-    const updateClient = async (dataFromChild) => {
+export async function getServerSideProps({ params }) {
+  let categoryData = [{}];
+  try {
+    const id = params.id;
+    const res = await fetch(`http://localhost:3000/api/category/${id}`, { cache: "no-store" });
+    // res.setHeader(
+    //   'Cache-Control',
+    //   'public, s-maxage=10, stale-while-revalidate=59'
+    // )
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch category');
+    }
+    categoryData = await res.json();
+  }
+  catch (error) {
+    console.log('Error loading category', error);
+  }
+  return { props: { categoryData } };
+}
+
+
+const EditCategory = ({categoryData}) => {
+  const data = categoryData[0];
+  console.log(categoryData);
+  
+    const updateCategory = async (dataFromChild) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/client/${data._id}`,
+            console.log(dataFromChild);
+            // const res = await fetch(process.env.VERCEL_URL + '/api/category',
+            const res = await fetch(`http://localhost:3000/api/category/${data._id}`,
                 {
                     method: 'PUT',
                     headers: { "Content-type": "application/json" },
                     body: JSON.stringify({
-                        'client_name': dataFromChild.clientName,
-                        'is_active': dataFromChild.active,
+                        'category_name': dataFromChild.categoryName,
+                        'is_archived': dataFromChild.archived,
                         'description': dataFromChild.description
                     })
                 });
@@ -46,17 +52,18 @@ const EditClient = ({clientData}) => {
 
     return (
         <CategoryAddEditFormComponent
-            client={{
-                processClient: updateClient,
-                clientName: data.client_name,
-                active: data.is_active,
-                description: data.description,
+            category={{
+                processCategory: updateCategory,
+                categoryName: data?.category_name,
+                archived: data?.is_archived,
+                description: data?.description,
                 isLoading: false,
                 showMsg: false,
                 msg: '',
+                disableFields: false
             }}
         />
     );
-}
+} 
 
-export default EditClient;
+export default EditCategory;
