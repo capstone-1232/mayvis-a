@@ -7,41 +7,70 @@ import NewProposalStepper from '@/components/Stepper';
 const ClientDetails = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [clientsData, setClientsData] = useState([]);
-  const [filteredClients, setFilteredClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [contactsData, setContactsData] = useState([]);
-  const [clientSearchTerm, setClientSearchTerm] = useState('');
-  const [contactSearchTerm, setContactSearchTerm] = useState('');
+  const [selectedContact, setSelectedContact] = useState(null);
   const router = useRouter();
 
-  useEffect(() => {
-    setFilteredClients(clientsData);
-  }, [clientsData]);
+  const cleanContactId = (contactId) => {
+    return contactId.replace(/^['"]+|['"]+$/g, '');
+  };
+
+  const getContactDetails = async (contactId) => {
+    const cleanId = cleanContactId(contactId);
+    const response = await fetch(`/api/contact/${cleanId}`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch contact details');
+    }
+    return response.json();
+  };
 
   useEffect(() => {
     const fetchClients = async () => {
-      const response = await fetch('/api/client');
-      const data = await response.json();
-      setClientsData(data);
-    };
-
-    fetchClients();
-  }, []);
-
-  useEffect(() => {
-    const fetchContacts = async () => {
-      if (selectedClient && Array.isArray(selectedClient.contact_id)) {
-        const response = await fetch(`/api/contact/${filteredClients._id}`);
+      try {
+        const response = await fetch('/api/client');
         const data = await response.json();
-        console.log(data);
-        setContactsData(data);
-      } else {
-        setContactsData([]);
+        setClientsData(data);
+        
+        if (data && data.length > 0) {
+          const defaultClient = data[0];
+          setSelectedClient(defaultClient);
+          fetchContactsForClient(defaultClient);
+        }
+      } catch (error) {
+        console.error('Failed to fetch clients:', error);
       }
     };
+  
+    fetchClients();
+  }, []);
+  
+  const fetchContactsForClient = async (client) => {
+    if (!client || !client.contact_id) return;
+    
+    try {
+      const contactIds = client.contact_id;
+      let contacts = [];
+      if (Array.isArray(contactIds)) {
+        contacts = await Promise.all(contactIds.map(contactId => getContactDetails(contactId)));
+      } else {
+        const contactDetails = await getContactDetails(contactIds);
+        contacts = [contactDetails];
+      }
+      setContactsData(contacts);
+    } catch (error) {
+      console.error('Failed to fetch contacts for client:', error);
+      setContactsData([]);
+    }
+  };
 
-    fetchContacts();
-  }, [contactsData]);
+  const handleClientChange = (_, value) => {
+    setSelectedClient(value);
+  };
+
+  const handleContactChange = (setter) => (_, value) => {
+    setter(value);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -50,24 +79,6 @@ const ClientDetails = () => {
 
   const handleNext = () => {
     router.push('/new-proposal/title');
-  };
-
-  const companySearchChange = (event, newValue) => {
-    setClientSearchTerm(newValue);
-    const lowercasedValue = newValue.toLowerCase();
-    const filtered = filteredClients.filter(item =>
-        item.client_name.toLowerCase().includes(lowercasedValue)
-    );
-    setFilteredClients(filtered);
-  };
-
-  const contactSearchChange = (event, newValue) => {
-    setContactSearchTerm(newValue);
-    const lowercasedValue = newValue.toLowerCase();
-    const filtered = contactsData.filter(item =>
-        item.contact_firstname.toLowerCase().includes(lowercasedValue)
-    );
-    setContactsData(filtered);
   };
 
   return ( <>
@@ -88,16 +99,19 @@ const ClientDetails = () => {
               <Autocomplete
                   id="searchClient"
                   freeSolo
-                  options={clientsData.map((client) => client.client_name)}
-                  value={clientSearchTerm}
-                  onInputChange={companySearchChange}
+                  options={clientsData}
+                  getOptionLabel={(option) => option.client_name}
+                  onChange={(event, newValue) => {
+                    setSelectedClient(newValue);
+                    fetchContactsForClient(newValue); // Fetch contacts when a new client is selected
+                  }}
                   renderInput={(params) => (
                       <TextField
                           {...params}
                           label="Client Company Name"
                           name="companyName"
                           variant="outlined"
-                          value={filteredClients.client_name}
+                          // value={filteredClients.client_name}
                           fullWidth
                           required
                           sx={{
@@ -106,72 +120,58 @@ const ClientDetails = () => {
                       />
                   )}
               />
-              <Autocomplete
-                  id="searchContactFirstname"
-                  freeSolo
-                  options={contactsData.map((contact) => contact.contact_firstname)}
-                  value={contactSearchTerm}
-                  onInputChange={contactSearchChange}
-                  renderInput={(params) => (
-                      <TextField
-                          {...params}
-                          label="Contact Firstname"
-                          name="contactFirstname"
-                          variant="outlined"
-                          value={contactsData.contact_firstname}
-                          fullWidth
-                          required
-                          sx={{
-                            bgcolor: 'grey.100'
-                          }}
-                      />
-                  )}
-              />
-              <Autocomplete
-                  id="searchContactLastname"
-                  freeSolo
-                  options={contactsData.map((contact) => contact.contact_lastname)}
-                  value={contactSearchTerm}
-                  onInputChange={contactSearchChange}
-                  renderInput={(params) => (
-                      <TextField
-                          {...params}
-                          label="Contact Lastname"
-                          name="contactLastname"
-                          variant="outlined"
-                          value={contactsData.contact_lastname}
-                          fullWidth
-                          required
-                          sx={{
-                            bgcolor: 'grey.100'
-                          }}
-                      />
-                  )}
-              />
-              {/* <TextField
-                label="Contact Person First Name"
-                name="firstName"
-                value={contactsData.firstName}
-                onChange={handleSearchChange}
-                variant="outlined"
-                sx={{
-                  bgcolor: 'grey.100'
-                }}
-                fullWidth
-                required
-              />
-              <TextField
-                label="Contact Person Last Name"
-                name="lastName"
-                value={contactsData.lastName}
-                onChange={handleSearchChange}
-                variant="outlined"
-                sx={{
-                  bgcolor: 'grey.100'
-                }}
-                fullWidth
-                required
-              /> */}
+              {selectedClient && (
+                <>
+                  <Autocomplete
+                      id="searchContactFirstname"
+                      freeSolo
+                      options={contactsData}
+                      getOptionLabel={(option) => option.contact_firstname || ''}
+                      onChange={(event, newValue) => {
+                        setSelectedClient(newValue);
+                        fetchContactsForClient(newValue);
+                      }}
+                      value={selectedContact}
+                      renderInput={(params) => (
+                          <TextField
+                              {...params}
+                              label="Contact Firstname"
+                              name="contactFirstname"
+                              variant="outlined"
+                              fullWidth
+                              required
+                              sx={{
+                                bgcolor: 'grey.100'
+                              }}
+                          />
+                      )}
+                  />
+                  <Autocomplete
+                      id="searchContactLastname"
+                      freeSolo
+                      options={contactsData}
+                      getOptionLabel={(option) => option.contact_lastname || ''}
+                      onChange={(event, newValue) => {
+                        setSelectedClient(newValue);
+                        fetchContactsForClient(newValue);
+                      }}
+                      value={selectedContact}
+                      renderInput={(params) => (
+                          <TextField
+                              {...params}
+                              label="Contact Lastname"
+                              name="contactLastname"
+                              variant="outlined"
+                              fullWidth
+                              required
+                              sx={{
+                                bgcolor: 'grey.100'
+                              }}
+                          />
+                      )}
+                  />
+                </>
+              )}
             </Stack>
             <Button
               type='submit'
