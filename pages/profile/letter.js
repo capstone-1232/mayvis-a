@@ -36,20 +36,19 @@ export default function Letter() {
         mt: 'auto', // Add some margin to the top
       }}
     >
-       <h1 style={{ textAlign: 'left' }}>My Letter</h1>
+      <h1 style={{ textAlign: 'left', margin: '1.5rem 0', }}>My Letter</h1>
       <Paper elevation={3} style={paperStyle}
             sx={{
-              maxWidth: '80%',
-              maxWidth:'720px',
+              maxWidth: '80vw',
               mx: 'auto',
               mt: 'auto',
             }}>
         <h2 style={{ textAlign: 'left' }}>Customize Message</h2>
 
-        <Box sx={{height:'350px'}}><RTextEditor /></Box>
+        <Box sx={{height:'50vh'}}><RTextEditor /></Box>
 
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: '5rem' }}>
-          <button onClick={saveContent} style={{ padding: '0.5rem 1rem', borderRadius: '5px', border: 'none', backgroundColor: '#405CAA', color: 'white', cursor: 'pointer' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: '3rem' }}>
+          <button onClick={saveContent} style={{ padding: '1rem 1.5rem', borderRadius: '5px', border: 'none', backgroundColor: '#405CAA', color: 'white', cursor: 'pointer' }}>
             Save
           </button>
         </Box>

@@ -1,103 +1,78 @@
-import React, { useState } from 'react';
-import dynamic from 'next/dynamic';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import CustomToggleButton from '@/components/CustomToggleButton';
-import RTextEditor from '@/components/RTextEditor';
+import React from "react"
+import ProductAddEditFormComponent from "@/components/ProductAddEditFormComponent";
 
-// Import 'react-quill' dynamically without SSR
-const QuillEditor = dynamic(() => import('react-quill'), {
-  ssr: false,
-});
+export async function getServerSideProps(context) {
+    const { req } = context;
+    // Determine the base URL based on the environment (Vercel or local)
+    const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+    const host = req ? req.headers.host : window.location.hostname;
+    const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
+    const apiRoute = `${baseURL}/api/category`;
 
-export default function ProductsServices() {
-  const [productService, setProductService] = useState('');
-  const [category, setCategory] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
-  const [archive, setArchive] = useState(false);
+    let categories = [{}];
+    try {
+        const res = await fetch(apiRoute, { cache: "no-store" });
 
-  const handleProductServiceChange = (event) => {
-    setProductService(event.target.value);
-  };
+        if (!res.ok) {
+            const errorText = await res.text(); // or use `res.json()` if your API returns a JSON response
+            throw new Error(`Failed to fetch category: ${errorText}`);
+        }
 
-  const handleCategoryChange = (event) => {
-    setCategory(event.target.value);
-  };
+        categories = await res.json();
+    } catch (error) {
+        console.error('Error loading categories', error);
+        // Pass the error message to the page's props or handle it as needed
+        return { props: { categories, error: error.message } };
+    }
 
-  const handlePriceChange = (event) => {
-    setPrice(event.target.value);
-  };
-
-  const handleDescriptionChange = (value) => {
-    setDescription(value);
-  };
-
-  const handleArchiveToggle = () => {
-    setArchive(!archive);
-  };
-
-  // Inline styles
-  const paperStyle = {
-    padding: '2rem',
-    borderRadius: '8px',
-    boxShadow: '0px 3px 15px rgba(0,0,0,0.2)',
-  };
-
-  return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-      <Paper elevation={3} style={paperStyle} sx={{ width:'80%', maxWidth:'720px' }}>
-        <h1>Products/Services</h1>
-
-        <CustomToggleButton label={'Archive'} toggled={archive} onToggle={handleArchiveToggle} />
-
-        <FormControl fullWidth margin="normal">
-          <InputLabel id="category-select-label">Category</InputLabel>
-          <Select
-            labelId="category-select-label"
-            id="category-select"
-            value={category}
-            label="Category"
-            onChange={handleCategoryChange}
-          >
-            <MenuItem value={'Category 1'}>Category 1</MenuItem>
-            <MenuItem value={'Category 2'}>Category 2</MenuItem>
-          </Select>
-        </FormControl>
-
-        <TextField
-          label="Product/Service"
-          variant="outlined"
-          value={productService}
-          onChange={handleProductServiceChange}
-          fullWidth
-          margin="normal"
-        />
-
-        <TextField
-          label="$ Price"
-          variant="outlined"
-          value={price}
-          onChange={handlePriceChange}
-          fullWidth
-          margin="normal"
-        />
-
-        <h2>Description</h2>
-        <Box sx={{height:'350px'}}>
-        <RTextEditor/>
-        </Box>
-
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', mt: '5rem' }}>
-            <button onClick={() => console.log('Cancelled')} style={{ padding: '0.5rem 1rem', borderRadius: '10px', border: 'none', backgroundColor: '#405CAA', color: 'white', cursor: 'pointer' }}>Cancel</button>
-            <button onClick={() => console.log('Saved')} style={{ padding: '0.5rem 1rem', borderRadius: '10px', border: 'none', backgroundColor: '#2A987A', color: 'white', cursor: 'pointer' }}>Save</button>
-          </Box>
-      </Paper>
-    </Box>
-  );
+    return { props: { categories } };
 }
+
+const AddProduct = ({categories}) => {
+    console.log(categories);
+    const insertProduct = async (dataFromChild) => {
+        try {
+            console.log(dataFromChild);
+            const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+            // const host = req ? req.headers.host : window.location.hostname;
+            const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+            const apiRoute = `${baseURL}/api/products`;
+            const res = await fetch(apiRoute,
+                {
+                    method: 'POST',
+                    headers: { "Content-type": "application/json" },
+                    body: JSON.stringify({
+                        'product_name': dataFromChild.product_name,
+                        'description': dataFromChild.description,
+                        'price': dataFromChild.price,
+                        'is_archived': dataFromChild.is_archived,
+                        'category_id': dataFromChild.category_id
+                    })
+                });
+            return await res.json();
+        }
+        catch (e) {
+            throw e;
+        }
+
+    }
+
+    return (
+        <ProductAddEditFormComponent
+        product={{
+                processClient: insertProduct,
+                productName: '',
+                archived: false,
+                description: '',
+                price: 0,
+                category: '',
+                categories: categories,
+                isLoading: false,
+                showMsg: false,
+                msg: '',
+            }}
+        />
+    );
+}
+
+export default AddProduct;

@@ -17,8 +17,8 @@ export default async function handler(req, res) {
         case 'PUT':
             try {
                 const { id } = req.query;
-                const { category_name } = req.body;
-                const updatedCategory = await Category.findByIdAndUpdate(id, { category_name }, { new: true });
+                const { category_name, is_archived, description } = req.body;
+                const updatedCategory = await Category.findByIdAndUpdate(id, { category_name, is_archived, description }, { new: true });
                 if (!updatedCategory) {
                     return res.status(404).json({ message: "Category not found." });
                 }

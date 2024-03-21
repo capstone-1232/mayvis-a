@@ -9,8 +9,9 @@ const ProductSchema = new Schema({
     notes: { type: String },
     quantity: { type: Number },
     created_by: { type: Schema.Types.ObjectId, ref: 'User' },
-    updated_by: { type: Schema.Types.ObjectId, ref: 'User' }
-    }, { timestamps: true }
+    updated_by: { type: Schema.Types.ObjectId, ref: 'User' },
+    category_id:  { type: Schema.Types.ObjectId, ref: 'Category' }
+}, { timestamps: true }
 );
 
 const Product = mongoose.models.Product || mongoose.model('Product', ProductSchema);

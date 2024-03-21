@@ -85,8 +85,10 @@ function NavBarComponent(props) {
             onClose={handleMenuClose}
         >
             <MenuItem onClick={handleMenuClose}>Home</MenuItem>
+            <MenuItem component={Link} href="/profile/edit-profile">My Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My Proposals</MenuItem>
-            <MenuItem component={Link} href="/letter">Setup Customer Letter</MenuItem>
+            <MenuItem component={Link} href="/profile/letter">Setup Custom Letter</MenuItem>
+            <MenuItem component={Link} href="/profile/email">Setup Email Template</MenuItem>
             <Divider />
             <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
 
@@ -145,8 +147,8 @@ function NavBarComponent(props) {
             <Stack sx={{ backgroundColor: '#405CAA', height: '100%', marginTop: 9.3 }}>
                 <Box sx={{ overflow: 'auto' }}>
                     <List>
-                        {menuItems.slice(0, -1).map((item) => ( // Exclude the logout item
-                            <Link href={item.href} legacyBehavior>
+                        {menuItems.slice(0, -1).map((item,index) => ( // Exclude the logout item
+                            <Link href={item.href} legacyBehavior key={index}>
                                 <a style={{ textDecoration: 'none' }}>
                                     <ListItem key={item.text} disablePadding sx={{ justifyContent: 'center' }}>
                                     
