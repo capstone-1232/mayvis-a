@@ -8,22 +8,26 @@ const ClientDetails = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [clientsData, setClientsData] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
-  const [contactsData, setContactsData] = useState([]);
-  const [selectedContact, setSelectedContact] = useState(null);
+  const [allContacts, setAllContacts] = useState([]);
+  const [filteredFirstnames, setFilteredFirstnames] = useState([]);
+  const [filteredLastnames, setFilteredLastnames] = useState([]);
+  const [selectedFirstname, setSelectedFirstname] = useState(null);
+  const [selectedLastname, setSelectedLastname] = useState(null);
+  const [showSaveClientButton, setShowSaveClientButton] = useState(false);
+  const [companyName, setCompanyName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const router = useRouter();
 
-  const cleanContactId = (contactId) => {
-    return contactId.replace(/^['"]+|['"]+$/g, '');
-  };
-
-  const getContactDetails = async (contactId) => {
-    const cleanId = cleanContactId(contactId);
-    const response = await fetch(`/api/contact/${cleanId}`);
-    if (!response.ok) {
-        throw new Error('Failed to fetch contact details');
-    }
-    return response.json();
-  };
+  useEffect(() => {
+    const storedCompanyName = sessionStorage.getItem('companyName');
+    const storedFirstName = sessionStorage.getItem('firstName');
+    const storedLastName = sessionStorage.getItem('lastName');
+  
+    if (storedCompanyName) setCompanyName(storedCompanyName);
+    if (storedFirstName) setFirstName(storedFirstName);
+    if (storedLastName) setLastName(storedLastName);
+  }, []);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -49,32 +53,84 @@ const ClientDetails = () => {
     if (!client || !client.contact_id) return;
     
     try {
-      const contactIds = client.contact_id;
-      let contacts = [];
-      if (Array.isArray(contactIds)) {
-        contacts = await Promise.all(contactIds.map(contactId => getContactDetails(contactId)));
-      } else {
-        const contactDetails = await getContactDetails(contactIds);
-        contacts = [contactDetails];
-      }
-      setContactsData(contacts);
+      const contactsPromises = client.contact_id.map(id => fetch(`/api/contact/${id}`).then(res => res.json()));
+      const contacts = await Promise.all(contactsPromises);
+      
+      setAllContacts(contacts);
+      setFilteredFirstnames(contacts);
+      setFilteredLastnames(contacts);
     } catch (error) {
       console.error('Failed to fetch contacts for client:', error);
-      setContactsData([]);
     }
   };
 
-  const handleClientChange = (_, value) => {
-    setSelectedClient(value);
+  const handleClientChange = (event, newValue) => {
+    if (typeof newValue === 'object' && newValue !== null) {
+      // Case when an item from the options list is selected
+      const companyName = newValue.client_name;
+      setCompanyName(companyName);
+      sessionStorage.setItem('companyName', companyName);
+      setSelectedClient(newValue);
+  
+      // Check if the selected client exists in the data
+      const clientExists = clientsData.some(client => client._id === newValue._id);
+  
+      if (clientExists) {
+        fetchContactsForClient(newValue); // Fetch contacts for existing client
+        setShowSaveClientButton(false); // Hide 'Save' button for existing client
+      } else {
+        setShowSaveClientButton(true); // Show 'Save' button for new client
+      }
+    } else if (typeof newValue === 'string') {
+      // Case when manual input is provided
+      setCompanyName(newValue);
+      sessionStorage.setItem('companyName', newValue);
+      setShowSaveClientButton(true); // Show 'Save' button for new manual input
+    }
   };
 
-  const handleContactChange = (setter) => (_, value) => {
-    setter(value);
+  const handleFirstnameChange = (event, firstname) => {
+    setSelectedFirstname(firstname);
+    sessionStorage.setItem('firstName', firstname);
+    if (firstname) {
+      const relevantContacts = allContacts.filter(contact => contact.contact_firstname === firstname);
+      setFilteredLastnames(relevantContacts);
+    } else {
+      setFilteredLastnames(allContacts);
+    }
+  };
+
+  const handleLastnameChange = (event, lastname) => {
+    setSelectedLastname(lastname);
+    sessionStorage.setItem('lastName', lastname);
+    if (lastname) {
+      const relevantContacts = allContacts.filter(contact => contact.contact_lastname === lastname);
+      setFilteredFirstnames(relevantContacts);
+    } else {
+      setFilteredFirstnames(allContacts);
+    }
+  };
+
+  const handleInputFirstnameChange = (e) => {
+    const newValue = e.target.value;
+    setFirstName(newValue);
+    sessionStorage.setItem('firstName', newValue);
+  };
+
+  const handleInputLastnameChange = (e) => {
+    const newValue = e.target.value;
+    setLastName(newValue);
+    sessionStorage.setItem('lastName', newValue);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // To Do Logic to handle form data...
+  };
+
+  const saveClient = () => {
+    // Logic to save the new client to the database
+    console.log("Saving client:", selectedClient);
   };
 
   const handleNext = () => {
@@ -100,18 +156,19 @@ const ClientDetails = () => {
                   id="searchClient"
                   freeSolo
                   options={clientsData}
-                  getOptionLabel={(option) => option.client_name}
-                  onChange={(event, newValue) => {
-                    setSelectedClient(newValue);
-                    fetchContactsForClient(newValue); // Fetch contacts when a new client is selected
+                  getOptionLabel={(option) => option.client_name || ''}
+                  onChange={handleClientChange}
+                  onInputChange={(event, newInputValue) => {
+                    setCompanyName(newInputValue);
+                    sessionStorage.setItem('companyName', newInputValue);
                   }}
+                  inputValue={companyName}
                   renderInput={(params) => (
                       <TextField
                           {...params}
                           label="Client Company Name"
                           name="companyName"
                           variant="outlined"
-                          // value={filteredClients.client_name}
                           fullWidth
                           required
                           sx={{
@@ -120,24 +177,22 @@ const ClientDetails = () => {
                       />
                   )}
               />
-              {selectedClient && (
+              {selectedClient && allContacts.length > 0 ? (
                 <>
                   <Autocomplete
                       id="searchContactFirstname"
                       freeSolo
-                      options={contactsData}
-                      getOptionLabel={(option) => option.contact_firstname || ''}
-                      onChange={(event, newValue) => {
-                        setSelectedClient(newValue);
-                        fetchContactsForClient(newValue);
-                      }}
-                      value={selectedContact}
+                      options={filteredFirstnames.map(contact => contact.contact_firstname)}
+                      onChange={handleFirstnameChange}
+                      value={selectedFirstname}
                       renderInput={(params) => (
                           <TextField
                               {...params}
                               label="Contact Firstname"
                               name="contactFirstname"
                               variant="outlined"
+                              onChange={handleFirstnameChange}
+                              value={firstName}
                               fullWidth
                               required
                               sx={{
@@ -149,19 +204,17 @@ const ClientDetails = () => {
                   <Autocomplete
                       id="searchContactLastname"
                       freeSolo
-                      options={contactsData}
-                      getOptionLabel={(option) => option.contact_lastname || ''}
-                      onChange={(event, newValue) => {
-                        setSelectedClient(newValue);
-                        fetchContactsForClient(newValue);
-                      }}
-                      value={selectedContact}
+                      options={filteredLastnames.map(contact => contact.contact_lastname)}
+                      onChange={handleLastnameChange}
+                      value={selectedLastname}
                       renderInput={(params) => (
                           <TextField
                               {...params}
                               label="Contact Lastname"
                               name="contactLastname"
                               variant="outlined"
+                              onChange={handleLastnameChange}
+                              value={lastName}
                               fullWidth
                               required
                               sx={{
@@ -171,22 +224,48 @@ const ClientDetails = () => {
                       )}
                   />
                 </>
+                ) : (
+                  <>
+                    <TextField
+                      label="Contact Person First Name"
+                      name="firstName"
+                      variant="outlined"
+                      fullWidth
+                      required
+                      value={firstName}
+                      onChange={handleInputFirstnameChange}
+                      sx={{ bgcolor: 'grey.100', mt: 2 }}
+                    />
+                    <TextField
+                      label="Contact Person Last Name"
+                      name="lastName"
+                      variant="outlined"
+                      fullWidth
+                      required
+                      value={lastName}
+                      onChange={handleInputLastnameChange}
+                      sx={{ bgcolor: 'grey.100', mt: 2 }}
+                    />
+                  </>
               )}
             </Stack>
-            <Button
-              type='submit'
-              color='primary'
-              variant="contained"
-              sx={{
-                py: 1,
-                borderRadius: 10,
-                width: '25%',
-                mx: 'auto',
-                display: 'block'
-              }}
-            >
-              Save This Client
-            </Button>
+            {showSaveClientButton && (
+              <Button
+                type='submit'
+                color='primary'
+                variant="contained"
+                onClick={saveClient}
+                sx={{
+                  py: 1,
+                  borderRadius: 10,
+                  width: '25%',
+                  mx: 'auto',
+                  display: 'block'
+                }}
+              >
+                Save This Client
+              </Button>
+            )}
           </form>
         </Paper>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
