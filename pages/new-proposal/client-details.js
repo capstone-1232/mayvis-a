@@ -1,25 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Container, Typography, TextField, Button, Paper, Stack, Box } from '@mui/material';
+import { Autocomplete, Container, Typography, TextField, Button, Paper, Stack, Box } from '@mui/material';
 
 import NewProposalStepper from '@/components/Stepper';
 
 const ClientDetails = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [clientsData, setClientsData] = useState([]);
+  const [filteredClients, setFilteredClients] = useState([]);
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [contactsData, setContactsData] = useState([]);
+  const [clientSearchTerm, setClientSearchTerm] = useState('');
+  const [contactSearchTerm, setContactSearchTerm] = useState('');
   const router = useRouter();
 
-  const [clientDetails, setClientDetails] = useState({
-    firstName: '',
-    lastName: '',
-    companyName: '',
-  });
+  useEffect(() => {
+    setFilteredClients(clientsData);
+  }, [clientsData]);
 
-  const handleChange = (e) => {
-    setClientDetails({
-      ...clientDetails,
-      [e.target.name]: e.target.value,
-    });
-  };
+  useEffect(() => {
+    const fetchClients = async () => {
+      const response = await fetch('/api/client');
+      const data = await response.json();
+      setClientsData(data);
+    };
+
+    fetchClients();
+  }, []);
+
+  useEffect(() => {
+    const fetchContacts = async () => {
+      if (selectedClient && Array.isArray(selectedClient.contact_id)) {
+        const response = await fetch(`/api/contact/${filteredClients._id}`);
+        const data = await response.json();
+        console.log(data);
+        setContactsData(data);
+      } else {
+        setContactsData([]);
+      }
+    };
+
+    fetchContacts();
+  }, [contactsData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,6 +50,24 @@ const ClientDetails = () => {
 
   const handleNext = () => {
     router.push('/new-proposal/title');
+  };
+
+  const companySearchChange = (event, newValue) => {
+    setClientSearchTerm(newValue);
+    const lowercasedValue = newValue.toLowerCase();
+    const filtered = filteredClients.filter(item =>
+        item.client_name.toLowerCase().includes(lowercasedValue)
+    );
+    setFilteredClients(filtered);
+  };
+
+  const contactSearchChange = (event, newValue) => {
+    setContactSearchTerm(newValue);
+    const lowercasedValue = newValue.toLowerCase();
+    const filtered = contactsData.filter(item =>
+        item.contact_firstname.toLowerCase().includes(lowercasedValue)
+    );
+    setContactsData(filtered);
   };
 
   return ( <>
@@ -45,23 +85,74 @@ const ClientDetails = () => {
           </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={5} sx={{ mb: 5 }}>
-              <TextField
-                label="Client Company Name"
-                name="companyName"
-                value={clientDetails.companyName}
-                onChange={handleChange}
-                variant="outlined"
-                sx={{
-                  bgcolor: 'grey.100'
-                }}
-                fullWidth
-                required
+              <Autocomplete
+                  id="searchClient"
+                  freeSolo
+                  options={clientsData.map((client) => client.client_name)}
+                  value={clientSearchTerm}
+                  onInputChange={companySearchChange}
+                  renderInput={(params) => (
+                      <TextField
+                          {...params}
+                          label="Client Company Name"
+                          name="companyName"
+                          variant="outlined"
+                          value={filteredClients.client_name}
+                          fullWidth
+                          required
+                          sx={{
+                            bgcolor: 'grey.100'
+                          }}
+                      />
+                  )}
               />
-              <TextField
+              <Autocomplete
+                  id="searchContactFirstname"
+                  freeSolo
+                  options={contactsData.map((contact) => contact.contact_firstname)}
+                  value={contactSearchTerm}
+                  onInputChange={contactSearchChange}
+                  renderInput={(params) => (
+                      <TextField
+                          {...params}
+                          label="Contact Firstname"
+                          name="contactFirstname"
+                          variant="outlined"
+                          value={contactsData.contact_firstname}
+                          fullWidth
+                          required
+                          sx={{
+                            bgcolor: 'grey.100'
+                          }}
+                      />
+                  )}
+              />
+              <Autocomplete
+                  id="searchContactLastname"
+                  freeSolo
+                  options={contactsData.map((contact) => contact.contact_lastname)}
+                  value={contactSearchTerm}
+                  onInputChange={contactSearchChange}
+                  renderInput={(params) => (
+                      <TextField
+                          {...params}
+                          label="Contact Lastname"
+                          name="contactLastname"
+                          variant="outlined"
+                          value={contactsData.contact_lastname}
+                          fullWidth
+                          required
+                          sx={{
+                            bgcolor: 'grey.100'
+                          }}
+                      />
+                  )}
+              />
+              {/* <TextField
                 label="Contact Person First Name"
                 name="firstName"
-                value={clientDetails.firstName}
-                onChange={handleChange}
+                value={contactsData.firstName}
+                onChange={handleSearchChange}
                 variant="outlined"
                 sx={{
                   bgcolor: 'grey.100'
@@ -72,15 +163,15 @@ const ClientDetails = () => {
               <TextField
                 label="Contact Person Last Name"
                 name="lastName"
-                value={clientDetails.lastName}
-                onChange={handleChange}
+                value={contactsData.lastName}
+                onChange={handleSearchChange}
                 variant="outlined"
                 sx={{
                   bgcolor: 'grey.100'
                 }}
                 fullWidth
                 required
-              />
+              /> */}
             </Stack>
             <Button
               type='submit'

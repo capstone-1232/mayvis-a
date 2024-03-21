@@ -35,7 +35,7 @@ const SelectDeliverables = ({ onAddDeliverable }) => {
           const categoriesWithProducts = await Promise.all(categories.map(async (category) => {
             if (!Array.isArray(category.product_id)) {
                 console.warn(`Category ${category._id} does not have product_id as an array`);
-                return { ...category, products: [] }; // Default to empty products array if product_id is not as expected
+                return { ...category, products: [] };
             }
             const productDetailsPromises = category.product_id.map(productId => getProductDetails(productId));
             const products = await Promise.all(productDetailsPromises);

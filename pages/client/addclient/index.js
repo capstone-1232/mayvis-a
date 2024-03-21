@@ -5,8 +5,8 @@ const NewClient = () => {
     const addClient = async (dataFromChild) => {
         try {
             const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
-            const host = req ? req.headers.host : window.location.hostname;
-            const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
+            // const host = req ? req.headers.host : window.location.hostname;
+            const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
             const apiRoute = `${baseURL}/api/client`;
             const res = await fetch(apiRoute,
                 {
