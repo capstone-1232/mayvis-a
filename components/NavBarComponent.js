@@ -143,8 +143,8 @@ function NavBarComponent(props) {
     const drawer = (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             {/* <Toolbar sx={{ marginTop:1 }} /> */}
-            {/* <Divider sx={{ backgroundColor: (mobileOpen ? '#405CAA' : 'transparent') }} /> */}
-            <Stack sx={{ backgroundColor: '#405CAA', height: '100%', marginTop: 9.3 }}>
+            {/* <Divider sx={{ backgroundColor: (mobileOpen ? '#253C7C' : 'transparent') }} /> */}
+            <Stack sx={{ backgroundColor: '#253C7C', height: '100%', marginTop: 9.3, width: '80%' }}>
                 <Box sx={{ overflow: 'auto' }}>
                     <List>
                         {menuItems.slice(0, -1).map((item,index) => ( // Exclude the logout item

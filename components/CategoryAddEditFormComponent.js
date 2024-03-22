@@ -32,6 +32,7 @@ const CategoryAddEditFormComponent = ({ category }) => {
                 categoryName: categoryName,
                 archived: archive,
                 description: description,
+                productId: _id
             })
 
             if (data.error) {
@@ -66,16 +67,16 @@ const CategoryAddEditFormComponent = ({ category }) => {
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                            <FormControlLabel control={<Switch checked={archive} onChange={(e) => setArchive(e.target.checked)} disabled = {(category.disableFields ? true: false)}/>} label="Archive Category" />
+                            <FormControlLabel control={<Switch checked={archive} onChange={(e) => setArchive(e.target.checked)} disabled = {(category.disableFields)}/>} label="Archive Category" />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField label="Category Name" fullWidth value={categoryName} onChange={(e) => setCategoryName(e.target.value)} required 
-                            disabled = {(category.disableFields ? true: false)}/>
+                            disabled = {(category.disableFields)}/>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField label="Description" fullWidth multiline
                                 rows={15} value={description} onChange={(e) => setDescription(e.target.value)} required 
-                                disabled = {(category.disableFields ? true: false)}/>
+                                disabled = {(category.disableFields)}/>
                         </Grid>
                         <Grid item xs={12} container justifyContent="flex-end" spacing={2}>
                             <Grid item>
@@ -86,7 +87,7 @@ const CategoryAddEditFormComponent = ({ category }) => {
                                 </Link>
                             </Grid>
                             <Grid item>
-                                <Button variant="contained" type="submit" disabled={isLoading || (category.disableFields ? true: false)}>
+                                <Button variant="contained" type="submit" disabled={isLoading || (category.disableFields)}>
                                     {isLoading ? 'Saving...' : 'Save'}
                                 </Button>
                             </Grid>

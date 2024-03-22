@@ -9,15 +9,15 @@ export default async function productHandler(req, res) {
             // Create a new product
             try {
                 // const { product_name, description, price, is_recurring, is_archived, notes, quantity, created_by, updated_by } = req.body;
-                const { product_name, description, price, is_recurring, recurring_option, quantity, is_archived, category_id } = req.body;
+                const { product_name, description, price, is_recurring, quantity, is_archived, category_id } = req.body;
                 const newProduct = await Product.create({
                     product_name,
                     description,
                     price,
                     is_recurring,
+                    is_archived,
                     recurring_option,
                     quantity,
-                    is_archived,
                     category_id
                 });
                 return res.status(201).json({ message: "Product created successfully.", newProduct });
@@ -40,7 +40,7 @@ export default async function productHandler(req, res) {
                         },
                         {
                             $match: {
-                                is_archived: false
+                                is_archived: true
                             }
                         }
                     ]);

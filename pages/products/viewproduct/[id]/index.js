@@ -46,14 +46,12 @@ export async function getServerSideProps({ params }) {
 
     }
     catch (error) {
-        console.log('Error loading category', error);
+        console.log('Error: ', error);
     }
     return { props: { productData, categories } };
 }
 
 const ViewProduct = ({ productData, categories }) => {
-console.log(productData)
-console.log(categories)
     return (
         <ProductAddEditFormComponent
             product={{
@@ -61,6 +59,9 @@ console.log(categories)
                 archived: productData?.is_archived,
                 description: productData?.description,
                 price: productData?.price?.$numberDecimal || 0,
+                recurring: productData?.is_recurring,
+                recurringOption: productData?.recurring_option,
+                quantity: productData?.quantity,
                 category: categories.find(category => category._id == productData.category_id)?.category_name,
                 categoryId: productData?.category_id,
                 categories: categories,

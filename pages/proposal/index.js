@@ -43,13 +43,13 @@ const Proposal = () => {
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
                         <Link href="/new-proposal/client-details" passHref>
-                            <Button variant="contained" component="a" sx={{backgroundColor: '#405CAA'}}>
+                            <Button variant="contained" component="a" sx={{backgroundColor: '#253C7C'}}>
                                 Create New Proposal +
                             </Button>
                         </Link>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<FilterAltIcon />} sx={{backgroundColor: '#405CAA'}}>
+                        <Button variant="contained" startIcon={<FilterAltIcon />} sx={{backgroundColor: '#253C7C'}}>
                             Archival
                         </Button>
                     </Grid>
@@ -79,12 +79,7 @@ const Proposal = () => {
                                 />
                             )}
                         />
-                    </Grid>
-                    <Grid item xs={6} sm={4} md={2} container justifyContent="flex-end">
-                        <Button variant="outlined" startIcon={<FilterAltIcon />}>
-                            Filter
-                        </Button>
-                    </Grid>
+                    </Grid>     
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                     {filteredData
@@ -110,7 +105,7 @@ const Proposal = () => {
                                         </Typography>
                                     </Stack>
                                     <Stack alignItems="center">
-                                        <Button variant="contained"  sx={{backgroundColor: '#405CAA', width:'30%', marginBottom:"10px"}}>
+                                        <Button variant="contained"  sx={{backgroundColor: '#253C7C', width:'30%', marginBottom:"10px"}}>
                                             View
                                         </Button>
                                     </Stack>

@@ -1,45 +1,60 @@
 import {
     Autocomplete, Box, Button, Card, Grid, Paper,
-    TextField, Typography, Stack, Pagination, ListItemAvatar
+    TextField, Typography, Stack, Pagination
 } from "@mui/material";
 import React, { useState, useEffect } from 'react';
 
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import Link from "next/link";
+import SearchIcon from '@mui/icons-material/Search';
 import ViewListIcon from '@mui/icons-material/ViewList';
+import Link from "next/link";
 import GridViewIcon from '@mui/icons-material/GridView';
 import ModuleViewComponent from "@/components/ModuleViewComponent";
 import ListViewComponent from "@/components/ListViewComponent";
+
 import SearchField from "@/components/SearchField";
-
-export async function getServerSideProps() {
-    let clientsData = [{}];
-    try {
-        //console.log(process.env.VERCEL_URL);
-        // const res = await fetch(process.env.VERCEL_URL + '/api/client', { cache: "no-store" });
-        const res = await fetch('http://localhost:3000/api/client', { cache: "no-store" });
-
-        // res.setHeader(
-        //     'Cache-Control',
-        //     'public, s-maxage=10, stale-while-revalidate=59'
-        //   )
-        if (!res.ok) {
-            throw new Error('Failed to fetch clients');
-        }
-        clientsData = await res.json();
-
-    }
-    catch (error) {
-        console.log('Error loading clients', error);
-    }
-    return { props: { clientsData } };
-}
-
 const itemsPerPage = 8;
 
-const Client = ({ clientsData }) => {
+export async function getServerSideProps(context) {
+    const { req } = context;
+    // Determine the base URL based on the environment (Vercel or local)
+    const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+    const host = req ? req.headers.host : window.location.hostname;
+    const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
+    const apiRoute = `${baseURL}/api/category/archival`;
+
+    let categoriesData = [];
+    try {
+        const res = await fetch(apiRoute, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                //'Authorization': `Basic ${Buffer.from('techcoders.nait@gmail.com:techCoders1234').toString('base64')}`,
+                // Include Authorization header if needed
+            },
+            // Additional options if needed
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text(); // or use `res.json()` if your API returns a JSON response
+            throw new Error(`Failed to fetch category: ${errorText}`);
+        }
+
+        categoriesData = await res.json();
+    } catch (error) {
+        console.error('Error loading categories', error);
+        // Pass the error message to the page's props or handle it as needed
+        return { props: { categoriesData, error: error.message } };
+    }
+
+    return { props: { categoriesData } };
+}
+
+
+
+const Category = ({ categoriesData }) => {
     const [page, setPage] = useState(1);
-    const [filteredData, setFilteredData] = useState(clientsData);
+    const [filteredData, setFilteredData] = useState(categoriesData);
     const [searchTerm, setSearchTerm] = useState('');
     const [propsData, setPropsData] = useState([]);
     const [viewMode, setViewMode] = useState('module');
@@ -51,31 +66,26 @@ const Client = ({ clientsData }) => {
     const handleSearchChange = (event, newValue) => {
         setSearchTerm(newValue);
         const lowercasedValue = newValue.toLowerCase();
-        const filtered = clientsData?.filter(item =>
-            item.client_name.toLowerCase().includes(lowercasedValue)
+        const filtered = categoriesData.filter(item =>
+            item.category_name.toLowerCase().includes(lowercasedValue)
         );
         setFilteredData(filtered);
         setPropsData(tranformPropData(filtered));
         setPage(1);
     };
 
-    const noOfPages = Math.ceil(filteredData?.length / itemsPerPage);
+    const noOfPages = Math.ceil(filteredData ? filteredData.length / itemsPerPage : 0);
 
     const tranformPropData = (data) => {
         return data
             ?.map(c => {
-                const primaryContact = c.contact_info?.find(contact => contact.is_primary === true);
-
                 return [
-                    { key: 'Title', column: 'Client Name', value: c.client_name, show: true },
-                    { key: 'Contact Name', column: 'Contact Name', value: primaryContact ? `${primaryContact.contact_firstname} ${primaryContact.contact_lastname}` : 'N/A', show: true },
-                    { key: 'Contact Email', column: 'Contact Email', value: primaryContact?.email || 'N/A', show: true },
-                    { key: 'Contact No', column: 'Contact No', value: primaryContact?.contact_no || 'N/A', show: true },
-                    { key: 'Active', column: 'Active', value: c.is_active ? 'Yes' : 'No', show: true },
-                    { key: 'Description', column: 'Description', value: c.description, show: viewMode === 'module' ? true : false },
+                    { key: 'Title', column: 'Category Name', value: c.category_name, show: true },
+                    { key: 'Description', column: 'Description', value: c.description, show: true },
+                    { key: 'Archived', column: 'Archived Name', value: c.is_archived ? 'Yes' : 'No', show: true },
                     { key: '_id', column: '_id', value: c._id, show: false },
-                    { key: 'editUrlPath', column: 'Edit', value: 'client/editclient', show: viewMode === 'module' ? false : true },
-                    { key: 'viewUrlPath', column: 'View', value: 'client/viewclient', show: viewMode === 'module' ? false : true },
+                    { key: 'editUrlPath', column: 'Edit', value: 'category/editcategory', show: viewMode === 'module' ? false : true },
+                    { key: 'viewUrlPath', column: 'View', value: 'category/viewcategory', show: viewMode === 'module' ? false : true },
                 ];
             });
     }
@@ -89,22 +99,22 @@ const Client = ({ clientsData }) => {
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
                     <Typography variant="h4" component="div" gutterBottom>
-                       All Clients
+                        Archived Categories
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
 
-                        <Link href={'/client/addclient'} >
-                            <Button variant="contained" sx={{backgroundColor: '#253C7C'}}>
-                                Create New Client +
+                        <Link href={'/category/addcategory'} >
+                            <Button variant="contained" sx={{ backgroundColor: '#253C7C' }}>
+                                Create New Category +
                             </Button>
                         </Link>
                     </Grid>
                     <Grid item>
-                        <Link href={'/client/archival'} >
-                            <Button variant="contained" startIcon={<FilterAltIcon />}>
-                                Archival
+                        <Link href={'/category/'} >
+                            <Button variant="contained" startIcon={<FilterAltIcon />} sx={{ backgroundColor: '#253C7C' }}>
+                            Back to All Categories
                             </Button>
                         </Link>
                     </Grid>
@@ -114,41 +124,18 @@ const Client = ({ clientsData }) => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={8} md={6}>
                         <Box
-                            mt={1}
                             sx={{
-                                width: '70%',
+                                width: '70%'
                             }}
                         >
                             <SearchField
-                                id={"searchClient"}
-                                options={clientsData?.map((client) => client.client_name)}
+                                id={"searchCategory"}
+                                options={categoriesData?.map((category) => category.category_name)}
                                 value={searchTerm}
                                 onInputChange={handleSearchChange}
                             />
                         </Box>
-                        {/* <Autocomplete
-                            id="searchClient"
-                            freeSolo
-                            options={clientsData?.map((client) => client.client_name)}
-                            value={searchTerm}
-                            onInputChange={handleSearchChange}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Search Client"
-                                    variant="outlined"
-                                    fullWidth
-                                    InputProps={{
-                                        ...params.InputProps,
-                                        startAdornment: (
-                                            <SearchIcon sx={{ mr: 2 }} />
-                                        ),
-                                    }}
-                                />
-                            )}
-                        /> */}
                     </Grid>
-
                     <Box display="flex" justifyContent="flex-start">
                         <Button onClick={() => setViewMode('list')}>
                             <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C' }} />
@@ -157,12 +144,13 @@ const Client = ({ clientsData }) => {
                             <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C' }} />
                         </Button>
                     </Box>
-
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                     {propsData ?
                         viewMode === 'list' ?
-                            <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
+                            <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                                <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
+                            </Grid>
                             :
                             propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
                                 ?.map((data, index) =>
@@ -192,8 +180,8 @@ const Client = ({ clientsData }) => {
                 </Box>
             </Paper>
 
-        </Box >
+        </Box>
     );
 };
 
-export default Client;
+export default Category;

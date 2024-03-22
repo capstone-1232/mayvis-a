@@ -5,8 +5,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import loginLogo from "../../public/assets/images/login_head.png";
-import { GoogleLogin } from '@react-oauth/google';
-import { GoogleOAuthProvider } from "@react-oauth/google";
+// import { GoogleLogin } from '@react-oauth/google';
+// import { GoogleOAuthProvider } from "@react-oauth/google";
+import { signIn, signOut, useSession } from "next-auth/react"
 import { useRouter } from 'next/router';
 
 const slideshowImages = [
@@ -17,7 +18,7 @@ const slideshowImages = [
 
 const LoginSignup = () => {
     const paperStyle = { padding: 20, width: 600, margin: "0 auto", borderRadius: 20, position: 'relative', zIndex: 2 }
-    const avatarStyle = { backgroundColor: '#1bbd7e' }
+    const avatarStyle = { backgroundColor: '#253C7C' }
     const btnstyle = { margin: '8px 0', borderRadius: 5, height: 40 }
 
     const [currentImage, setCurrentImage] = useState(0);
@@ -30,6 +31,8 @@ const LoginSignup = () => {
     const [showMsg, setShowMsg] = useState(false);
     const [msg, setMsg] = useState('');
     const [severity, setSeverity] = useState('error')
+
+    const { data: session } = useSession();
 
     const router = useRouter();
     const AuthLogin = () => {
@@ -143,8 +146,17 @@ const LoginSignup = () => {
         }
     }
 
+    const loginButtonOAuth = () => {
+        if (!session) {
+            return (
+                    <Button onClick={() => signIn('google')} color='primary' variant="contained" sx={{backgroundColor:'#253C7C'}} style={btnstyle} fullWidth>Sign in with Google</Button>
+            );
+        }
+    
+    }
+
     return (
-        <GoogleOAuthProvider>
+        <>
             <Grid container style={{
                 position: 'absolute',
                 top: 0,
@@ -189,15 +201,15 @@ const LoginSignup = () => {
                                 },
                             },
                             '.Mui-selected': {
-                                backgroundColor: '#1976d2',
+                                backgroundColor: '#253C7C',
                                 color: '#ffffff !important',
-                                borderColor: '#1976d2',
+                                borderColor: '#253C7C',
                                 zIndex: 1,
                                 '&:not(:first-of-type)': {
-                                    borderLeft: '1px solid #1976d2',
+                                    borderLeft: '1px solid #253C7C',
                                 },
                                 '&:not(:last-child)': {
-                                    borderRight: '1px solid #1976d2',
+                                    borderRight: '1px solid #253C7C',
                                 },
                             },
                             '.MuiTabs-indicator': {
@@ -217,9 +229,9 @@ const LoginSignup = () => {
                         </Grid>
                         <Stack spacing={2}>
                             <form onSubmit={loginUser}>
-                                <TextField label='Email' placeholder='Enter email' variant="outlined" fullWidth required onChange={(e) => setEmailAddress(e.target.value)} sx={{marginBottom:"10px"}}/>
+                                <TextField label='Email' placeholder='Enter email' variant="outlined" fullWidth required onChange={(e) => setEmailAddress(e.target.value)} sx={{ marginBottom: "10px" }} />
                                 <TextField label='Password' placeholder='Enter password' type='password' variant="outlined" fullWidth required onChange={(e) => setPassword(e.target.value)} />
-                                <Button type='submit' color='primary' variant="contained" style={btnstyle} fullWidth>Sign in</Button>
+                                <Button type='submit' color='primary' variant="contained" sx={{backgroundColor:'#253C7C'}} style={btnstyle} fullWidth>Sign in</Button>
                             </form>
                             <Typography>
                                 <Link href="#">Forgot password?</Link>
@@ -229,7 +241,7 @@ const LoginSignup = () => {
                                 <span style={{ margin: '0 10px', fontWeight: 'bold', color: '#000' }}>or</span>
                                 <span style={{ flexGrow: 1, height: '1px', backgroundColor: '#000' }}></span>
                             </div>
-                            <GoogleLogin
+                            {/* <GoogleLogin
                                 onSuccess={(credentialResponse) => {
                                     console.log(credentialResponse);
                                 }}
@@ -237,7 +249,10 @@ const LoginSignup = () => {
                                     console.log('Login Failed');
                                 }}
                                 theme='filled_blue'
-                            />
+                            /> */}
+
+                            {loginButtonOAuth()}
+
                             <Typography style={{ paddingTop: '8px' }}> Do you have an account?
                                 <Link href="#" onClick={() => setActiveTab(1)}>Sign Up</Link>
                             </Typography>
@@ -259,7 +274,7 @@ const LoginSignup = () => {
                                 <TextField label='Password' placeholder='Enter password' type='password' variant="outlined" fullWidth required onChange={(e) => setPassword(e.target.value)} />
                                 <TextField label='Confirm Password' placeholder='Confirm password' type='password' variant="outlined" fullWidth required onChange={(e) => setConfirmPassword(e.target.value)} />
                                 {/* <Link href={'/login/signup/'} > */}
-                                <Button type='submit' color='primary' variant="contained" style={{ btnstyle, paddingTop: '15px' }} fullWidth>Sign up</Button>
+                                <Button type='submit' color='primary' variant="contained" sx={{backgroundColor:'#253C7C'}} style={{ btnstyle, paddingTop: '15px' }} fullWidth>Sign up</Button>
                                 {/* </Link> */}
                                 <Typography style={{ paddingTop: '15px' }}> Already have an account?
                                     <Link href="#" onClick={() => setActiveTab(0)}>Login</Link>
@@ -283,7 +298,7 @@ const LoginSignup = () => {
                     {msg}
                 </Alert>
             </Snackbar>
-        </GoogleOAuthProvider>
+        </>
     );
 };
 

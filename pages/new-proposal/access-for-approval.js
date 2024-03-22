@@ -65,7 +65,7 @@ const AccessForApproval = () => {
                     py: 1.5,
                     px: 10,
                     borderRadius: 5,
-                    bgcolor: '#405CAA',
+                    bgcolor: '#253C7C',
                   }}
                   onClick={handleDeactivateLink}
                 >
@@ -115,7 +115,7 @@ const AccessForApproval = () => {
                         py: 1.5,
                         px: 8,
                         borderRadius: 3,
-                        bgcolor: '#405CAA',
+                        bgcolor: '#253C7C',
                       }}
                     >
                       Add To List
@@ -144,7 +144,7 @@ const AccessForApproval = () => {
               sx={{
                 py: 1.5,
                 borderRadius: 3,
-                bgcolor: '#405CAA',
+                bgcolor: '#253C7C',
                 width: '15%',
                 marginRight: '40px'
               }}
@@ -157,7 +157,7 @@ const AccessForApproval = () => {
               sx={{
                 py: 1.5,
                 borderRadius: 3,
-                bgcolor: '#405CAA',
+                bgcolor: '#253C7C',
                 width: '15%',
               }}
               onClick={handleBack}

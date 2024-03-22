@@ -62,7 +62,7 @@
 
 
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', mt: '5rem' }}>
-            <button onClick={() => console.log('Cancelled')} style={{ padding: '0.5rem 1rem', borderRadius: '10px', border: 'none', backgroundColor: '#405CAA', color: 'white', cursor: 'pointer' }}>Cancel</button>
+            <button onClick={() => console.log('Cancelled')} style={{ padding: '0.5rem 1rem', borderRadius: '10px', border: 'none', backgroundColor: '#253C7C', color: 'white', cursor: 'pointer' }}>Cancel</button>
             <button onClick={() => console.log('Saved')} style={{ padding: '0.5rem 1rem', borderRadius: '10px', border: 'none', backgroundColor: '#2A987A', color: 'white', cursor: 'pointer' }}>Save</button>
           </Box>
         </Paper>

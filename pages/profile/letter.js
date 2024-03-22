@@ -48,7 +48,7 @@ export default function Letter() {
         <Box sx={{height:'50vh'}}><RTextEditor /></Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: '3rem' }}>
-          <button onClick={saveContent} style={{ padding: '1rem 1.5rem', borderRadius: '5px', border: 'none', backgroundColor: '#405CAA', color: 'white', cursor: 'pointer' }}>
+          <button onClick={saveContent} style={{ padding: '1rem 1.5rem', borderRadius: '5px', border: 'none', backgroundColor: '#253C7C', color: 'white', cursor: 'pointer' }}>
             Save
           </button>
         </Box>
