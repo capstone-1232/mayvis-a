@@ -7,45 +7,53 @@ import {
   Container
 } from '@mui/material';
 
-import SearchBarWithButton from './SearchField';
+import SearchField from './SearchField';
 import CategoriesAccordion from './CustomAccordion';
 
-const SelectDeliverables = () => {
+const SelectDeliverables = ({ onAddDeliverable }) => {
   const [categoriesData, setCategoriesData] = useState([]);
 
-  const getCategories = async () => {
+  const getProductDetails = async (productId) => {
+    const response = await fetch(`/api/product/${productId}`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch product details');
+    }
+    return response.json();
+  };
+
+  useEffect(() => {
+    const fetchCategoriesAndProducts = async () => {
       try {
-          const res = await fetch('http://localhost:3001/api/categories', { cache: 'no-store' });
+          const res = await fetch('/api/category', { cache: 'no-store' });
           if (!res.ok) {
               throw new Error('Failed to fetch categories');
           }
-          const json = await res.json();
+          let categories = await res.json();
+          categories = Array.isArray(categories) ? categories : [];
+          console.log(categories);
 
-          setCategoriesData(json);
+          const categoriesWithProducts = await Promise.all(categories.map(async (category) => {
+            if (!Array.isArray(category.product_id)) {
+                console.warn(`Category ${category._id} does not have product_id as an array`);
+                return { ...category, products: [] }; // Default to empty products array if product_id is not as expected
+            }
+            const productDetailsPromises = category.product_id.map(productId => getProductDetails(productId));
+            const products = await Promise.all(productDetailsPromises);
+            return { ...category, products };
+          }));
+
+          setCategoriesData(categoriesWithProducts);
+      } catch (error) {
+          console.log('Error loading categories and products:', error);
       }
-      catch (error) {
-          console.log('Error loading categories', error);
-      }
-  }
+    };
 
-  getCategories();
+    fetchCategoriesAndProducts();
+  }, []);
 
-  const sampleCategories = [
-    {
-      name: 'Web Development',
-      products: [
-        { name: 'Website Redesign', price: 3500.00, description: 'Complete overhaul of your current website to improve user experience.' },
-        { name: 'SEO Optimization Package', price: 1000.00, description: 'Audit and enhancement of your website SEO to improve search engine.' },
-      ],
-    },
-    {
-      name: 'Digital Marketing',
-      products: [
-        { name: 'Digital Marketing Strategy', price: 2000.00, description: 'Comprehensive digital marketing plan to increase online visibility.' },
-        { name: 'Social Media Management', price: 1500.00, description: 'Monthly management of social media accounts to increase engagement.' },
-      ],
-    },
-  ];
+  const handleAddProduct = (product) => {
+    onAddDeliverable(product);
+  };
   
   return (
     <Container>
@@ -54,8 +62,18 @@ const SelectDeliverables = () => {
           Select Deliverables
         </Typography>
       </Box>
-      <SearchBarWithButton/>
-      <CategoriesAccordion categories={sampleCategories} />
+      <Box
+        sx={{
+          width: '76%'
+      }}
+      >
+        <SearchField/>
+      </Box>
+
+      <CategoriesAccordion 
+        categories={categoriesData}
+        onAddToDeliverables={handleAddProduct}
+      />
     </Container>
   );
 };

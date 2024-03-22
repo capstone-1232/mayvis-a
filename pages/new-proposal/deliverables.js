@@ -9,6 +9,7 @@ import ProposalTotal from '@/components/ProposalTotal';
 
 const Deliverables = () => {
   const [activeStep, setActiveStep] = useState(3);
+  const [selectedDeliverables, setSelectedDeliverables] = useState([]);
   const router = useRouter();
 
   const handleSubmit = (e) => {
@@ -22,6 +23,14 @@ const Deliverables = () => {
 
   const handleBack = () => {
     router.back();
+  };
+
+  const handleAddDeliverable = (deliverable) => {
+    setSelectedDeliverables((prevDeliverables) => [...prevDeliverables, deliverable]);
+  };
+
+  const handleDeleteDeliverable = (index) => {
+    setSelectedDeliverables((prevDeliverables) => prevDeliverables.filter((_, i) => i !== index));
   };
 
   return ( <>
@@ -57,7 +66,7 @@ const Deliverables = () => {
               elevation={5} 
               sx={{ p: 4, mt: 10, mb: 1, borderRadius: 2 }}
           >
-            <SelectedDeliverables />
+            <SelectedDeliverables deliverables={selectedDeliverables} onDelete={handleDeleteDeliverable} />
           </Paper>
           
           <Paper
@@ -73,7 +82,7 @@ const Deliverables = () => {
             sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2 }}
         >
             <Box sx={{ flex: '60%' }}>
-                <SelectDeliverables />
+              <SelectDeliverables onAddDeliverable={handleAddDeliverable} />
             </Box>
         </Paper>
       </Box>

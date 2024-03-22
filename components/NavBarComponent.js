@@ -85,8 +85,10 @@ function NavBarComponent(props) {
             onClose={handleMenuClose}
         >
             <MenuItem onClick={handleMenuClose}>Home</MenuItem>
+            <MenuItem component={Link} href="/profile/edit-profile">My Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My Proposals</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Setup Customer Letter</MenuItem>
+            <MenuItem component={Link} href="/profile/letter">Setup Custom Letter</MenuItem>
+            <MenuItem component={Link} href="/profile/email">Setup Email Template</MenuItem>
             <Divider />
             <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
 
@@ -145,15 +147,60 @@ function NavBarComponent(props) {
             <Stack sx={{ backgroundColor: '#405CAA', height: '100%', marginTop: 9.3 }}>
                 <Box sx={{ overflow: 'auto' }}>
                     <List>
-                        {menuItems.slice(0, -1).map((item) => ( // Exclude the logout item
-                            <Link href={item.href} passHref key={item.text}>
-                                <ListItem disablePadding>
-                                    <ListItemButton
-                                        sx={{
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
+                        {menuItems.slice(0, -1).map((item,index) => ( // Exclude the logout item
+                            <Link href={item.href} legacyBehavior key={index}>
+                                <a style={{ textDecoration: 'none' }}>
+                                    <ListItem key={item.text} disablePadding sx={{ justifyContent: 'center' }}>
+                                    
+                                        <ListItemButton
+                                            sx={{ 
+                                                flexDirection: 'column', 
+                                                alignItems: 'center', 
+                                                color: 'white', 
+                                                marginTop: '1rem',
+                                                '&:hover': {
+                                                    backgroundColor: '#3AC6ED',
+                                                    '.MuiListItemText-root .MuiTypography-root': {
+                                                        color: 'white',
+                                                    },
+                                                    '.MuiListItemIcon-root': {
+                                                        color: 'white',
+                                                    },
+                                                },
+                                            }}>
+                                            <ListItemIcon sx={{ fontSize: '3rem', color: 'white', minWidth: 'auto' }}>
+                                                {React.cloneElement(item.icon, { fontSize: 'large' })}
+                                            </ListItemIcon>
+                                            <ListItemText 
+                                                primary={item.text} 
+                                                sx={{ 
+                                                    '& .MuiTypography-root': { 
+                                                        fontSize: '1.25rem', 
+                                                        color: '#3AC6ED',
+                                                        textAlign: 'center',
+                                                    } 
+                                                }} 
+                                            />
+                                        </ListItemButton>
+                                    
+                                    </ListItem>
+                                </a>
+                            </Link>
+                        ))}
+                    </List>
+                </Box>
+                <Box sx={{ mt: 'auto', width: '100%' }}>
+                    <Divider sx={{ backgroundColor: 'white' }} />
+                    <List>
+                        <Link href={'./login'} legacyBehavior>
+                            <a style={{ textDecoration: 'none' }}>
+                                <ListItem key="Logout" disablePadding sx={{ justifyContent: 'center' }}>
+                                
+                                    <ListItemButton 
+                                        sx={{ 
+                                            flexDirection: 'column', 
+                                            alignItems: 'center', 
                                             color: 'white',
-                                            marginTop: '1rem',
                                             '&:hover': {
                                                 backgroundColor: '#3AC6ED',
                                                 '.MuiListItemText-root .MuiTypography-root': {
@@ -163,66 +210,24 @@ function NavBarComponent(props) {
                                                     color: 'white',
                                                 },
                                             },
-                                            '.MuiListItemIcon-root': {
-                                                minWidth: 'auto',
-                                                justifyContent: 'center',
-                                                fontSize: '3rem',
-                                                color: 'white',
-                                            },
-                                            '.MuiListItemText-root .MuiTypography-root': {
-                                                fontSize: '1.25rem',
-                                                color: '#3AC6ED',
-                                                textAlign: 'center',
-                                                textDecoration: 'none',
-                                            },
-                                        }}
-                                    >
-                                        <ListItemIcon>
-                                            {React.cloneElement(item.icon, { fontSize: 'large' })}
+                                        }}>
+                                        <ListItemIcon sx={{ fontSize: '3rem', color: 'white', minWidth: 'auto' }}>
+                                            {React.cloneElement(menuItems[menuItems.length - 1].icon, { fontSize: 'large' })}
                                         </ListItemIcon>
-                                        <ListItemText primary={item.text} />
+                                        <ListItemText 
+                                            primary={menuItems[menuItems.length - 1].text} 
+                                            sx={{ 
+                                                '& .MuiTypography-root': { 
+                                                    fontSize: '1.25rem', 
+                                                    color: '#3AC6ED' 
+                                                } 
+                                            }} 
+                                        />
                                     </ListItemButton>
-                                </ListItem>
-                            </Link>
-                        ))}
-                    </List>
-
-                </Box>
-                <Box sx={{ mt: 'auto', width: '100%' }}>
-                    <Divider sx={{ backgroundColor: 'white' }} />
-                    <List><Link href={'./login'}>
-                        <ListItem key="Logout" disablePadding>
-
-                            <ListItemButton sx={{
-                                flexDirection: 'column', alignItems: 'center', color: 'white', '&:hover': {
-                                    backgroundColor: '#3AC6ED',
-                                    '.MuiListItemText-root .MuiTypography-root': {
-                                        color: 'white',
-                                    },
-                                    '.MuiListItemIcon-root': {
-                                        color: 'white',
-                                    },
-                                },
-                                '.MuiListItemIcon-root': {
-                                    minWidth: 'auto',
-                                    justifyContent: 'center',
-                                    fontSize: '3rem',
-                                    color: 'white',
-                                },
-                                '.MuiListItemText-root .MuiTypography-root': {
-                                    fontSize: '1.25rem',
-                                    color: '#3AC6ED',
-                                    textAlign: 'center',
-                                    textDecoration: 'none',
-                                }
-                            }}>
-                                <ListItemIcon sx={{ fontSize: '3rem', color: 'white' }}>
-                                    {React.cloneElement(menuItems[menuItems.length - 1].icon, { fontSize: 'large' })}
-                                </ListItemIcon>
-                                <ListItemText primary={menuItems[menuItems.length - 1].text} sx={{ '& .MuiTypography-root': { fontSize: '1.25rem', color: 'white' } }} />
-                            </ListItemButton>
-
-                        </ListItem> </Link>
+                                
+                                </ListItem> 
+                            </a>
+                        </Link>
                     </List>
                 </Box>
             </Stack>

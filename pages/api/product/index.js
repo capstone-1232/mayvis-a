@@ -8,17 +8,14 @@ export default async function productHandler(req, res) {
         case 'POST':
             // Create a new product
             try {
-                const { product_name, description, price, is_recurring, is_archived, notes, quantity, created_by, updated_by } = req.body;
+                // const { product_name, description, price, is_recurring, is_archived, notes, quantity, created_by, updated_by } = req.body;
+                const { product_name, description, price, is_archived, category_id } = req.body;
                 const newProduct = await Product.create({
                   product_name,
                   description,
                   price,
-                  is_recurring,
                   is_archived,
-                  notes,
-                  quantity,
-                  created_by,
-                  updated_by,
+                  category_id
                 });
                 return res.status(201).json({ message: "Product created successfully.", newProduct });
             } catch (error) {
@@ -28,35 +25,20 @@ export default async function productHandler(req, res) {
         case 'GET':
             // Retrieve all products or a specific product by ID
             try {
-                const { id } = req.query;
-                if (id) {
-                    const product = await Product.findById(id);
-                    if (!product) {
-                        return res.status(404).json({ message: "Product not found" });
-                    }
-                    return res.status(200).json(product);
-                } else {
-                    const products = await Product.find({});
+                const products = await Product//.find({});
+                    .aggregate([
+                        {
+                            $lookup: {
+                                localField: "created_by",
+                                from: "users",
+                                foreignField: "_id",
+                                as: "created_user"
+                            }
+                        }]);
                     return res.status(200).json(products);
-                }
             } catch (error) {
                 return res.status(500).json({ message: "Error fetching products", error: error.message });
             }
-
-        case 'PUT':
-            // Update a product
-            try {
-                const { id } = req.query;
-                const updateData = req.body;
-                const updatedProduct = await Product.findByIdAndUpdate(id, updateData, { new: true });
-                if (!updatedProduct) {
-                    return res.status(404).json({ message: "Product not found." });
-                }
-                return res.status(200).json({ message: "Product updated successfully.", updatedProduct });
-            } catch (error) {
-                return res.status(500).json({ message: "Error updating product", error: error.message });
-            }
-
         case 'DELETE':
             // Delete a product
             try {
@@ -71,7 +53,7 @@ export default async function productHandler(req, res) {
             }
 
         default:
-            res.setHeader('Allow', ['POST', 'GET', 'PUT', 'DELETE']);
+            res.setHeader('Allow', ['POST', 'GET', 'DELETE']);
             res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 }
