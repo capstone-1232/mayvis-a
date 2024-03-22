@@ -63,7 +63,7 @@ function CategoriesAccordion({ categories, onAddToDeliverables }) {
               aria-controls={`panel-${category._id}-content`}
               id={`panel-${category._id}-header`}
               sx={{
-                bgcolor: '#405caa',
+                bgcolor: '#253C7C',
                 color: 'white',
                 marginBottom: (index === categories.length - 1 || index === categories.findIndex(cat => cat.name === expandedPanel) - 1) ? 0 : 0.5,
               }}

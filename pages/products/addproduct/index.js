@@ -29,7 +29,6 @@ export async function getServerSideProps(context) {
 }
 
 const AddProduct = ({categories}) => {
-    console.log(categories);
     const insertProduct = async (dataFromChild) => {
         try {
             console.log(dataFromChild);
@@ -45,6 +44,9 @@ const AddProduct = ({categories}) => {
                         'product_name': dataFromChild.product_name,
                         'description': dataFromChild.description,
                         'price': dataFromChild.price,
+                        'recurring': dataFromChild?.is_recurring,
+                        'recurring_option': dataFromChild?.recurring_option,
+                        'quantity': dataFromChild?.quantity,
                         'is_archived': dataFromChild.is_archived,
                         'category_id': dataFromChild.category_id
                     })
@@ -65,6 +67,9 @@ const AddProduct = ({categories}) => {
                 archived: false,
                 description: '',
                 price: 0,
+                recurring: false,
+                recurring_option: '',
+                quantity: 1,
                 category: '',
                 categories: categories,
                 isLoading: false,

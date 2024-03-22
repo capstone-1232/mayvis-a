@@ -13,6 +13,10 @@ import CompletionProgressWidget from '@/components/CompletionProgressWidget';
 import RecentProposalWidget from '@/components/RecentProposalWidget';
 import styles from '@/styles/dashboard.module.css'
 
+import { useSession } from "next-auth/react"
+
+
+
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
@@ -20,9 +24,12 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }));
 
+
 export default function DashboardComponent() {
     const router = useRouter();
     const elevationValue = 12;
+
+    const { data: session } = useSession();
 
     const navigateToClientDetails = () => {
         router.push('/new-proposal/client-details');
@@ -36,7 +43,7 @@ export default function DashboardComponent() {
                         <Card elevation={elevationValue} className={styles.cardHeight}>
                             <CardContent sx={{textAlign:"center", marginTop:"60px"}}>
                                 <Typography gutterBottom variant="h3" component="div" sx={{fontWeight:"bold"}}>
-                                    Welcome back, Nina
+                                    Welcome back, {session ? session.user.name : ""}
                                 </Typography>
                                 <Typography variant="h5" color="text.secondary">
                                     Streamline your proposal process with our easy-to-use estimating tools
@@ -44,7 +51,7 @@ export default function DashboardComponent() {
                             </CardContent>
                             <CardActions className={"justifyContentCenter"}>
                                 <Button 
-                                    sx={{ backgroundColor: '#405CAA', color: 'white', margin: '0 1rem 1rem', alignItems: 'center', width: '20rem' }} 
+                                    sx={{ backgroundColor: '#253C7C', color: 'white', margin: '0 1rem 1rem', alignItems: 'center', width: '20rem' }} 
                                     variant='contained' 
                                     size="large"
                                     onClick={navigateToClientDetails}

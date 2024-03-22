@@ -17,7 +17,7 @@ export async function getServerSideProps() {
     try {
         //console.log(process.env.VERCEL_URL);
         // const res = await fetch(process.env.VERCEL_URL + '/api/client', { cache: "no-store" });
-        const res = await fetch('http://localhost:3000/api/client', { cache: "no-store" });
+        const res = await fetch('http://localhost:3000/api/client/archival', { cache: "no-store" });
 
         // res.setHeader(
         //     'Cache-Control',
@@ -89,7 +89,7 @@ const Client = ({ clientsData }) => {
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
                     <Typography variant="h4" component="div" gutterBottom>
-                       All Clients
+                       Archived Clients
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
@@ -102,9 +102,9 @@ const Client = ({ clientsData }) => {
                         </Link>
                     </Grid>
                     <Grid item>
-                        <Link href={'/client/archival'} >
+                        <Link href={'/client'} >
                             <Button variant="contained" startIcon={<FilterAltIcon />}>
-                                Archival
+                                Back to Active Clients
                             </Button>
                         </Link>
                     </Grid>

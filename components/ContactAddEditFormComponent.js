@@ -119,7 +119,7 @@ const ContactAddEditFormComponent = ({ contactData }) => {
                         <Grid item xs={12} container justifyContent="flex-end" spacing={2}>
                             <Grid item>
                                 <Link href={`/client/viewclient/${clientId}`} className="link" >
-                                    <Button variant="contained">
+                                    <Button variant="contained" sx={{backgroundColor: '#253C7C'}}>
                                         Back To Cient Info
                                     </Button>
                                 </Link>

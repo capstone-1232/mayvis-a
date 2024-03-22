@@ -99,22 +99,24 @@ const Category = ({ categoriesData }) => {
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
                     <Typography variant="h4" component="div" gutterBottom>
-                        Category
+                        All Categories
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
 
                         <Link href={'/category/addcategory'} >
-                            <Button variant="contained" sx={{ backgroundColor: '#405CAA' }}>
+                            <Button variant="contained" sx={{ backgroundColor: '#253C7C' }}>
                                 Create New Category +
                             </Button>
                         </Link>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<FilterAltIcon />} sx={{ backgroundColor: '#405CAA' }}>
-                            Archival
-                        </Button>
+                        <Link href={'/category/archival'} >
+                            <Button variant="contained" startIcon={<FilterAltIcon />} sx={{ backgroundColor: '#253C7C' }}>
+                                Archival
+                            </Button>
+                        </Link>
                     </Grid>
                 </Grid>
             </Grid>
@@ -126,7 +128,7 @@ const Category = ({ categoriesData }) => {
                                 width: '70%'
                             }}
                         >
-                            <SearchField 
+                            <SearchField
                                 id={"searchCategory"}
                                 options={categoriesData?.map((category) => category.category_name)}
                                 value={searchTerm}
@@ -136,10 +138,10 @@ const Category = ({ categoriesData }) => {
                     </Grid>
                     <Box display="flex" justifyContent="flex-start">
                         <Button onClick={() => setViewMode('list')}>
-                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1 }} />
+                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C'}} />
                         </Button>
                         <Button onClick={() => setViewMode('module')}>
-                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1 }} />
+                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C'}} />
                         </Button>
                     </Box>
                 </Grid>

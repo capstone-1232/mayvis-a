@@ -47,14 +47,14 @@ const ModuleViewComponent = ({ data }) => {
                     <Grid container spacing={3} justifyContent="center"  >
                         <Grid item >
                             <Link href={`/${data.find(item => item.key === 'viewUrlPath')?.value}/${data.find(item => item.key === '_id')?.value}`} className="link">
-                                <Button variant="contained">
+                                <Button variant="contained" sx={{backgroundColor: '#253C7C'}}>
                                     View
                                 </Button>
                             </Link>
                         </Grid>
                         <Grid item>
                             <Link href={`/${data.find(item => item.key === 'editUrlPath')?.value}/${data.find(item => item.key === '_id')?.value}`} className="link">
-                                <Button variant="contained">
+                                <Button variant="contained" sx={{backgroundColor: '#253C7C'}}>
                                     Edit
                                 </Button>
                             </Link>

@@ -45,7 +45,7 @@ export async function getServerSideProps({ params }) {
 
     }
     catch (error) {
-        console.log('Error loading category', error);
+        console.log('Error: ', error);
     }
     return { props: { productData, categories } };
 }
@@ -65,8 +65,11 @@ const EditProduct = ({ productData, categories }) => {
                         'product_name': dataFromChild.product_name,
                         'description': dataFromChild.description,
                         'price': dataFromChild.price,
+                        'is_recurring': dataFromChild.is_recurring,
+                        'recurring_option': productData?.recurring_option,
+                        'quantity': dataFromChild.quantity,
                         'is_archived': dataFromChild.is_archived,
-                        'category_id': dataFromChild.category_id
+                        'category_id': dataFromChild.category_id,
                     })
                 });
             return await res.json();
@@ -76,6 +79,7 @@ const EditProduct = ({ productData, categories }) => {
         }
 
     }
+    
 
     return (
         <ProductAddEditFormComponent
@@ -85,6 +89,9 @@ const EditProduct = ({ productData, categories }) => {
                 archived: productData.is_archived,
                 description: productData.description,
                 price: productData.price.$numberDecimal,
+                recurring: productData?.is_recurring,
+                recurringOption: productData?.recurring_option,
+                quantity: productData?.quantity,
                 category: categories.find(category => category._id == productData.category_id)?.category_name,
                 categoryId: productData.category_id,
                 categories: categories,

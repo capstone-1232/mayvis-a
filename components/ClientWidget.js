@@ -12,7 +12,7 @@ const ClientWidget = ({ elev }) => {
             </CardContent>
             <CardActions className={"justifyContentCenter"}>
                 <Link href={"/client/addclient"}>
-                    <Button variant='contained' sx={{ backgroundColor: '#405CAA', color: 'white', margin: '0 1rem 1rem', alignItems: 'center', width: '15rem' }} size="large">
+                    <Button variant='contained' sx={{ backgroundColor: '#253C7C', color: 'white', margin: '0 1rem 1rem', alignItems: 'center', width: '15rem' }} size="large">
                         + Add New
                     </Button>
                 </Link>
