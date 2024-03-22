@@ -27,6 +27,10 @@ const AccessForApproval = () => {
     router.push('/new-proposal/message');
   };
 
+  const handleClientView = () => {
+    router.push('/new-proposal/client-view-page');
+  };
+
   const handleBack = () => {
     router.back();
   };
@@ -148,7 +152,7 @@ const AccessForApproval = () => {
                 width: '15%',
                 marginRight: '40px'
               }}
-              onClick={handleBack}
+              onClick={handleClientView}
             >
               Client View
             </Button>

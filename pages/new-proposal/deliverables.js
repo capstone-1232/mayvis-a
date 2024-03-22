@@ -34,7 +34,7 @@ const Deliverables = () => {
   };
 
   return ( <>
-    <Box 
+    {/* <Box 
         sx={{
             position: 'fixed', 
             top: 75, 
@@ -58,20 +58,24 @@ const Deliverables = () => {
         <Box sx={{width: '87.1%'}}>
           <NewProposalStepper activeStep={activeStep} />
         </Box>
-    </Box>
-    <Container maxWidth="xl" position="relative">
-      <Box sx={{ display: 'flex', gap: '25px', alignItems: 'start', marginTop: '200px', justifyContent: 'center' }}>
-        <Box sx={{ flex: '40%' }}>
+    </Box> */}
+    <Typography variant="h3" align="left" sx={{ my: 5 }} gutterBottom>
+        New Proposal
+    </Typography>
+    <NewProposalStepper activeStep={activeStep} />
+    <Container maxWidth="xl">
+      <Box sx={{ display: 'flex', gap: '25px', alignItems: 'start', mt: 1, justifyContent: 'center' }}>
+        <Box sx={{width: '30%'}}>
           <Paper
               elevation={5} 
-              sx={{ p: 4, mt: 10, mb: 1, borderRadius: 2 }}
+              sx={{ p: 4, mt: 10, mb: 1, borderRadius: 2, width: '100%' }}
           >
             <SelectedDeliverables deliverables={selectedDeliverables} onDelete={handleDeleteDeliverable} />
           </Paper>
           
           <Paper
               elevation={5} 
-              sx={{ p: 4, mb: 5, borderRadius: 2 }}
+              sx={{ p: 4, mb: 5, borderRadius: 2, width: '100%' }}
           >
             <ProposalTotal />
           </Paper>
@@ -79,7 +83,7 @@ const Deliverables = () => {
 
         <Paper
             elevation={5} 
-            sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2 }}
+            sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, width: '60%', maxWidth: '60%' }}
         >
             <Box sx={{ flex: '60%' }}>
               <SelectDeliverables onAddDeliverable={handleAddDeliverable} />
@@ -87,7 +91,7 @@ const Deliverables = () => {
         </Paper>
       </Box>
 
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, width: '96%' }}>
         <Button
           variant="contained"
           sx={{

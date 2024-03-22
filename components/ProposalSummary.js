@@ -28,21 +28,34 @@ const ProposalSummary = () => {
   }
   
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <Box sx={{}}>
       <Typography variant="h5" component="h3" align="center" sx={{ marginBottom: 3 }}>
         Proposal Summary
       </Typography>
 
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" align="center" gutterBottom>
         Website Redesign
       </Typography>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, marginBottom: 3 }}>
-        <Typography variant="body1"><b>Status:</b> In Progress</Typography>
-        <Typography variant="body1"><b>Date Created:</b> March 10, 2024</Typography>
-        <Typography variant="body1"><b>Client Name:</b> James Davis</Typography>
-        <Typography variant="body1"><b>Client Contact:</b> jamesd@gmail.com</Typography>
-        <Typography variant="body1"><b>Created By:</b> Nicole Samuels</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10%', alignItems: 'center'}}>
+          <Typography variant="body1" sx={{ textAlign: 'start' }}>Status:</Typography>
+          <Typography>In Progress</Typography>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10%', alignItems: 'center' }}>
+          <Typography variant="body1">Date Created:</Typography>
+          <Typography>March 10, 2024</Typography>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10%', alignItems: 'center' }}>
+          <Typography variant="body1">Client Name:</Typography>
+          <Typography>James Davis</Typography>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10%', alignItems: 'center' }}>
+          <Typography variant="body1">Client Contact:</Typography>
+          <Typography>jamesd@gmail.com</Typography>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10%', alignItems: 'center' }}>
+          <Typography variant="body1">Created By:</Typography>
+          <Typography>Nicole Samuels</Typography>
       </Box>
 
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>

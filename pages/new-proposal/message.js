@@ -52,7 +52,7 @@ const Message = () => {
             This message will appear on the client proposal. Feel free to customize.
           </Typography>
           <form onSubmit={handleSubmit}>
-            <Box sx={{height:'40vh', paddingBottom: '20px' }}>
+            <Box sx={{height:'35vh', paddingBottom: '20px' }}>
               <RTextEditor />
             </Box>
           </form>
