@@ -59,7 +59,7 @@ const CategoryAddEditFormComponent = ({ category }) => {
     return (
         <form onSubmit={handleSubmit}>
             <Box sx={{ flexGrow: 1, padding: 2 }}>
-                <Paper elevation={12} sx={{ marginTop: 2, padding: 5 }}>
+                <Paper elevation={12} sx={{ marginTop: 2, padding: 5, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
                     <Grid container spacing={5} alignItems="center">
                         <Grid item xs={12}>
                             <Typography variant="h4" component="div" gutterBottom>

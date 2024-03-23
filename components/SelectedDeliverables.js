@@ -62,7 +62,7 @@ const SelectedDeliverables = ({ deliverables = [], onDelete }) => {
               }
               divider
               sx={{ 
-                bgcolor: '#253C7C', 
+                bgcolor: '#253C7C', borderRadius: '15px', 
                 mb: 1,
                 borderRadius: 3
               }}
