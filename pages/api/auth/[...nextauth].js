@@ -16,7 +16,12 @@ export default NextAuth({
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials) {
-                const res = await fetch("http://localhost:3000/api/user", {
+                // Determine the base URL based on the environment (Vercel or local)
+                const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+                const host = req ? req.headers.host : window.location.hostname;
+                const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
+                const apiRoute = `${baseURL}/api/user`;
+                const res = await fetch(apiRoute, {
                     method: 'POST',
                     headers: {
                         "Content-Type": "application/json",
