@@ -38,7 +38,7 @@ const AccessForApproval = () => {
       <Container sx={{ mt: 1 }} maxWidth={'100vh'}>
         <Paper
           elevation={5} 
-          sx={{ p: 4, mt: 5, mb: 5, borderRadius: 2 }}
+          sx={{ p: 4, mt: 5, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
         >
           <Typography variant='h6' sx={{ mb: 2, fontWeight: 'bold' }} gutterBottom>
             Link for the Proposal
@@ -77,7 +77,7 @@ const AccessForApproval = () => {
         </Paper>
         <Paper
           elevation={5} 
-          sx={{ p: 4, mt: 5, mb: 5, borderRadius: 2 }}
+          sx={{ p: 4, mt: 5, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
         >
           <Box sx={{ display: 'flex', gap: '5%' }}>
             <Box width={'55%'}>

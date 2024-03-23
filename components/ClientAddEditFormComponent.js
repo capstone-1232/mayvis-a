@@ -58,7 +58,7 @@ const ClientAddEditFormComponent = ({ client }) => {
     return (
         <form onSubmit={handleSubmit}>
             <Box sx={{ flexGrow: 1, padding: 2 }}>
-                <Paper elevation={12} sx={{ marginTop: 2, padding: 5 }}>
+                <Paper elevation={12} sx={{ marginTop: 2, padding: 5, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
                     <Grid container spacing={5} alignItems="center">
                         <Grid item xs={12}>
                             <Typography variant="h4" component="div" gutterBottom>
@@ -78,13 +78,13 @@ const ClientAddEditFormComponent = ({ client }) => {
                         <Grid item xs={12} container justifyContent="flex-end" spacing={2}>
                             <Grid item>
                                 <Link href={'/client'} >
-                                    <Button variant="contained" sx={{backgroundColor: '#253C7C'}}>
+                                    <Button variant="contained" sx={{backgroundColor: '#253C7C', borderRadius: '15px'}}>
                                         Cancel
                                     </Button>
                                 </Link>
                             </Grid>
                             <Grid item>
-                                <Button variant="contained" type="submit" disabled={isLoading}>
+                                <Button variant="contained" type="submit" disabled={isLoading} sx={{backgroundColor: '#253C7C', borderRadius: '15px'}}>
                                     {isLoading ? 'Saving...' : 'Save'}
                                 </Button>
                             </Grid>

@@ -147,9 +147,9 @@ const LoginSignup = () => {
     }
 
     const loginButtonOAuth = () => {
-        if (!session) {
+        if (session) {
             return (
-                    <Button onClick={() => signIn('google')} color='primary' variant="contained" sx={{backgroundColor:'#253C7C'}} style={btnstyle} fullWidth>Sign in with Google</Button>
+                    <Button onClick={() => signIn('google')} color='primary' variant="contained" sx={{backgroundColor:'#253C7C', borderRadius: '15px'}} style={btnstyle} fullWidth>Sign in with Google</Button>
             );
         }
     
@@ -180,7 +180,7 @@ const LoginSignup = () => {
                 </div>
 
                 {/* Login & Signup Paper */}
-                <Paper elevation={10} style={paperStyle}>
+                <Paper elevation={10} style={paperStyle} sx={{boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)'}}>
                     <Tabs
                         value={activeTab}
                         onChange={handleChangeTab}
@@ -231,7 +231,7 @@ const LoginSignup = () => {
                             <form onSubmit={loginUser}>
                                 <TextField label='Email' placeholder='Enter email' variant="outlined" fullWidth required onChange={(e) => setEmailAddress(e.target.value)} sx={{ marginBottom: "10px" }} />
                                 <TextField label='Password' placeholder='Enter password' type='password' variant="outlined" fullWidth required onChange={(e) => setPassword(e.target.value)} />
-                                <Button type='submit' color='primary' variant="contained" sx={{backgroundColor:'#253C7C'}} style={btnstyle} fullWidth>Sign in</Button>
+                                <Button type='submit' color='primary' variant="contained" sx={{backgroundColor:'#253C7C', borderRadius: '15px'}} style={btnstyle} fullWidth>Sign in</Button>
                             </form>
                             <Typography>
                                 <Link href="#">Forgot password?</Link>
@@ -274,7 +274,7 @@ const LoginSignup = () => {
                                 <TextField label='Password' placeholder='Enter password' type='password' variant="outlined" fullWidth required onChange={(e) => setPassword(e.target.value)} />
                                 <TextField label='Confirm Password' placeholder='Confirm password' type='password' variant="outlined" fullWidth required onChange={(e) => setConfirmPassword(e.target.value)} />
                                 {/* <Link href={'/login/signup/'} > */}
-                                <Button type='submit' color='primary' variant="contained" sx={{backgroundColor:'#253C7C'}} style={{ btnstyle, paddingTop: '15px' }} fullWidth>Sign up</Button>
+                                <Button type='submit' color='primary' variant="contained" sx={{backgroundColor:'#253C7C', borderRadius: '15px'}} style={{ btnstyle, paddingTop: '15px' }} fullWidth>Sign up</Button>
                                 {/* </Link> */}
                                 <Typography style={{ paddingTop: '15px' }}> Already have an account?
                                     <Link href="#" onClick={() => setActiveTab(0)}>Login</Link>

@@ -70,7 +70,7 @@ const ViewClient = ({ clientData }) => {
           </Grid>
         </Grid>
       </Grid>
-      <Paper elevation={12} sx={{ marginTop: 2, padding: 2 }}>
+      <Paper elevation={12} sx={{ marginTop: 2, padding: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={8} md={6}>
             <Autocomplete
@@ -175,7 +175,7 @@ const ViewClient = ({ clientData }) => {
               </React.Fragment>
             )) :
             <Grid item xs={12}>
-              <Card elevation={0} sx={{ padding: 2, textAlign: 'center' }}>No Record(s) Found</Card>
+              <Card elevation={0} sx={{ padding: 2, textAlign: 'center', boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>No Record(s) Found</Card>
             </Grid>
           }
         </Grid>

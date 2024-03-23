@@ -8,16 +8,18 @@ import Link from "next/link";
 
 const RecentProposalWidget = ({ elev }) => {
     return (
-        <Card elevation={elev} className={styles.cardHeight}>
+        <Card elevation={elev}
+            sx={{ boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
+            className={styles.cardHeight}>
             <CardContent className={styles.cardContentHeight}>
-                <Typography gutterBottom variant="h4" component="div" sx={{fontWeight:"bold"}}>
+                <Typography gutterBottom variant="h4" component="div" sx={{ fontWeight: "bold" }}>
                     Recent Proposal
                 </Typography>
                 <div className={`${styles.justifyContentCenter} ${styles.content}`}>
                     <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                         <ListItem alignItems="flex-start">
                             <ListItemAvatar>
-                            <Avatar sx={{ backgroundColor: 'green' }}>{" "}</Avatar>
+                                <Avatar sx={{ backgroundColor: 'green' }}>{" "}</Avatar>
                             </ListItemAvatar>
                             <ListItemText
                                 primary={
@@ -29,7 +31,7 @@ const RecentProposalWidget = ({ elev }) => {
                                             <Grid item xs={5}>
                                                 {"Jan 22, 2024"}
                                             </Grid>
-                                        </Grid>    
+                                        </Grid>
                                     </React.Fragment>
                                 }
                                 secondary={
@@ -61,7 +63,7 @@ const RecentProposalWidget = ({ elev }) => {
                                             <Grid item xs={5}>
                                                 {"Jan 22, 2024"}
                                             </Grid>
-                                        </Grid>    
+                                        </Grid>
                                     </React.Fragment>
                                 }
                                 secondary={
@@ -81,7 +83,7 @@ const RecentProposalWidget = ({ elev }) => {
                         <Divider variant="inset" component="li" />
                         <ListItem alignItems="flex-start">
                             <ListItemAvatar>
-                            <Avatar sx={{ backgroundColor: 'red' }}>{" "}</Avatar>
+                                <Avatar sx={{ backgroundColor: 'red' }}>{" "}</Avatar>
                             </ListItemAvatar>
                             <ListItemText
                                 primary={
@@ -93,7 +95,7 @@ const RecentProposalWidget = ({ elev }) => {
                                             <Grid item xs={5}>
                                                 {"Jan 22, 2024"}
                                             </Grid>
-                                        </Grid>    
+                                        </Grid>
                                     </React.Fragment>
                                 }
                                 secondary={
@@ -115,9 +117,9 @@ const RecentProposalWidget = ({ elev }) => {
             </CardContent>
             <CardActions className={"justifyContentCenter"}>
                 <Link href={"/proposal"}>
-                <Button variant='contained' sx={{ backgroundColor: '#253C7C', color: 'white', margin: '0 1rem 1rem', alignItems: 'center', width: '15rem' }} size="large">
-                    View All Proposals
-                </Button>
+                    <Button variant='contained' sx={{ backgroundColor: '#253C7C', borderRadius: '15px', color: 'white', margin: '0 1rem 1rem', alignItems: 'center', width: '15rem' }} size="large">
+                        View All Proposals
+                    </Button>
                 </Link>
             </CardActions>
         </Card>

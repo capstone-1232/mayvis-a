@@ -37,7 +37,8 @@
         <Paper elevation={3} style={paperStyle}             
               sx={{
               width:'80%',
-              maxWidth:'720px'
+              maxWidth:'720px',
+              boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)'
               }}>
           <h1>Category</h1>
 
@@ -62,7 +63,7 @@
 
 
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', mt: '5rem' }}>
-            <button onClick={() => console.log('Cancelled')} style={{ padding: '0.5rem 1rem', borderRadius: '10px', border: 'none', backgroundColor: '#253C7C', color: 'white', cursor: 'pointer' }}>Cancel</button>
+            <button onClick={() => console.log('Cancelled')} style={{ padding: '0.5rem 1rem', borderRadius: '10px', border: 'none', backgroundColor: '#253C7C', borderRadius: '15px', color: 'white', cursor: 'pointer' }}>Cancel</button>
             <button onClick={() => console.log('Saved')} style={{ padding: '0.5rem 1rem', borderRadius: '10px', border: 'none', backgroundColor: '#2A987A', color: 'white', cursor: 'pointer' }}>Save</button>
           </Box>
         </Paper>

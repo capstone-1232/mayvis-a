@@ -64,14 +64,14 @@ const Deliverables = () => {
         <Box sx={{ flex: '40%' }}>
           <Paper
               elevation={5} 
-              sx={{ p: 4, mt: 10, mb: 1, borderRadius: 2 }}
+              sx={{ p: 4, mt: 10, mb: 1, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
           >
             <SelectedDeliverables deliverables={selectedDeliverables} onDelete={handleDeleteDeliverable} />
           </Paper>
           
           <Paper
               elevation={5} 
-              sx={{ p: 4, mb: 5, borderRadius: 2 }}
+              sx={{ p: 4, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
           >
             <ProposalTotal />
           </Paper>
@@ -79,7 +79,7 @@ const Deliverables = () => {
 
         <Paper
             elevation={5} 
-            sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2 }}
+            sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
         >
             <Box sx={{ flex: '60%' }}>
               <SelectDeliverables onAddDeliverable={handleAddDeliverable} />

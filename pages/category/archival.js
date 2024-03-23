@@ -106,21 +106,21 @@ const Category = ({ categoriesData }) => {
                     <Grid item>
 
                         <Link href={'/category/addcategory'} >
-                            <Button variant="contained" sx={{ backgroundColor: '#253C7C' }}>
-                                Create New Category +
+                            <Button variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
+                               + Create New Category
                             </Button>
                         </Link>
                     </Grid>
                     <Grid item>
                         <Link href={'/category/'} >
-                            <Button variant="contained" startIcon={<FilterAltIcon />} sx={{ backgroundColor: '#253C7C' }}>
+                            <Button variant="contained" startIcon={<FilterAltIcon />} sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
                             Back to All Categories
                             </Button>
                         </Link>
                     </Grid>
                 </Grid>
             </Grid>
-            <Paper elevation={12} sx={{ marginTop: 2, padding: 2 }}>
+            <Paper elevation={12} sx={{ marginTop: 2, padding: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={8} md={6}>
                         <Box
@@ -138,10 +138,10 @@ const Category = ({ categoriesData }) => {
                     </Grid>
                     <Box display="flex" justifyContent="flex-start">
                         <Button onClick={() => setViewMode('list')}>
-                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C' }} />
+                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
                         </Button>
                         <Button onClick={() => setViewMode('module')}>
-                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C' }} />
+                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
                         </Button>
                     </Box>
                 </Grid>
@@ -161,7 +161,7 @@ const Category = ({ categoriesData }) => {
                                 ))
                         :
                         <Grid item xs={12}>
-                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center' }}>No Record(s) Found</Card>
+                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center', boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>No Record(s) Found</Card>
                         </Grid>
                     }
                 </Grid>
