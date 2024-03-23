@@ -3,7 +3,6 @@ import {
     TextField, Typography, Stack, Pagination
 } from "@mui/material";
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
@@ -22,9 +21,9 @@ export async function getServerSideProps(context) {
     const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
     const host = req ? req.headers.host : window.location.hostname;
     const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
-    const apiRoute = `${baseURL}/api/proposal`;
+    const apiRoute = `${baseURL}/api/category/archival`;
 
-    let proposalsData = [];
+    let categoriesData = [];
     try {
         const res = await fetch(apiRoute, {
             method: 'GET',
@@ -38,26 +37,24 @@ export async function getServerSideProps(context) {
 
         if (!res.ok) {
             const errorText = await res.text(); // or use `res.json()` if your API returns a JSON response
-            throw new Error(`Failed to fetch proposal: ${errorText}`);
+            throw new Error(`Failed to fetch category: ${errorText}`);
         }
 
-        proposalsData = await res.json();
+        categoriesData = await res.json();
     } catch (error) {
-        console.error('Error loading proposals', error);
+        console.error('Error loading categories', error);
         // Pass the error message to the page's props or handle it as needed
-        return { props: { proposalsData, error: error.message } };
+        return { props: { categoriesData, error: error.message } };
     }
 
-    return { props: { proposalsData } };
+    return { props: { categoriesData } };
 }
 
 
 
-const Proposal = ({ proposalsData }) => {
+const Category = ({ categoriesData }) => {
     const [page, setPage] = useState(1);
-    const router = useRouter();
-
-    const [filteredData, setFilteredData] = useState(proposalsData);
+    const [filteredData, setFilteredData] = useState(categoriesData);
     const [searchTerm, setSearchTerm] = useState('');
     const [propsData, setPropsData] = useState([]);
     const [viewMode, setViewMode] = useState('module');
@@ -66,15 +63,11 @@ const Proposal = ({ proposalsData }) => {
         setPage(newPage);
     };
 
-    const navigateToClientDetails = () => {
-        router.push('/new-proposal/client-details');
-    };
-
     const handleSearchChange = (event, newValue) => {
         setSearchTerm(newValue);
         const lowercasedValue = newValue.toLowerCase();
-        const filtered = proposalsData.filter(item =>
-            item.proposal_name.toLowerCase().includes(lowercasedValue)
+        const filtered = categoriesData.filter(item =>
+            item.category_name.toLowerCase().includes(lowercasedValue)
         );
         setFilteredData(filtered);
         setPropsData(tranformPropData(filtered));
@@ -87,12 +80,12 @@ const Proposal = ({ proposalsData }) => {
         return data
             ?.map(c => {
                 return [
-                    { key: 'Title', column: 'Proposal Name', value: c.proposal_name, show: true },
+                    { key: 'Title', column: 'Category Name', value: c.category_name, show: true },
                     { key: 'Description', column: 'Description', value: c.description, show: true },
                     { key: 'Archived', column: 'Archived Name', value: c.is_archived ? 'Yes' : 'No', show: true },
                     { key: '_id', column: '_id', value: c._id, show: false },
-                    { key: 'editUrlPath', column: 'Edit', value: 'proposal/editproposal', show: viewMode === 'module' ? false : true },
-                    { key: 'viewUrlPath', column: 'View', value: 'proposal/viewproposal', show: viewMode === 'module' ? false : true },
+                    { key: 'editUrlPath', column: 'Edit', value: 'category/editcategory', show: viewMode === 'module' ? false : true },
+                    { key: 'viewUrlPath', column: 'View', value: 'category/viewcategory', show: viewMode === 'module' ? false : true },
                 ];
             });
     }
@@ -106,26 +99,22 @@ const Proposal = ({ proposalsData }) => {
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
                     <Typography variant="h4" component="div" gutterBottom>
-                        All Proposals
+                        Archived Categories
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
 
-                        <Button
-                            sx={{ backgroundColor: '#253C7C', borderRadius: '15px', color: 'white', margin: '0 1rem 1rem', alignItems: 'center', width: '20rem' }}
-                            variant='contained'
-                            size="large"
-                            onClick={navigateToClientDetails}
-                        >
-                            + Create New Proposal
-                        </Button>
-
+                        <Link href={'/category/addcategory'} >
+                            <Button variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
+                               + Create New Category
+                            </Button>
+                        </Link>
                     </Grid>
                     <Grid item>
-                        <Link href={'/proposal/archival'} >
+                        <Link href={'/category/'} >
                             <Button variant="contained" startIcon={<FilterAltIcon />} sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
-                                Archival
+                            Back to All Categories
                             </Button>
                         </Link>
                     </Grid>
@@ -140,8 +129,8 @@ const Proposal = ({ proposalsData }) => {
                             }}
                         >
                             <SearchField
-                                id={"searchProposal"}
-                                options={proposalsData?.map((proposal) => proposal.proposal_name)}
+                                id={"searchCategory"}
+                                options={categoriesData?.map((category) => category.category_name)}
                                 value={searchTerm}
                                 onInputChange={handleSearchChange}
                             />
@@ -195,4 +184,4 @@ const Proposal = ({ proposalsData }) => {
     );
 };
 
-export default Proposal;
+export default Category;

@@ -3,61 +3,45 @@ import {
     TextField, Typography, Stack, Pagination
 } from "@mui/material";
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
-import ViewListIcon from '@mui/icons-material/ViewList';
-import Link from "next/link";
+//import productsData from "@/public/data/productsData.json";
 import GridViewIcon from '@mui/icons-material/GridView';
 import ModuleViewComponent from "@/components/ModuleViewComponent";
 import ListViewComponent from "@/components/ListViewComponent";
-
+import Link from "next/link";
+import ViewListIcon from '@mui/icons-material/ViewList';
 import SearchField from "@/components/SearchField";
-const itemsPerPage = 8;
 
-export async function getServerSideProps(context) {
-    const { req } = context;
-    // Determine the base URL based on the environment (Vercel or local)
-    const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
-    const host = req ? req.headers.host : window.location.hostname;
-    const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
-    const apiRoute = `${baseURL}/api/proposal`;
-
-    let proposalsData = [];
+export async function getServerSideProps() {
+    let productsData = [{}];
     try {
-        const res = await fetch(apiRoute, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                //'Authorization': `Basic ${Buffer.from('techcoders.nait@gmail.com:techCoders1234').toString('base64')}`,
-                // Include Authorization header if needed
-            },
-            // Additional options if needed
-        });
+        //console.log(process.env.VERCEL_URL);
+        // const res = await fetch(process.env.VERCEL_URL + '/api/client', { cache: "no-store" });
+        const res = await fetch('http://localhost:3000/api/products/archival', { cache: "no-store" });
 
+        // res.setHeader(
+        //     'Cache-Control',
+        //     'public, s-maxage=10, stale-while-revalidate=59'
+        //   )
         if (!res.ok) {
-            const errorText = await res.text(); // or use `res.json()` if your API returns a JSON response
-            throw new Error(`Failed to fetch proposal: ${errorText}`);
+            throw new Error('Failed to fetch clients');
         }
+        productsData = await res.json();
 
-        proposalsData = await res.json();
-    } catch (error) {
-        console.error('Error loading proposals', error);
-        // Pass the error message to the page's props or handle it as needed
-        return { props: { proposalsData, error: error.message } };
     }
-
-    return { props: { proposalsData } };
+    catch (error) {
+        console.log('Error loading clients', error);
+    }
+    return { props: { productsData } };
 }
 
+const itemsPerPage = 8;
 
-
-const Proposal = ({ proposalsData }) => {
+const Products = ({ productsData }) => {
     const [page, setPage] = useState(1);
-    const router = useRouter();
-
-    const [filteredData, setFilteredData] = useState(proposalsData);
+    const [filteredData, setFilteredData] = useState(productsData);
     const [searchTerm, setSearchTerm] = useState('');
     const [propsData, setPropsData] = useState([]);
     const [viewMode, setViewMode] = useState('module');
@@ -66,33 +50,32 @@ const Proposal = ({ proposalsData }) => {
         setPage(newPage);
     };
 
-    const navigateToClientDetails = () => {
-        router.push('/new-proposal/client-details');
-    };
-
     const handleSearchChange = (event, newValue) => {
         setSearchTerm(newValue);
         const lowercasedValue = newValue.toLowerCase();
-        const filtered = proposalsData.filter(item =>
-            item.proposal_name.toLowerCase().includes(lowercasedValue)
+        const filtered = productsData.filter(item =>
+            item.product_name.toLowerCase().includes(lowercasedValue)
         );
         setFilteredData(filtered);
         setPropsData(tranformPropData(filtered));
         setPage(1);
     };
 
-    const noOfPages = Math.ceil(filteredData ? filteredData.length / itemsPerPage : 0);
+    const noOfPages = Math.ceil(filteredData?.length / itemsPerPage);
 
     const tranformPropData = (data) => {
+        console.log(data);
         return data
             ?.map(c => {
                 return [
-                    { key: 'Title', column: 'Proposal Name', value: c.proposal_name, show: true },
-                    { key: 'Description', column: 'Description', value: c.description, show: true },
-                    { key: 'Archived', column: 'Archived Name', value: c.is_archived ? 'Yes' : 'No', show: true },
+                    { key: 'Title', column: 'Product Name', value: c.product_name, show: true },
+                    { key: 'Price', column: 'Price', value: c.price.$numberDecimal, show: true },
+                    { key: 'Description', column: 'Description', value: c.description, show: viewMode === 'module' ? true : false },
+                    { key: 'Created By', column: 'Created By', value: `${c.created_user.firstname} ${c.created_user.lastname}`, show: viewMode === 'module' ? false : true },
+                    { key: 'Created Date', column: 'Created Date', value: c.createdAt, show: viewMode === 'module' ? false : true },
                     { key: '_id', column: '_id', value: c._id, show: false },
-                    { key: 'editUrlPath', column: 'Edit', value: 'proposal/editproposal', show: viewMode === 'module' ? false : true },
-                    { key: 'viewUrlPath', column: 'View', value: 'proposal/viewproposal', show: viewMode === 'module' ? false : true },
+                    { key: 'editUrlPath', column: 'Edit', value: 'products/editproduct', show: viewMode === 'module' ? false : true },
+                    { key: 'viewUrlPath', column: 'View', value: 'products/viewproduct', show: viewMode === 'module' ? false : true },
                 ];
             });
     }
@@ -106,26 +89,21 @@ const Proposal = ({ proposalsData }) => {
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
                     <Typography variant="h4" component="div" gutterBottom>
-                        All Proposals
+                        Products/Services
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
-
-                        <Button
-                            sx={{ backgroundColor: '#253C7C', borderRadius: '15px', color: 'white', margin: '0 1rem 1rem', alignItems: 'center', width: '20rem' }}
-                            variant='contained'
-                            size="large"
-                            onClick={navigateToClientDetails}
-                        >
-                            + Create New Proposal
-                        </Button>
-
+                        <Link href={'/products/addproduct'} >
+                            <Button variant="contained" sx={{backgroundColor: '#253C7C', borderRadius: '15px'}}>
+                               + Add New Products
+                            </Button>
+                        </Link>
                     </Grid>
                     <Grid item>
-                        <Link href={'/proposal/archival'} >
-                            <Button variant="contained" startIcon={<FilterAltIcon />} sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
-                                Archival
+                        <Link href={'/products/'} >
+                            <Button variant="contained" startIcon={<FilterAltIcon />}>
+                                Back to All Products/Services
                             </Button>
                         </Link>
                     </Grid>
@@ -140,8 +118,8 @@ const Proposal = ({ proposalsData }) => {
                             }}
                         >
                             <SearchField
-                                id={"searchProposal"}
-                                options={proposalsData?.map((proposal) => proposal.proposal_name)}
+                                id={"searchProducts"}
+                                options={productsData?.map((products) => products.product_name)}
                                 value={searchTerm}
                                 onInputChange={handleSearchChange}
                             />
@@ -159,9 +137,7 @@ const Proposal = ({ proposalsData }) => {
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                     {propsData ?
                         viewMode === 'list' ?
-                            <Grid container spacing={2} sx={{ marginTop: 2 }}>
-                                <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
-                            </Grid>
+                            <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
                             :
                             propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
                                 ?.map((data, index) =>
@@ -195,4 +171,4 @@ const Proposal = ({ proposalsData }) => {
     );
 };
 
-export default Proposal;
+export default Products;

@@ -145,7 +145,7 @@ const ClientDetails = () => {
       <Container maxWidth="md" sx={{ mt: 4 }}>
         <Paper
           elevation={5} 
-          sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2 }}
+          sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
         >
           <Typography variant='h5' sx={{ mb: 5 }} gutterBottom>
             Input your client's information

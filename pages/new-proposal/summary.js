@@ -59,50 +59,59 @@ const Summary = () => {
         <Box sx={{ width: '30%' }}>
           <Paper
               elevation={5} 
-              sx={{ p: 4, mt: 10, mb: 1, borderRadius: 2, width: '100%' }}
+              sx={{ p: 4, mt: 10, mb: 1, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
           >
             <SelectedDeliverables />
           </Paper>
           
           <Paper
               elevation={5} 
-              sx={{ p: 4, mb: 5, borderRadius: 2, width: '100%' }}
+              sx={{ p: 4, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
           >
             <ProposalTotal />
           </Paper>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
-            <Button
-              variant="contained"
-              sx={{
-                py: 1.5,
-                borderRadius: 2,
-                width: '50%',
-              }}
-              onClick={handleBack}
-            >
-              Back
-            </Button>
-
-            <Button
-              variant="contained"
-              sx={{
-                py: 1.5,
-                ml: 3,
-                borderRadius: 2,
-                width: '50%',
-                bgcolor: '#2A987A',
-                '&:hover': {
-                  bgcolor: '#238b6a',
-                  boxShadow: 'none'
-                }
-              }}
-              // onClick={() => setModalOpen(true)}
-            >
-              Save For Later
-            </Button>
-          </Box>
         </Box>
 
+        <Box sx={{ flex: '60%' }}>
+            <Paper
+                elevation={5} 
+                sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
+            >
+                <ProposalSummary />
+            </Paper>
+        </Box>        
+      </Box>
+
+      <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
+        <Button
+          variant="contained"
+          sx={{
+            py: 1.5,
+            borderRadius: 2,
+            width: '15%',
+          }}
+          onClick={handleBack}
+        >
+          Back
+        </Button>
+
+        <Button
+          variant="contained"
+          sx={{
+            py: 1.5,
+            ml: 3,
+            borderRadius: 2,
+            width: '50%',
+            bgcolor: '#2A987A',
+            '&:hover': {
+              bgcolor: '#238b6a',
+              boxShadow: 'none'
+            }
+          }}
+          // onClick={() => setModalOpen(true)}
+        >
+          Save For Later
+        </Button>
         <Paper
             elevation={5} 
             sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, width: '60%', maxWidth: '60%' }}

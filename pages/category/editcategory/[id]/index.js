@@ -57,6 +57,7 @@ const EditCategory = ({categoryData}) => {
                 categoryName: data?.category_name,
                 archived: data?.is_archived,
                 description: data?.description,
+                productId: data?._id,
                 isLoading: false,
                 showMsg: false,
                 msg: '',

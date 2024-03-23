@@ -29,7 +29,7 @@ export default async function handler(req, res) {
                         ,
                         {
                             $match: {
-                                is_active: true
+                                is_active: false
                             }
                         }
 

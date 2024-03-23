@@ -42,13 +42,14 @@ export default function Letter() {
               maxWidth: '80vw',
               mx: 'auto',
               mt: 'auto',
+              boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)'
             }}>
         <h2 style={{ textAlign: 'left' }}>Customize Message</h2>
 
         <Box sx={{height:'50vh'}}><RTextEditor /></Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: '3rem' }}>
-          <button onClick={saveContent} style={{ padding: '1rem 1.5rem', borderRadius: '5px', border: 'none', backgroundColor: '#405CAA', color: 'white', cursor: 'pointer' }}>
+          <button onClick={saveContent} style={{ padding: '1rem 1.5rem', borderRadius: '5px', border: 'none', backgroundColor: '#253C7C', borderRadius: '15px', color: 'white', cursor: 'pointer' }}>
             Save
           </button>
         </Box>

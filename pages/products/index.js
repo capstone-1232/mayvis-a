@@ -12,6 +12,7 @@ import ModuleViewComponent from "@/components/ModuleViewComponent";
 import ListViewComponent from "@/components/ListViewComponent";
 import Link from "next/link";
 import ViewListIcon from '@mui/icons-material/ViewList';
+import SearchField from "@/components/SearchField";
 
 export async function getServerSideProps() {
     let productsData = [{}];
@@ -73,7 +74,7 @@ const Products = ({ productsData }) => {
                     { key: 'Created By', column: 'Created By', value: `${c.created_user.firstname} ${c.created_user.lastname}`, show: viewMode === 'module' ? false : true },
                     { key: 'Created Date', column: 'Created Date', value: c.createdAt, show: viewMode === 'module' ? false : true },
                     { key: '_id', column: '_id', value: c._id, show: false },
-                    { key: 'editUrlPath', column: 'Edit', value: 'products/editproduct', show: viewMode === 'module' ? false : true},
+                    { key: 'editUrlPath', column: 'Edit', value: 'products/editproduct', show: viewMode === 'module' ? false : true },
                     { key: 'viewUrlPath', column: 'View', value: 'products/viewproduct', show: viewMode === 'module' ? false : true },
                 ];
             });
@@ -94,49 +95,42 @@ const Products = ({ productsData }) => {
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
                         <Link href={'/products/addproduct'} >
-                            <Button variant="contained">
-                                Add New Products +
+                            <Button variant="contained" sx={{backgroundColor: '#253C7C', borderRadius: '15px'}}>
+                               + Add New Products
                             </Button>
                         </Link>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<FilterAltIcon />}>
-                            Archival
-                        </Button>
+                        <Link href={'/products/archival'} >
+                            <Button variant="contained" startIcon={<FilterAltIcon />} sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
+                                Archival
+                            </Button>
+                        </Link>
                     </Grid>
                 </Grid>
             </Grid>
-            <Paper elevation={12} sx={{ marginTop: 2, padding: 2 }}>
+            <Paper elevation={12} sx={{ marginTop: 2, padding: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={8} md={6}>
-                        <Autocomplete
-                            id="searchProducts"
-                            freeSolo
-                            options={productsData?.map((products) => products.product_name)}
-                            value={searchTerm}
-                            onInputChange={handleSearchChange}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Search Products"
-                                    variant="outlined"
-                                    fullWidth
-                                    InputProps={{
-                                        ...params.InputProps,
-                                        startAdornment: (
-                                            <SearchIcon sx={{ mr: 2 }} />
-                                        ),
-                                    }}
-                                />
-                            )}
-                        />
+                        <Box
+                            sx={{
+                                width: '70%'
+                            }}
+                        >
+                            <SearchField
+                                id={"searchProducts"}
+                                options={productsData?.map((products) => products.product_name)}
+                                value={searchTerm}
+                                onInputChange={handleSearchChange}
+                            />
+                        </Box>
                     </Grid>
                     <Box display="flex" justifyContent="flex-start">
                         <Button onClick={() => setViewMode('list')}>
-                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1 }} />
+                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
                         </Button>
                         <Button onClick={() => setViewMode('module')}>
-                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1 }} />
+                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
                         </Button>
                     </Box>
                 </Grid>
@@ -154,7 +148,7 @@ const Products = ({ productsData }) => {
                                 ))
                         :
                         <Grid item xs={12}>
-                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center' }}>No Record(s) Found</Card>
+                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center', boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>No Record(s) Found</Card>
                         </Grid>
                     }
                 </Grid>

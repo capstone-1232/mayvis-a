@@ -89,26 +89,28 @@ const Client = ({ clientsData }) => {
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
                     <Typography variant="h4" component="div" gutterBottom>
-                        Client
+                       All Clients
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
 
                         <Link href={'/client/addclient'} >
-                            <Button variant="contained">
-                                Create New Client +
+                            <Button variant="contained" sx={{backgroundColor: '#253C7C', borderRadius: '15px'}}>
+                                + Create New Client
                             </Button>
                         </Link>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<FilterAltIcon />}>
-                            Archival
-                        </Button>
+                        <Link href={'/client/archival'} >
+                            <Button variant="contained" startIcon={<FilterAltIcon />} sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
+                                Archival
+                            </Button>
+                        </Link>
                     </Grid>
                 </Grid>
             </Grid>
-            <Paper elevation={12} sx={{ marginTop: 2, padding: 2 }}>
+            <Paper elevation={12} sx={{ marginTop: 2, padding: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={8} md={6}>
                         <Box
@@ -117,7 +119,7 @@ const Client = ({ clientsData }) => {
                                 width: '70%',
                             }}
                         >
-                            <SearchField 
+                            <SearchField
                                 id={"searchClient"}
                                 options={clientsData?.map((client) => client.client_name)}
                                 value={searchTerm}
@@ -149,10 +151,10 @@ const Client = ({ clientsData }) => {
 
                     <Box display="flex" justifyContent="flex-start">
                         <Button onClick={() => setViewMode('list')}>
-                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1 }} />
+                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
                         </Button>
                         <Button onClick={() => setViewMode('module')}>
-                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1 }} />
+                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
                         </Button>
                     </Box>
 
@@ -171,7 +173,7 @@ const Client = ({ clientsData }) => {
                                 ))
                         :
                         <Grid item xs={12}>
-                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center' }}>No Record(s) Found</Card>
+                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center', boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>No Record(s) Found</Card>
                         </Grid>
                     }
                 </Grid>

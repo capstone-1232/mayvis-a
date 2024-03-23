@@ -15,7 +15,7 @@ import LogoutIcon from '@mui/icons-material/ExitToApp';
 import Link from 'next/link';
 
 
-const drawerWidth = 200;
+const drawerWidth = 140;
 
 function NavBarComponent(props) {
     const { window } = props;
@@ -142,47 +142,40 @@ function NavBarComponent(props) {
 
     const drawer = (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            {/* <Toolbar sx={{ marginTop:1 }} /> */}
-            {/* <Divider sx={{ backgroundColor: (mobileOpen ? '#405CAA' : 'transparent') }} /> */}
-            <Stack sx={{ backgroundColor: '#405CAA', height: '100%', marginTop: 9.3 }}>
+            <Stack sx={{ backgroundColor: '#253C7C', height: '100%', marginTop: 9.3 }}>
                 <Box sx={{ overflow: 'auto' }}>
                     <List>
-                        {menuItems.slice(0, -1).map((item,index) => ( // Exclude the logout item
+                        {menuItems.slice(0, -1).map((item, index) => ( // Exclude the logout item
                             <Link href={item.href} legacyBehavior key={index}>
                                 <a style={{ textDecoration: 'none' }}>
-                                    <ListItem key={item.text} disablePadding sx={{ justifyContent: 'center' }}>
-                                    
+                                    <ListItem disablePadding sx={{ justifyContent: 'center' }}>
                                         <ListItemButton
-                                            sx={{ 
-                                                flexDirection: 'column', 
-                                                alignItems: 'center', 
-                                                color: 'white', 
+                                            sx={{
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                color: 'white',
                                                 marginTop: '1rem',
                                                 '&:hover': {
                                                     backgroundColor: '#3AC6ED',
-                                                    '.MuiListItemText-root .MuiTypography-root': {
-                                                        color: 'white',
-                                                    },
-                                                    '.MuiListItemIcon-root': {
-                                                        color: 'white',
+                                                    '& .MuiListItemText-primary': {
+                                                        display: 'block', // Show the label
                                                     },
                                                 },
-                                            }}>
-                                            <ListItemIcon sx={{ fontSize: '3rem', color: 'white', minWidth: 'auto' }}>
-                                                {React.cloneElement(item.icon, { fontSize: 'large' })}
-                                            </ListItemIcon>
-                                            <ListItemText 
-                                                primary={item.text} 
-                                                sx={{ 
-                                                    '& .MuiTypography-root': { 
-                                                        fontSize: '1.25rem', 
-                                                        color: '#3AC6ED',
-                                                        textAlign: 'center',
-                                                    } 
-                                                }} 
-                                            />
+                                                '& .MuiListItemIcon-root': {
+                                                    color: 'white',
+                                                    minWidth: 'auto', // Ensure icons are centered
+                                                },
+                                                '& .MuiListItemText-primary': {
+                                                    display: 'none', // Hide the label by default
+                                                    fontSize: '1rem',
+                                                    color: 'white',
+                                                    textAlign: 'center',
+                                                }
+                                            }}
+                                        >
+                                            {React.cloneElement(item.icon, { fontSize: 'large' })}
+                                            <ListItemText primary={item.text} />
                                         </ListItemButton>
-                                    
                                     </ListItem>
                                 </a>
                             </Link>
@@ -192,40 +185,37 @@ function NavBarComponent(props) {
                 <Box sx={{ mt: 'auto', width: '100%' }}>
                     <Divider sx={{ backgroundColor: 'white' }} />
                     <List>
-                        <Link href={'./login'} legacyBehavior>
+                        {/* This section is for the Logout item */}
+                        <Link href={menuItems[menuItems.length - 1].href} legacyBehavior>
                             <a style={{ textDecoration: 'none' }}>
-                                <ListItem key="Logout" disablePadding sx={{ justifyContent: 'center' }}>
-                                
-                                    <ListItemButton 
-                                        sx={{ 
-                                            flexDirection: 'column', 
-                                            alignItems: 'center', 
+                                <ListItem disablePadding sx={{ justifyContent: 'center' }}>
+                                    <ListItemButton
+                                        sx={{
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
                                             color: 'white',
                                             '&:hover': {
                                                 backgroundColor: '#3AC6ED',
-                                                '.MuiListItemText-root .MuiTypography-root': {
-                                                    color: 'white',
-                                                },
-                                                '.MuiListItemIcon-root': {
-                                                    color: 'white',
+                                                '& .MuiListItemText-primary': {
+                                                    display: 'block', // Show the label on hover
                                                 },
                                             },
-                                        }}>
-                                        <ListItemIcon sx={{ fontSize: '3rem', color: 'white', minWidth: 'auto' }}>
-                                            {React.cloneElement(menuItems[menuItems.length - 1].icon, { fontSize: 'large' })}
-                                        </ListItemIcon>
-                                        <ListItemText 
-                                            primary={menuItems[menuItems.length - 1].text} 
-                                            sx={{ 
-                                                '& .MuiTypography-root': { 
-                                                    fontSize: '1.25rem', 
-                                                    color: '#3AC6ED' 
-                                                } 
-                                            }} 
-                                        />
+                                            '& .MuiListItemIcon-root': {
+                                                color: 'white',
+                                                minWidth: 'auto', // Ensure icons are centered
+                                            },
+                                            '& .MuiListItemText-primary': {
+                                                display: 'none', // Hide the label by default
+                                                fontSize: '1rem',
+                                                color: 'white',
+                                                textAlign: 'center',
+                                            }
+                                        }}
+                                    >
+                                        {React.cloneElement(menuItems[menuItems.length - 1].icon, { fontSize: 'large' })}
+                                        <ListItemText primary={menuItems[menuItems.length - 1].text} />
                                     </ListItemButton>
-                                
-                                </ListItem> 
+                                </ListItem>
                             </a>
                         </Link>
                     </List>
@@ -233,6 +223,7 @@ function NavBarComponent(props) {
             </Stack>
         </Box>
     );
+
 
     return (
         <Box sx={{ display: 'flex' }}>

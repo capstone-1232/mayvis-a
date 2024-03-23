@@ -32,7 +32,7 @@ function CategoriesAccordion({ categories, onAddToDeliverables }) {
       const price = product.price?.$numberDecimal ? parseFloat(product.price.$numberDecimal) : product.price;
       
       return (
-        <Card sx={{ flexGrow: 1, m: 1 }} key={product.id}>
+        <Card sx={{ flexGrow: 1, m: 1, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }} key={product.id}>
           <CardActionArea onClick={() => onAddToDeliverables(product)}>
             <CardContent>
               <Typography variant="h6" component="div">
@@ -63,8 +63,8 @@ function CategoriesAccordion({ categories, onAddToDeliverables }) {
               aria-controls={`panel-${category._id}-content`}
               id={`panel-${category._id}-header`}
               sx={{
-                bgcolor: '#405caa',
-                color: 'white',
+                bgcolor: '#253C7C',
+                color: 'white', borderRadius: '15px',
                 marginBottom: (index === categories.length - 1 || index === categories.findIndex(cat => cat.name === expandedPanel) - 1) ? 0 : 0.5,
               }}
             >
