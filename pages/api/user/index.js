@@ -24,7 +24,7 @@ export default async function handler(req, res) {
                         return res.status(401).json({ message: 'Authentication failed' });
                     }
 
-                    return res.status(200).json({ message: 'Login successful' });
+                    return res.status(200).json(user);
 
                 } else {
                     // const { email_address, firstname, lastname, password } = req.body;

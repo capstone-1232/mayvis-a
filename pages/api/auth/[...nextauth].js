@@ -1,13 +1,69 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
+import CredentialsProvider from "next-auth/providers/credentials"
 
 export default NextAuth({
-  // Configure one or more authentication providers
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-  ],
-  // Additional NextAuth configuration here
+    // Configure one or more authentication providers
+    providers: [
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        }),
+        CredentialsProvider({
+            name: 'Credentials',
+            credentials: {
+                username: { label: "Username", type: "text" },
+                password: { label: "Password", type: "password" }
+            },
+            async authorize(credentials) {
+                const res = await fetch("http://localhost:3000/api/user", {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        'email_address': credentials.emailAddress,
+                        'password': credentials.password,
+                        'type': credentials.type,
+                    }),
+                });
+                const user = await res.json();
+                // Assuming your API returns a status code of 200 for successful authentication
+                if (res.ok && user) {
+                    return user;
+                }
+                // Return null if user data could not be retrieved
+                return null;
+            }
+        }),
+    ],
+    // Add custom pages for sign in, sign out, error, verify request, etc.
+    pages: {
+        signIn: '/login',
+        signOut: '/login',
+    },
+    session: {
+        // Use JWT for session so we don't need a database
+        strategy: "jwt",
+    },
+    callbacks: {
+        async session({ session, token, user }) {
+            // Here, you can decide what data from the user object should be included in the session
+            // For example, if the user object includes an id, email, and name:
+            session.user.id = token.id;
+            session.user.email = token.email;
+            session.user.name = token.name;
+            return session;
+        },
+        async jwt({ token, user }) {
+            // If the user object is returned by `authorize`, it's passed here
+            if (user) {
+                token.id = user._id;
+                token.email = user.email_address;
+                token.name = `${user.firstname} ${user.lastname}`;
+            }
+            return token;
+        },
+    }
+    // Additional NextAuth configuration here
 });

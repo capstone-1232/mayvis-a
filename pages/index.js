@@ -16,7 +16,6 @@ import styles from '@/styles/dashboard.module.css'
 import { useSession } from "next-auth/react"
 
 
-
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
@@ -65,7 +64,7 @@ export default function DashboardComponent() {
                     </Item>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                    <Card className={styles.cardHeight} elevation={elevationValue}  sx={{boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)'}}>
+                    <Card className={styles.cardHeight} elevation={elevationValue} sx={{ boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <Item>

@@ -33,15 +33,8 @@ const LoginSignup = () => {
     const [severity, setSeverity] = useState('error')
 
     const { data: session } = useSession();
-
     const router = useRouter();
-    const AuthLogin = () => {
-        let isAuth = true;
-        // do authentication here
-        if (isAuth) {
-            router.push('/');
-        }
-    }
+    const { callbackUrl } = router.query; // Capture the callbackUrl from the query
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -79,28 +72,28 @@ const LoginSignup = () => {
     const loginUser = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('http://localhost:3000/api/user',
-                {
-                    method: 'POST',
-                    headers: { "Content-type": "application/json" },
-                    body: JSON.stringify({
-                        'email_address': emailAddress,
-                        'password': password,
-                        'type': "Log In"
-                    })
-                });
+            // Attempt to sign in
+            const result = await signIn('credentials', {
+                redirect: false, // Prevent NextAuth from redirecting
+                emailAddress,
+                password,
+                'type': "Log In",
+            });
 
-            const jsonRes = await res.json();
-
-            if (jsonRes.message == "Login successful") {
-                router.push('/');
+            if (result.error) {
+                // Handle error messages
+                //throw new Error(`Failed to log in, Error: ${result.error}`);
+                setMsg('Authentication Failed.')
+                setShowMsg(true);
+                return;
             }
-            console.log(jsonRes)
+            // Redirect to the secure page after sign in
+            router.push(callbackUrl || '/');
+
         }
         catch (e) {
             throw e;
         }
-
     }
 
     const handleMsg = (msg) => {
@@ -149,10 +142,18 @@ const LoginSignup = () => {
     const loginButtonOAuth = () => {
         if (session) {
             return (
-                    <Button onClick={() => signIn('google')} color='primary' variant="contained" sx={{backgroundColor:'#253C7C', borderRadius: '15px'}} style={btnstyle} fullWidth>Sign in with Google</Button>
+                //for testing only
+                <>
+                    <p>Signed in as {session.user.email}</p>
+                    <Button onClick={() => signOut()} color='primary' variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }} style={btnstyle} fullWidth>Sign out</Button>
+                </>
             );
         }
-    
+        else {
+            return (
+                <Button onClick={() => signIn('google', { callbackUrl: callbackUrl || '/' })} color='primary' variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }} style={btnstyle} fullWidth>Sign in with Google</Button>
+            );
+        }
     }
 
     return (
@@ -180,7 +181,7 @@ const LoginSignup = () => {
                 </div>
 
                 {/* Login & Signup Paper */}
-                <Paper elevation={10} style={paperStyle} sx={{boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)'}}>
+                <Paper elevation={10} style={paperStyle} sx={{ boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
                     <Tabs
                         value={activeTab}
                         onChange={handleChangeTab}
@@ -231,7 +232,7 @@ const LoginSignup = () => {
                             <form onSubmit={loginUser}>
                                 <TextField label='Email' placeholder='Enter email' variant="outlined" fullWidth required onChange={(e) => setEmailAddress(e.target.value)} sx={{ marginBottom: "10px" }} />
                                 <TextField label='Password' placeholder='Enter password' type='password' variant="outlined" fullWidth required onChange={(e) => setPassword(e.target.value)} />
-                                <Button type='submit' color='primary' variant="contained" sx={{backgroundColor:'#253C7C', borderRadius: '15px'}} style={btnstyle} fullWidth>Sign in</Button>
+                                <Button type='submit' color='primary' variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }} style={btnstyle} fullWidth>Sign in</Button>
                             </form>
                             <Typography>
                                 <Link href="#">Forgot password?</Link>
@@ -274,7 +275,7 @@ const LoginSignup = () => {
                                 <TextField label='Password' placeholder='Enter password' type='password' variant="outlined" fullWidth required onChange={(e) => setPassword(e.target.value)} />
                                 <TextField label='Confirm Password' placeholder='Confirm password' type='password' variant="outlined" fullWidth required onChange={(e) => setConfirmPassword(e.target.value)} />
                                 {/* <Link href={'/login/signup/'} > */}
-                                <Button type='submit' color='primary' variant="contained" sx={{backgroundColor:'#253C7C', borderRadius: '15px'}} style={{ btnstyle, paddingTop: '15px' }} fullWidth>Sign up</Button>
+                                <Button type='submit' color='primary' variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }} style={{ btnstyle, paddingTop: '15px' }} fullWidth>Sign up</Button>
                                 {/* </Link> */}
                                 <Typography style={{ paddingTop: '15px' }}> Already have an account?
                                     <Link href="#" onClick={() => setActiveTab(0)}>Login</Link>

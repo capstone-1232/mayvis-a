@@ -26,7 +26,7 @@ export default function Letter() {
   const paperStyle = {
     padding: '2rem',
     borderRadius: '8px',
-    boxShadow: '0px 3px 15px rgba(0,0,0,0.2)', // Adjust the shadow to match your design
+    boxShadow: '0px 5px 10px rgba(0,0,0,0.30)', // Adjust the shadow to match your design
   };
 
   return (
