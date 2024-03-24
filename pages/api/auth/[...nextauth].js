@@ -39,6 +39,7 @@ export default NextAuth({
                     }),
                 });
                 const user = await res.json();
+                console.log(user);
                 // Assuming your API returns a status code of 200 for successful authentication
                 if (res.ok && user) {
                     return user;
