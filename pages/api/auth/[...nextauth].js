@@ -2,16 +2,20 @@ import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from "next-auth/providers/credentials"
 
-console.log(process.env.GOOGLE_CLIENT_ID);
-console.log(process.env.GOOGLE_CLIENT_SECRET);
+const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+const apiRoute = `${baseURL}/api/user`; //"http://localhost:3000/api/user"
 
+console.log(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
+console.log(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET);
+console.log(apiRoute);
 
 export default NextAuth({
     // Configure one or more authentication providers
     providers: [
         GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+            clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
         }),
         CredentialsProvider({
             name: 'Credentials',
@@ -21,10 +25,8 @@ export default NextAuth({
             },
             async authorize(credentials) {
                 // Determine the base URL based on the environment (Vercel or local)
-                const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
-                const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
-                const apiRoute = `${baseURL}/api/user`; //"http://localhost:3000/api/user"
-                
+
+
                 const res = await fetch(apiRoute, {
                     method: 'POST',
                     headers: {
