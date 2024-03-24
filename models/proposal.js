@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const ProposalProductSchema = new Schema({
     product_id: { type: Schema.Types.ObjectId, ref: 'Product' },
-    price: { type: mongoose.Types.Decimal128, required: true },
+    price: { type: Number, required: true },
     quantity: Number,
     is_recurring: Boolean,
     recurring_option: String,
@@ -17,10 +17,10 @@ const ProposalSchema = new Schema({
     status: { type: String },
     suggestions: { type: String },
     is_archived: { type: Boolean, default: false },
-    proposal_total: { type: mongoose.Types.Decimal128 },
-    recurring_total: { type: mongoose.Types.Decimal128 },
-    project_total: { type: mongoose.Types.Decimal128 },
-    notes: { type: mongoose.Types.Decimal128 },
+    proposal_total: { type: Number },
+    recurring_total: { type: Number },
+    project_total: { type: Number },
+    notes: { type: String },
     updated_by: { type: Schema.Types.ObjectId, ref: 'User' },
     client_id: { type: Schema.Types.ObjectId, ref: 'Client' },
     products: [ProposalProductSchema],

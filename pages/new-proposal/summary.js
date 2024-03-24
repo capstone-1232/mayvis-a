@@ -84,6 +84,7 @@ const Summary = () => {
 
       const data = await response.json();
       console.log("Success:", data);
+      sessionStorage.clear();
     } catch (error) {
         console.error("Failed to save proposal:", error);
     }
