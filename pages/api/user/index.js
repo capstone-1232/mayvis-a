@@ -13,13 +13,15 @@ export default async function handler(req, res) {
                     if (!email_address || !password) {
                         return res.status(400).json({ message: 'email_address and password are required' });
                     }
-                    
+                    console.log(email_address);
                     const user = await User.findOne({ email_address });
+                    console.log(user);
                     if (!user) {
                         return res.status(401).json({ message: 'Authentication failed' });
                     }
 
                     const isMatch = password == user.password;
+                    console.log(isMatch);
                     if (!isMatch) {
                         return res.status(401).json({ message: 'Authentication failed' });
                     }

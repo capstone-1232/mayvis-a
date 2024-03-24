@@ -68,7 +68,7 @@ export default NextAuth({
             if (user) {
                 token.id = user._id;
                 token.email = user.email_address;
-                token.name = `${user.firstname} ${user.lastname}`;
+                token.name = user.name ?? `${user.firstname} ${user.lastname}`;
             }
             return token;
         },
