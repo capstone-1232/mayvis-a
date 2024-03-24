@@ -70,6 +70,6 @@ export default NextAuth({
             return token;
         },
     },
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: "4145a805fafd541a071924eed5742f83",
     // Additional NextAuth configuration here
 });
