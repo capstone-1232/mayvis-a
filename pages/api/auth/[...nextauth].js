@@ -6,7 +6,8 @@ const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
 const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
 const apiRoute = `${baseURL}/api/user`; //"http://localhost:3000/api/user"
 
-console.log(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
+console.log(`GOOGLE_CLIENT_ID: ${process.env.GOOGLE_CLIENT_ID}`);
+console.log(`NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}`);
 console.log(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET);
 console.log(apiRoute);
 
