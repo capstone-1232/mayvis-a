@@ -6,17 +6,12 @@ const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
 const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
 const apiRoute = `${baseURL}/api/user`; //"http://localhost:3000/api/user"
 
-console.log(`GOOGLE_CLIENT_ID: ${process.env.GOOGLE_CLIENT_ID}`);
-console.log(`NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}`);
-console.log(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET);
-console.log(apiRoute);
-
 export default NextAuth({
     // Configure one or more authentication providers
     providers: [
         GoogleProvider({
-            clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-            clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         }),
         CredentialsProvider({
             name: 'Credentials',
@@ -78,6 +73,6 @@ export default NextAuth({
             return token;
         },
     },
-    secret: "4145a805fafd541a071924eed5742f83",
+    secret: process.env.NEXTAUTH_SECRET,
     // Additional NextAuth configuration here
 });
