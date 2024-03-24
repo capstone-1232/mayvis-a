@@ -4,6 +4,14 @@ import User from "@/models/user";
 
 export default async function handler(req, res) {
     await connectMongoDB();
+    // Retrieve the API key from the request headers
+    const apiKey = req.headers['x-api-key'];
+
+    // Compare it to the environment variable value
+    if (apiKey !== process.env.DATA_API_KEY) {
+        return res.status(401).json({ message: 'Invalid API key' });
+    }
+
     switch (req.method) {
         case 'POST':
             const { email_address, firstname, lastname, password, type } = req.body;
