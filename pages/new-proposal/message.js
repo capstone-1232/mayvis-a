@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Container, Typography, Button, Paper, Stack, Box } from '@mui/material';
 
@@ -6,20 +6,27 @@ import NewProposalStepper from '@/components/Stepper';
 import RTextEditor from '@/components/RTextEditor';
 
 const Message = () => {
-  const [activeStep, setActiveStep] = useState(2);
   const router = useRouter();
+  const [activeStep, setActiveStep] = useState(2);
+  const [proposalMessage, setProposalMessage] = useState('');
 
-  const [clientDetails, setClientDetails] = useState({
-    firstName: '',
-    lastName: '',
-    companyName: '',
-  });
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const response = await fetch('/api/user/your-user-id');
+      const data = await response.json();
+      setProposalMessage(data.letter_message || '');
+    };
 
-  const handleChange = (e) => {
-    setClientDetails({
-      ...clientDetails,
-      [e.target.name]: e.target.value,
-    });
+    const storedProposalMessage = sessionStorage.getItem('proposalMessage');
+    if (storedProposalMessage) {
+      setProposalMessage(storedProposalMessage);
+    } else {
+      fetchUserData();
+    }
+  }, []);
+
+  const handleMessageChange = (newValue) => {
+    setProposalMessage(newValue);
   };
 
   const handleSubmit = (e) => {
@@ -28,6 +35,7 @@ const Message = () => {
   };
 
   const handleNext = () => {
+    sessionStorage.setItem('proposalMessage', proposalMessage);
     router.push('/new-proposal/deliverables');
   };
 
@@ -53,7 +61,10 @@ const Message = () => {
           </Typography>
           <form onSubmit={handleSubmit}>
             <Box sx={{height:'35vh', paddingBottom: '20px' }}>
-              <RTextEditor />
+              <RTextEditor
+                value={proposalMessage}
+                handleMessageChange={handleMessageChange}
+              />
             </Box>
           </form>
         </Paper>

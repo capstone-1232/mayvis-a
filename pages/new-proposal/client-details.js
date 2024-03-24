@@ -5,28 +5,33 @@ import { Autocomplete, Container, Typography, TextField, Button, Paper, Stack, B
 import NewProposalStepper from '@/components/Stepper';
 
 const ClientDetails = () => {
+  const router = useRouter();
   const [activeStep, setActiveStep] = useState(0);
   const [clientsData, setClientsData] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [allContacts, setAllContacts] = useState([]);
   const [filteredFirstnames, setFilteredFirstnames] = useState([]);
   const [filteredLastnames, setFilteredLastnames] = useState([]);
+  const [filteredEmail, setFilteredEmail] = useState([]);
   const [selectedFirstname, setSelectedFirstname] = useState(null);
   const [selectedLastname, setSelectedLastname] = useState(null);
+  const [selectedEmail, setSelectedEmail] = useState(null);
   const [showSaveClientButton, setShowSaveClientButton] = useState(false);
   const [companyName, setCompanyName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const router = useRouter();
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     const storedCompanyName = sessionStorage.getItem('companyName');
     const storedFirstName = sessionStorage.getItem('firstName');
     const storedLastName = sessionStorage.getItem('lastName');
+    const storedEmail = sessionStorage.getItem('email');
   
     if (storedCompanyName) setCompanyName(storedCompanyName);
     if (storedFirstName) setFirstName(storedFirstName);
     if (storedLastName) setLastName(storedLastName);
+    if (storedEmail) setEmail(storedEmail);
   }, []);
 
   useEffect(() => {
@@ -59,6 +64,7 @@ const ClientDetails = () => {
       setAllContacts(contacts);
       setFilteredFirstnames(contacts);
       setFilteredLastnames(contacts);
+      setFilteredEmail(contacts);
     } catch (error) {
       console.error('Failed to fetch contacts for client:', error);
     }
@@ -66,61 +72,67 @@ const ClientDetails = () => {
 
   const handleClientChange = (event, newValue) => {
     if (typeof newValue === 'object' && newValue !== null) {
-      // Case when an item from the options list is selected
       const companyName = newValue.client_name;
       setCompanyName(companyName);
-      sessionStorage.setItem('companyName', companyName);
       setSelectedClient(newValue);
   
-      // Check if the selected client exists in the data
       const clientExists = clientsData.some(client => client._id === newValue._id);
   
       if (clientExists) {
-        fetchContactsForClient(newValue); // Fetch contacts for existing client
-        setShowSaveClientButton(false); // Hide 'Save' button for existing client
+        fetchContactsForClient(newValue);
+        setShowSaveClientButton(false);
       } else {
-        setShowSaveClientButton(true); // Show 'Save' button for new client
+        setShowSaveClientButton(true);
       }
     } else if (typeof newValue === 'string') {
-      // Case when manual input is provided
       setCompanyName(newValue);
-      sessionStorage.setItem('companyName', newValue);
-      setShowSaveClientButton(true); // Show 'Save' button for new manual input
+      setShowSaveClientButton(true);
     }
   };
 
   const handleFirstnameChange = (event, firstname) => {
     setSelectedFirstname(firstname);
-    sessionStorage.setItem('firstName', firstname);
     if (firstname) {
       const relevantContacts = allContacts.filter(contact => contact.contact_firstname === firstname);
-      setFilteredLastnames(relevantContacts);
-    } else {
-      setFilteredLastnames(allContacts);
-    }
-  };
-
-  const handleLastnameChange = (event, lastname) => {
-    setSelectedLastname(lastname);
-    sessionStorage.setItem('lastName', lastname);
-    if (lastname) {
-      const relevantContacts = allContacts.filter(contact => contact.contact_lastname === lastname);
       setFilteredFirstnames(relevantContacts);
     } else {
       setFilteredFirstnames(allContacts);
     }
   };
 
+  const handleLastnameChange = (event, lastname) => {
+    setSelectedLastname(lastname);
+    if (lastname) {
+      const relevantContacts = allContacts.filter(contact => contact.contact_lastname === lastname);
+      setFilteredLastnames(relevantContacts);
+    } else {
+      setFilteredLastnames(allContacts);
+    }
+  };
+
+  const handleEmailChange = (event, email) => {
+    setSelectedEmail(email);
+    if (email) {
+      const relevantContacts = allContacts.filter(contact => contact.email === email);
+      setFilteredEmail(relevantContacts);
+    } else {
+      setFilteredEmail(allContacts);
+    }
+  };
+
   const handleInputFirstnameChange = (e) => {
     const newValue = e.target.value;
     setFirstName(newValue);
-    sessionStorage.setItem('firstName', newValue);
   };
 
   const handleInputLastnameChange = (e) => {
     const newValue = e.target.value;
     setLastName(newValue);
-    sessionStorage.setItem('lastName', newValue);
+  };
+
+  const handleInputEmailChange = (e) => {
+    const newValue = e.target.value;
+    setEmail(newValue);
   };
 
   const handleSubmit = (e) => {
@@ -134,6 +146,10 @@ const ClientDetails = () => {
   };
 
   const handleNext = () => {
+    sessionStorage.setItem('companyName', companyName);
+    sessionStorage.setItem('firstName', firstName);
+    sessionStorage.setItem('lastName', lastName);
+    sessionStorage.setItem('email', email);
     router.push('/new-proposal/title');
   };
 
@@ -160,7 +176,6 @@ const ClientDetails = () => {
                   onChange={handleClientChange}
                   onInputChange={(event, newInputValue) => {
                     setCompanyName(newInputValue);
-                    sessionStorage.setItem('companyName', newInputValue);
                   }}
                   inputValue={companyName}
                   renderInput={(params) => (
@@ -223,6 +238,28 @@ const ClientDetails = () => {
                           />
                       )}
                   />
+                  <Autocomplete
+                      id="searchContactEmail"
+                      freeSolo
+                      options={filteredEmail.map(contact => contact.email)}
+                      onChange={handleEmailChange}
+                      value={selectedEmail}
+                      renderInput={(params) => (
+                          <TextField
+                              {...params}
+                              label="Contact Email"
+                              name="contactEmail"
+                              variant="outlined"
+                              onChange={handleEmailChange}
+                              value={email}
+                              fullWidth
+                              required
+                              sx={{
+                                bgcolor: 'grey.100'
+                              }}
+                          />
+                      )}
+                  />
                 </>
                 ) : (
                   <>
@@ -244,6 +281,16 @@ const ClientDetails = () => {
                       required
                       value={lastName}
                       onChange={handleInputLastnameChange}
+                      sx={{ bgcolor: 'grey.100', mt: 2 }}
+                    />
+                    <TextField
+                      label="Contact Person Email"
+                      name="email"
+                      variant="outlined"
+                      fullWidth
+                      required
+                      value={email}
+                      onChange={handleInputEmailChange}
                       sx={{ bgcolor: 'grey.100', mt: 2 }}
                     />
                   </>

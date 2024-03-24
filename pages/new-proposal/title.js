@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Container, Typography, TextField, Button, Paper, Stack, Box } from '@mui/material';
 
@@ -6,20 +6,27 @@ import SelectDate from '@/components/SelectDate';
 import NewProposalStepper from '@/components/Stepper';
 
 const Title = () => {
-  const [activeStep, setActiveStep] = useState(1);
   const router = useRouter();
+  const [activeStep, setActiveStep] = useState(1);
+  const [proposalTitle, setProposalTitle] = useState('');
+  const [proposalDate, setProposalDate] = useState('');
 
-  const [clientDetails, setClientDetails] = useState({
-    firstName: '',
-    lastName: '',
-    companyName: '',
-  });
+  useEffect(() => {
+    const storedProposalTitle = sessionStorage.getItem('proposalTitle');
+    const storedProposalDate = sessionStorage.getItem('proposalDate');
+  
+    if (storedProposalTitle) setProposalTitle(storedProposalTitle);
+    if (storedProposalDate) setProposalDate(storedProposalDate);
+  }, []);
 
-  const handleChange = (e) => {
-    setClientDetails({
-      ...clientDetails,
-      [e.target.name]: e.target.value,
-    });
+  const handleProposalTitleChange = (e) => {
+    const newValue = e.target.value;
+    setProposalTitle(newValue);
+  };
+
+  const handleProposalDateChange = (newValue) => {
+    setProposalDate(newValue);
+    sessionStorage.setItem('proposalDate', newValue || '');
   };
 
   const handleSubmit = (e) => {
@@ -28,6 +35,8 @@ const Title = () => {
   };
 
   const handleNext = () => {
+    sessionStorage.setItem('proposalTitle', proposalTitle);
+    sessionStorage.setItem('proposalDate', proposalDate);
     router.push('/new-proposal/message');
   };
 
@@ -53,8 +62,8 @@ const Title = () => {
               <TextField
                 label="Proposal Title"
                 name="proposalTitle"
-                value={clientDetails.companyName}
-                onChange={handleChange}
+                value={proposalTitle}
+                onChange={handleProposalTitleChange}
                 variant="outlined"
                 sx={{
                   bgcolor: 'grey.100'
@@ -62,7 +71,10 @@ const Title = () => {
                 fullWidth
                 required
               />
-              <SelectDate />
+              <SelectDate
+                value={proposalDate}
+                onChange={handleProposalDateChange}
+              />
             </Stack>
           </form>
         </Paper>

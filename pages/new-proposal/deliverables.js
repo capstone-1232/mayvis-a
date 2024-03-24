@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Container, Typography, Button, Paper, Stack, Box } from '@mui/material';
 
@@ -12,12 +12,21 @@ const Deliverables = () => {
   const [selectedDeliverables, setSelectedDeliverables] = useState([]);
   const router = useRouter();
 
+  useEffect(() => {
+    const storedDeliverables = JSON.parse(sessionStorage.getItem('selectedDeliverables'));
+    
+    if (storedDeliverables) {
+      setSelectedDeliverables(storedDeliverables);
+    }
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // To Do Logic to handle form data...
   };
 
   const handleNext = () => {
+    sessionStorage.setItem('selectedDeliverables', JSON.stringify(selectedDeliverables));
     router.push('/new-proposal/summary');
   };
 
@@ -34,31 +43,6 @@ const Deliverables = () => {
   };
 
   return ( <>
-    {/* <Box 
-        sx={{
-            position: 'fixed', 
-            top: 75, 
-            zIndex: 2, 
-            backgroundColor: 'white', 
-            maxWidth: '100%',
-            width: '100%',
-            paddingBottom: '20px'
-        }}
-    >
-        <Typography 
-            variant="h3" 
-            align="left" 
-            sx={{
-                mt: 6.6,
-                mb: 5,
-            }}
-        >
-            New Proposal
-        </Typography>
-        <Box sx={{width: '87.1%'}}>
-          <NewProposalStepper activeStep={activeStep} />
-        </Box>
-    </Box> */}
     <Typography variant="h3" align="left" sx={{ my: 5 }} gutterBottom>
         New Proposal
     </Typography>
@@ -70,7 +54,10 @@ const Deliverables = () => {
               elevation={5} 
               sx={{ p: 4, mt: 10, mb: 1, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
           >
-            <SelectedDeliverables deliverables={selectedDeliverables} onDelete={handleDeleteDeliverable} />
+            <SelectedDeliverables 
+              deliverables={selectedDeliverables} 
+              onDelete={handleDeleteDeliverable} 
+            />
           </Paper>
           
           <Paper

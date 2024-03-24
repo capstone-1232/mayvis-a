@@ -1,19 +1,18 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const Counter = require('./counter');
-
-const AutoIncrementModelID = function (modelName, doc, next) {
+const AutoIncrementModelID = async function (modelName, doc, next) {
+  try {
     const Counter = mongoose.model('Counter');
-    Counter.findByIdAndUpdate(
-        { _id: modelName },
-        { $inc: { seq: 1 } },
-        { new: true, upsert: true },
-        function (error, counterDoc) {
-            if (error) return next(error);
-            doc[modelName] = counterDoc.seq;
-            next();
-        }
+    const counterDoc = await Counter.findByIdAndUpdate(
+      { _id: modelName },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true }
     );
+    doc[modelName] = counterDoc.seq;
+    next();
+  } catch (error) {
+    next(error);
+  }
 };
 
-module.exports = AutoIncrementModelID;
+module.exports = AutoIncrementModelID

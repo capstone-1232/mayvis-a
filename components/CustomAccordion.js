@@ -32,7 +32,14 @@ function CategoriesAccordion({ categories, onAddToDeliverables }) {
       const price = product.price?.$numberDecimal ? parseFloat(product.price.$numberDecimal) : product.price;
       
       return (
-        <Card sx={{ flexGrow: 1, m: 1, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }} key={product.id}>
+        <Card 
+          key={product.id}
+          sx={{ 
+            flexGrow: 1, 
+            m: 1, 
+            borderRadius: '15px', 
+            boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' 
+          }}>
           <CardActionArea onClick={() => onAddToDeliverables(product)}>
             <CardContent>
               <Typography variant="h6" component="div">
@@ -53,10 +60,28 @@ function CategoriesAccordion({ categories, onAddToDeliverables }) {
     return (
       <Box sx={{ my: 2 }}>
         {categories.map((category, index) => (
-          <Accordion 
+          <Accordion
             key={category._id} 
             expanded={expandedPanel === category._id} 
             onChange={handleChange(category._id)}
+            sx={{
+              borderRadius: '15px !important',
+              '&::before': {
+                height: 0,
+              },
+              '& .MuiAccordionSummary-root': {
+                borderBottom: 0,
+              },
+              '& .MuiAccordionDetails-root': {
+                borderTop: 0,
+              },
+              '&.Mui-expanded': {
+                '& .MuiAccordionSummary-root': {
+                  borderBottomLeftRadius: 0,
+                  borderBottomRightRadius: 0,
+                },
+              },
+            }}
           >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon sx={{ color: 'white' }}/>}

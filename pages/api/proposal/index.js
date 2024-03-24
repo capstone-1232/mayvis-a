@@ -7,12 +7,14 @@ export default async function handler(req, res) {
     switch (req.method) {
         case 'POST':
             try {
-                const { proposal_name, is_archived, description } = req.body;
-                const proposal = await Proposal.create({ proposal_name, is_archived, description });
-                return res.status(201).json({ message: "Proposal created successfully.", proposal });
+                const proposalData = req.body;
+                const proposal = await Proposal.create(proposalData);
+                res.status(201).json({ message: "Proposal created successfully", proposal });
             } catch (error) {
-                return res.status(500).json({ message: "Error creating proposal", error: error.message });
+                console.error(error);
+                res.status(500).json({ message: "Error creating proposal", error: error.message });
             }
+            break;
 
         case 'GET':
             try {

@@ -5,8 +5,7 @@ import 'react-quill/dist/quill.snow.css';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
-function RTextEditor() {
-  const [value, setValue] = useState('');
+function RTextEditor({ value, handleMessageChange}) {
 
   const toolbarOptions = [
     [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
@@ -36,7 +35,7 @@ function RTextEditor() {
             theme="snow"
             modules={modules}
             value={value} 
-            onChange={setValue} 
+            onChange={handleMessageChange} 
         />
     </Box>
   </>
