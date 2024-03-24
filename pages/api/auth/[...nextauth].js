@@ -2,6 +2,8 @@ import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from "next-auth/providers/credentials"
 
+console.log(process.env.GOOGLE_CLIENT_ID);
+
 export default NextAuth({
     // Configure one or more authentication providers
     providers: [
