@@ -15,9 +15,10 @@ import SearchField from "@/components/SearchField";
 export async function getServerSideProps() {
     let clientsData = [{}];
     try {
-        //console.log(process.env.VERCEL_URL);
-        // const res = await fetch(process.env.VERCEL_URL + '/api/client', { cache: "no-store" });
-        const res = await fetch('http://localhost:3000/api/client/archival', { cache: "no-store" });
+        const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+        const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+        const apiRoute = `${baseURL}/api/client/archival`;
+        const res = await fetch(apiRoute, { cache: "no-store" });
 
         // res.setHeader(
         //     'Cache-Control',
@@ -89,14 +90,14 @@ const Client = ({ clientsData }) => {
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
                     <Typography variant="h4" component="div" gutterBottom>
-                       Archived Clients
+                        Archived Clients
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
 
                         <Link href={'/client/addclient'} >
-                            <Button variant="contained" sx={{backgroundColor: '#253C7C', borderRadius: '15px'}}>
+                            <Button variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
                                 + Create New Client
                             </Button>
                         </Link>
@@ -173,7 +174,7 @@ const Client = ({ clientsData }) => {
                                 ))
                         :
                         <Grid item xs={12}>
-                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center', boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)'}}>No Record(s) Found</Card>
+                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center', boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>No Record(s) Found</Card>
                         </Grid>
                     }
                 </Grid>

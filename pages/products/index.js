@@ -14,12 +14,16 @@ import Link from "next/link";
 import ViewListIcon from '@mui/icons-material/ViewList';
 import SearchField from "@/components/SearchField";
 
+const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+const apiRoute = `${baseURL}/api/products`;
+
 export async function getServerSideProps() {
     let productsData = [{}];
     try {
         //console.log(process.env.VERCEL_URL);
         // const res = await fetch(process.env.VERCEL_URL + '/api/client', { cache: "no-store" });
-        const res = await fetch('http://localhost:3000/api/products', { cache: "no-store" });
+        const res = await fetch(apiRoute, { cache: "no-store" });
 
         // res.setHeader(
         //     'Cache-Control',

@@ -10,6 +10,10 @@ import loginLogo from "../../public/assets/images/login_head.png";
 import { signIn, signOut, useSession } from "next-auth/react"
 import { useRouter } from 'next/router';
 
+const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+const apiRoute = `${baseURL}/api/user`;
+
 const slideshowImages = [
     "/assets/images/login-slideshow-one.webp",
     "/assets/images/login-slideshow-two.webp",
@@ -49,7 +53,7 @@ const LoginSignup = () => {
 
     const addUser = async (user) => {
         try {
-            const res = await fetch('http://localhost:3000/api/user',
+            const res = await fetch(apiRoute,
                 {
                     method: 'POST',
                     headers: { "Content-type": "application/json" },
