@@ -4,13 +4,13 @@ import User from "@/models/user";
 
 export default async function handler(req, res) {
     await connectMongoDB();
-    // Retrieve the API key from the request headers
-    const apiKey = req.headers['x-api-key'];
+    // // Retrieve the API key from the request headers
+    // const apiKey = req.headers['x-api-key'];
 
-    // Compare it to the environment variable value
-    if (apiKey !== process.env.DATA_API_KEY) {
-        return res.status(401).json({ message: 'Invalid API key' });
-    }
+    // // Compare it to the environment variable value
+    // if (apiKey !== process.env.DATA_API_KEY) {
+    //     return res.status(401).json({ message: 'Invalid API key' });
+    // }
 
     switch (req.method) {
         case 'POST':
@@ -44,6 +44,7 @@ export default async function handler(req, res) {
             } catch (error) {
                 return res.status(500).json({ message: "Internal server error", error: error.message });
             }
+            break; // This was missing
 
         case 'GET':
             try {
@@ -52,6 +53,7 @@ export default async function handler(req, res) {
             } catch (error) {
                 return res.status(500).json({ message: "Error fetching users", error: error.message });
             }
+            break; // This was missing
 
         case 'DELETE':
             try {
@@ -64,6 +66,7 @@ export default async function handler(req, res) {
             } catch (error) {
                 return res.status(500).json({ message: "Error deleting user", error: error.message });
             }
+            break; // This was missing
 
         case 'PUT':
             try {
@@ -77,9 +80,11 @@ export default async function handler(req, res) {
             } catch (error) {
                 return res.status(500).json({ message: "Error updating user", error: error.message });
             }
+            break; // This was missing
 
         default:
             res.setHeader('Allow', ['POST', 'GET', 'DELETE', 'PUT']);
             res.status(405).end(`Method ${req.method} Not Allowed`);
+            break; // Good practice to have it even if it's the default case
     }
 }
