@@ -2,14 +2,16 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Container, Typography, Button, Paper, Stack, Box } from '@mui/material';
 
+import EditSelectedDeliverable from '@/components/EditSelectedDeliverable';
 import NewProposalStepper from '@/components/Stepper';
-import SelectedDeliverables from '@/components/SelectedDeliverables';
 import ProposalTotal from '@/components/ProposalTotal';
 import ProposalSummary from '@/components/ProposalSummary';
+import SelectedDeliverables from '@/components/SelectedDeliverables';
 
 const Summary = () => {
   const router = useRouter();
   const [activeStep, setActiveStep] = useState(4);
+  const [editingDeliverable, setEditingDeliverable] = useState(null);
   const [selectedDeliverables, setSelectedDeliverables] = useState([]);
   const [companyName, setCompanyName] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -18,6 +20,7 @@ const Summary = () => {
   const [proposalTitle, setProposalTitle] = useState('');
   const [proposalDate, setProposalDate] = useState('');
   const [proposalMessage, setProposalMessage] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const storedDeliverables = JSON.parse(sessionStorage.getItem('selectedDeliverables'));
@@ -90,6 +93,20 @@ const Summary = () => {
     }
   };
 
+  const handleEditDeliverable = (deliverable) => {
+    setEditingDeliverable(deliverable);
+    setIsEditing(true);
+  };
+
+  const handleSaveEditedDeliverable = (editedDeliverable) => {
+    const updatedDeliverables = selectedDeliverables.map(deliverable =>
+      deliverable._id === editedDeliverable._id ? editedDeliverable : deliverable
+    );
+    setSelectedDeliverables(updatedDeliverables);
+    setEditingDeliverable(null);
+    setIsEditing(false);
+  };
+
   const handleBack = () => {
     router.back();
   };
@@ -108,7 +125,9 @@ const Summary = () => {
           >
             <SelectedDeliverables 
               deliverables={selectedDeliverables}
-              onDelete={handleDeleteDeliverable} 
+              onDelete={handleDeleteDeliverable}
+              onEdit={handleEditDeliverable}
+              isEditing={isEditing}
             />
           </Paper>
           
@@ -119,47 +138,60 @@ const Summary = () => {
             <ProposalTotal />
           </Paper>
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
-            <Button
-              variant="contained"
-              sx={{
-                py: 1.5,
-                borderRadius: 2,
-                width: '50%',
-              }}
-              onClick={handleBack}
-            >
-              Back
-            </Button>
+          {!isEditing && (
+            <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
+              <Button
+                variant="contained"
+                sx={{
+                  py: 1.5,
+                  borderRadius: 2,
+                  width: '50%',
+                }}
+                onClick={handleBack}
+              >
+                Back
+              </Button>
 
-            <Button
-              variant="contained"
-              sx={{
-                py: 1.5,
-                ml: 3,
-                borderRadius: 2,
-                width: '50%',
-                bgcolor: '#2A987A',
-                '&:hover': {
-                  bgcolor: '#238b6a',
-                  boxShadow: 'none'
-                }
-              }}
-              onClick={handleSaveForLater}
-            >
-              Save For Later
-            </Button>
-          </Box>
+              <Button
+                variant="contained"
+                sx={{
+                  py: 1.5,
+                  ml: 3,
+                  borderRadius: 2,
+                  width: '50%',
+                  bgcolor: '#2A987A',
+                  '&:hover': {
+                    bgcolor: '#238b6a',
+                    boxShadow: 'none'
+                  }
+                }}
+                onClick={handleSaveForLater}
+              >
+                Save For Later
+              </Button>
+            </Box>
+          )}
         </Box>
 
         <Box sx={{ flex: '60%' }}>
-            <Paper
-                elevation={5} 
-                sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
-            >
-                <ProposalSummary />
-            </Paper>
-        </Box>        
+          <Paper
+            elevation={5} 
+            sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
+          >
+            {editingDeliverable ? (
+              <EditSelectedDeliverable
+                deliverable={editingDeliverable} 
+                onSave={handleSaveEditedDeliverable}
+                onCancel={() => {
+                  setEditingDeliverable(null);
+                  setIsEditing(false);
+                }}
+              />
+            ) : (
+              <ProposalSummary />
+            )}
+          </Paper>
+        </Box>      
       </Box>
     </Container>
   </>

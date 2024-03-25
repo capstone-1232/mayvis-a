@@ -3,7 +3,7 @@ import { Box, Typography, List, ListItem, ListItemText, IconButton, Stack } from
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 
-const SelectedDeliverables = ({ deliverables = [], onDelete }) => {
+const SelectedDeliverables = ({ deliverables = [], onDelete, onEdit, isEditing, showEditButton = true }) => {
 
   return (
     <Box sx={{ bgcolor: 'background.paper', p: 1 }}>
@@ -25,39 +25,43 @@ const SelectedDeliverables = ({ deliverables = [], onDelete }) => {
               key={index}
               secondaryAction={
                 <Stack>
-                  <IconButton 
-                    edge="end" 
-                    aria-label="delete" 
-                    onClick={() => onDelete(index)}
-                    sx={{ 
-                      position: 'absolute', 
-                      top: -50, 
-                      right: -17,
-                    }}
-                  >
-                    <RemoveCircleIcon
-                      sx={{
-                        color: 'red'
+                  {!isEditing && (
+                    <IconButton 
+                      edge="end" 
+                      aria-label="delete" 
+                      onClick={() => onDelete(index)}
+                      sx={{ 
+                        position: 'absolute', 
+                        top: -50, 
+                        right: -17,
                       }}
-                    />
-                  </IconButton>
+                    >
+                      <RemoveCircleIcon
+                        sx={{
+                          color: 'red'
+                        }}
+                      />
+                    </IconButton>
+                  )}
 
-                  <IconButton 
-                    edge="end" 
-                    aria-label="delete" 
-                    // onClick={handleEdit}
-                    sx={{ 
-                      position: 'absolute', 
-                      top: -20, 
-                      right: 5,
-                    }}
-                  >
-                    <ModeEditIcon
-                      sx={{
-                        color: '#dedede'
+                  {showEditButton && (
+                    <IconButton 
+                      edge="end" 
+                      aria-label="delete" 
+                      onClick={() => onEdit(item)}
+                      sx={{ 
+                        position: 'absolute', 
+                        top: -20, 
+                        right: 5,
                       }}
-                    />
-                  </IconButton>
+                    >
+                      <ModeEditIcon
+                        sx={{
+                          color: '#dedede'
+                        }}
+                      />
+                    </IconButton>
+                  )}
                 </Stack>
               }
               divider

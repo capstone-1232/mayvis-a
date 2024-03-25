@@ -55,8 +55,9 @@ const Deliverables = () => {
               sx={{ p: 4, mt: 10, mb: 1, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
           >
             <SelectedDeliverables 
-              deliverables={selectedDeliverables} 
-              onDelete={handleDeleteDeliverable} 
+              deliverables={selectedDeliverables}
+              onDelete={handleDeleteDeliverable}
+              showEditButton={false}
             />
           </Paper>
           
@@ -73,7 +74,9 @@ const Deliverables = () => {
             sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
         >
             <Box sx={{ flex: '60%' }}>
-              <SelectDeliverables onAddDeliverable={handleAddDeliverable} />
+              <SelectDeliverables 
+                onAddDeliverable={handleAddDeliverable}
+              />
             </Box>
         </Paper>
       </Box>

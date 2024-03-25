@@ -2,6 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const ProposalProductSchema = new Schema({
     product_id: { type: Schema.Types.ObjectId, ref: 'Product' },
+    description: { type: String },
     price: { type: Number, required: true },
     quantity: Number,
     is_recurring: Boolean,
