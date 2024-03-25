@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { TextField, Button, Box, FormControlLabel, Checkbox, MenuItem } from '@mui/material';
+import { TextField, Button, Box, Typography, MenuItem } from '@mui/material';
+
+import CustomToggleButton from './CustomToggleButton';
 
 const EditSelectedDeliverable = ({ deliverable, onSave, onCancel }) => {
     const [editedDeliverable, setEditedDeliverable] = useState({
         ...deliverable,
-        recurring_option: deliverable.recurring_option || '', // Use '' as default if undefined
+        recurring_option: deliverable.recurring_option || '',
     });
 
     useEffect(() => {
@@ -26,19 +28,28 @@ const EditSelectedDeliverable = ({ deliverable, onSave, onCancel }) => {
         onSave(editedDeliverable);
     };
 
-    // Populate this with your categories
-    const recurringOptions = ["Monthly", "Yearly", "Weekly"];
+    const recurringOptions = ["Weekly", "Monthly", "Quarterly", "Yearly"];
 
     return (<>
         <Box>
-            <TextField
-                label="Product Name"
-                name="product_name"
-                value={editedDeliverable.product_name}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-            />
+            <Typography 
+                variant="h5"
+                sx={{
+                    mb: 2
+                }}
+            >
+                {editedDeliverable.product_name}
+            </Typography>
+
+            <Typography 
+                variant="body1"
+                sx={{
+                    mb: 2
+                }}
+            >
+                {editedDeliverable.description}
+            </Typography>
+
             <TextField
                 label="Price"
                 name="price"
@@ -57,15 +68,15 @@ const EditSelectedDeliverable = ({ deliverable, onSave, onCancel }) => {
                 margin="normal"
                 type="number"
             />
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={editedDeliverable.is_recurring}
-                        onChange={handleInputChange}
-                        name="is_recurring"
-                    />
-                }
+            <CustomToggleButton
                 label="Is Recurring"
+                checked={editedDeliverable.is_recurring}
+                onChange={(event) => {
+                    setEditedDeliverable({
+                    ...editedDeliverable,
+                    is_recurring: event.target.checked,
+                    });
+                }}
             />
             <TextField
                 select
@@ -75,10 +86,13 @@ const EditSelectedDeliverable = ({ deliverable, onSave, onCancel }) => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                InputProps={{
+                    readOnly: !editedDeliverable.is_recurring,
+                }}
             >
                 <MenuItem value="">None</MenuItem>
                 {recurringOptions.map((option) => (
-                    <MenuItem key={option} value={option}>
+                    <MenuItem key={option} value={option.toLowerCase()}>
                         {option}
                     </MenuItem>
                 ))}

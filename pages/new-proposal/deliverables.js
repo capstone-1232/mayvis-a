@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Container, Typography, Button, Paper, Stack, Box } from '@mui/material';
+import { Container, Typography, Button, Paper, Stack, Box, CircularProgress } from '@mui/material';
 
 import NewProposalStepper from '@/components/Stepper';
 import SelectedDeliverables from '@/components/SelectedDeliverables';
@@ -10,6 +10,7 @@ import ProposalTotal from '@/components/ProposalTotal';
 const Deliverables = () => {
   const [activeStep, setActiveStep] = useState(3);
   const [selectedDeliverables, setSelectedDeliverables] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -20,10 +21,13 @@ const Deliverables = () => {
     }
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // To Do Logic to handle form data...
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleNext = () => {
     sessionStorage.setItem('selectedDeliverables', JSON.stringify(selectedDeliverables));
@@ -65,20 +69,28 @@ const Deliverables = () => {
               elevation={5} 
               sx={{ p: 4, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
           >
-            <ProposalTotal />
+            <ProposalTotal 
+              deliverables={selectedDeliverables}
+            />
           </Paper>
         </Box>
 
-        <Paper
-            elevation={5} 
-            sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
-        >
-            <Box sx={{ flex: '60%' }}>
+        <Box sx={{ flex: 1 }}>
+          <Paper
+              elevation={5} 
+              sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
+          >
+            {isLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '19vh' }}>
+                <CircularProgress />
+              </Box>
+            ) : (
               <SelectDeliverables 
                 onAddDeliverable={handleAddDeliverable}
               />
-            </Box>
-        </Paper>
+            )}
+          </Paper>
+        </Box>
       </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, width: '96%' }}>

@@ -135,7 +135,9 @@ const Summary = () => {
               elevation={5} 
               sx={{ p: 4, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
           >
-            <ProposalTotal />
+            <ProposalTotal 
+              deliverables={selectedDeliverables}
+            />
           </Paper>
 
           {!isEditing && (
@@ -173,7 +175,7 @@ const Summary = () => {
           )}
         </Box>
 
-        <Box sx={{ flex: '60%' }}>
+        <Box sx={{ flex: 1 }}>
           <Paper
             elevation={5} 
             sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}

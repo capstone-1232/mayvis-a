@@ -1,17 +1,44 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Typography, Button, Box } from '@mui/material';
+import { Typography, Button, Box, Stack } from '@mui/material';
 import CustomModal from '@/components/CustomModal';
 
 const ProposalSummary = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [urlModalOpen, setUrlModalOpen] = useState(false);
+  const [companyName, setCompanyName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [proposalTitle, setProposalTitle] = useState('');
+  const [proposalDate, setProposalDate] = useState('');
   const router = useRouter();
-//   if (!proposal) {
-//       return <Typography>Proposal data is loading or not available.</Typography>;
-//   }
-//   const { title, status, dateCreated, clientName, clientContact, createdBy } = proposal;
+
+  useEffect(() => {
+    const storedCompanyName = sessionStorage.getItem('companyName');
+    const storedFirstName = sessionStorage.getItem('firstName');
+    const storedLastName = sessionStorage.getItem('lastName');
+    const storedEmail = sessionStorage.getItem('email');
+    const storedProposalTitle = sessionStorage.getItem('proposalTitle');
+    const storedProposalDate = sessionStorage.getItem('proposalDate');
+
+    if (storedCompanyName) setCompanyName(storedCompanyName);
+    if (storedFirstName) setFirstName(storedFirstName);
+    if (storedLastName) setLastName(storedLastName);
+    if (storedEmail) setEmail(storedEmail);
+    if (storedProposalTitle) setProposalTitle(storedProposalTitle);
+    if (storedProposalDate) {
+      const date = new Date(storedProposalDate);
+      const formattedDate = new Intl.DateTimeFormat('en-GB', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(date);
+  
+      setProposalDate(formattedDate);
+    }
+  }, []);
 
   const handleClose = () => {
     setModalOpen(false);
@@ -22,40 +49,39 @@ const ProposalSummary = () => {
   }
 
   const handleUrlLink = () => {
-    // router.push('/new-proposal/access-for-approval');
     setModalOpen(false);
     setUrlModalOpen(true);
   }
   
   return (
     <Box sx={{}}>
-      <Typography variant="h5" component="h3" align="center" sx={{ marginBottom: 3 }}>
+      <Typography variant="h5" component="h3" align="center" sx={{ marginBottom: 5 }}>
         Proposal Summary
       </Typography>
 
       <Typography variant="h6" align="center" gutterBottom>
-        Website Redesign
+        {proposalTitle}
       </Typography>
 
-      <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10%', alignItems: 'center'}}>
-          <Typography variant="body1" sx={{ textAlign: 'start' }}>Status:</Typography>
-          <Typography>In Progress</Typography>
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10%', alignItems: 'center' }}>
-          <Typography variant="body1">Date Created:</Typography>
-          <Typography>March 10, 2024</Typography>
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10%', alignItems: 'center' }}>
-          <Typography variant="body1">Client Name:</Typography>
-          <Typography>James Davis</Typography>
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10%', alignItems: 'center' }}>
-          <Typography variant="body1">Client Contact:</Typography>
-          <Typography>jamesd@gmail.com</Typography>
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10%', alignItems: 'center' }}>
-          <Typography variant="body1">Created By:</Typography>
-          <Typography>Nicole Samuels</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10%', alignItems: 'center', py: 5}}>
+        <Box>
+          <Stack spacing={1}>
+            <Typography variant="body1" sx={{fontWeight: '600'}}>Status:</Typography>
+            <Typography variant="body1" sx={{fontWeight: '600'}}>Date Created:</Typography>
+            <Typography variant="body1" sx={{fontWeight: '600'}}>Client Name:</Typography>
+            <Typography variant="body1" sx={{fontWeight: '600'}}>Client Contact:</Typography>
+            <Typography variant="body1" sx={{fontWeight: '600'}}>Created By:</Typography>
+          </Stack>
+        </Box>
+        <Box>
+          <Stack spacing={1}>
+            <Typography>In Progress</Typography>
+            <Typography>{proposalDate}</Typography>
+            <Typography>{firstName} {lastName}</Typography>
+            <Typography>{email}</Typography>
+            <Typography>Nicole Samuels</Typography>
+          </Stack>
+        </Box>
       </Box>
 
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
@@ -63,7 +89,7 @@ const ProposalSummary = () => {
           variant="contained"
           onClick={() => setModalOpen(true)}
           sx={{ 
-              width: '75%', 
+              width: '50%', 
               mt: 2, 
               py: 1,
               borderRadius: 5,
