@@ -38,7 +38,7 @@ function CategoriesAccordion({ categories, onAddToDeliverables }) {
             flexGrow: 1, 
             m: 1, 
             borderRadius: '15px', 
-            boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' 
+            boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)'
           }}>
           <CardActionArea onClick={() => onAddToDeliverables(product)}>
             <CardContent>
@@ -61,7 +61,7 @@ function CategoriesAccordion({ categories, onAddToDeliverables }) {
       <Box sx={{ my: 2 }}>
         {categories.map((category, index) => (
           <Accordion
-            key={category._id} 
+            key={category._id || index} 
             expanded={expandedPanel === category._id} 
             onChange={handleChange(category._id)}
             sx={{

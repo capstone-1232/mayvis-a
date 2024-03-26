@@ -10,15 +10,19 @@ const recurringMultipliers = {
 
 const ProposalTotal = ({ deliverables }) => {
     const { projectTotal, recurringTotal } = deliverables.reduce((totals, item) => {
-        const price = parseFloat(item.price);
+        const pricePerUnit = parseFloat(item.price?.$numberDecimal || item.price);
+        const productCost = pricePerUnit * item.quantity;
+
         if (item.is_recurring) {
-          const multiplier = recurringMultipliers[item.recurring_option] || 1;
-          totals.recurringTotal += price * multiplier;
+            const multiplier = recurringMultipliers[item.recurring_option.toLowerCase()] || 1;
+            totals.recurringTotal += productCost * multiplier;
+
         } else {
-          totals.projectTotal += price;
+            totals.projectTotal += productCost;
         }
+
         return totals;
-      }, { projectTotal: 0, recurringTotal: 0 });
+    }, { projectTotal: 0, recurringTotal: 0 });
 
     const proposalTotal = projectTotal + recurringTotal;
 
