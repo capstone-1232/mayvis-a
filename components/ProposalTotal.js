@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 
 const recurringMultipliers = {
@@ -9,22 +9,37 @@ const recurringMultipliers = {
 };
 
 const ProposalTotal = ({ deliverables }) => {
-    const { projectTotal, recurringTotal } = deliverables.reduce((totals, item) => {
-        const pricePerUnit = parseFloat(item.price?.$numberDecimal || item.price);
-        const productCost = pricePerUnit * item.quantity;
+    const [projectTotal, setProjectTotal] = useState(0);
+    const [recurringTotal, setRecurringTotal] = useState(0);
+    const [proposalTotal, setProposalTotal] = useState(0);
 
-        if (item.is_recurring) {
-            const multiplier = recurringMultipliers[item.recurring_option.toLowerCase()] || 1;
-            totals.recurringTotal += productCost * multiplier;
+    useEffect(() => {
+        const { projectTotal, recurringTotal } = deliverables.reduce((acc, item) => {
+            const pricePerUnit = parseFloat(item.price?.$numberDecimal || item.price);
+            const productCost = pricePerUnit * item.quantity;
 
-        } else {
-            totals.projectTotal += productCost;
-        }
+            if (item.is_recurring) {
+                const multiplier = recurringMultipliers[item.recurring_option] || 1;
+                acc.recurringTotal += productCost * multiplier;
+                setRecurringTotal(acc.recurringTotal);
 
-        return totals;
-    }, { projectTotal: 0, recurringTotal: 0 });
+            } else {
+                acc.projectTotal += productCost;
+                setProjectTotal(acc.projectTotal);
+            }
 
-    const proposalTotal = projectTotal + recurringTotal;
+            return acc;
+        }, { projectTotal: 0, recurringTotal: 0 });
+
+        const proposalTotal = projectTotal + recurringTotal;
+
+        setProposalTotal(proposalTotal);
+
+        sessionStorage.setItem('projectTotal', projectTotal);
+        sessionStorage.setItem('recurringTotal', recurringTotal);
+        sessionStorage.setItem('proposalTotal', proposalTotal);
+
+    }, [deliverables]);
 
     return (
         <Box sx={{ bgcolor: 'background.paper', p: 1 }}>

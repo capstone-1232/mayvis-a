@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Alert, AlertTitle, Container, Typography, Button, Paper, Box, CircularProgress, Snackbar } from '@mui/material';
+import { Alert, Container, Typography, Button, Paper, Box, CircularProgress, Snackbar } from '@mui/material';
 
 import NewProposalStepper from '@/components/Stepper';
 import SelectedDeliverables from '@/components/SelectedDeliverables';

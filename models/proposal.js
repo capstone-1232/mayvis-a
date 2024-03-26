@@ -26,6 +26,7 @@ const ProposalSchema = new Schema({
     client_id: { type: Schema.Types.ObjectId, ref: 'Client' },
     products: [ProposalProductSchema],
     proposed_by: { type: Schema.Types.ObjectId, ref: 'User' },
+    proposal_date: { type: Date },
     }, { timestamps: true }
 );
 

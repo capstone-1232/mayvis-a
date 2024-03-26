@@ -1,12 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Container, Typography, Button, Paper, Stack, Box } from '@mui/material';
+import { CircularProgress, Container, Typography, Button, Paper, Stack, Box } from '@mui/material';
 
 import EditSelectedDeliverable from '@/components/EditSelectedDeliverable';
 import NewProposalStepper from '@/components/Stepper';
 import ProposalTotal from '@/components/ProposalTotal';
 import ProposalSummary from '@/components/ProposalSummary';
 import SelectedDeliverables from '@/components/SelectedDeliverables';
+
+const recurringMultipliers = {
+  weekly: 4,
+  monthly: 1,
+  quarterly: 3 / 12,
+  yearly: 1 / 12,
+};
 
 const Summary = () => {
   const router = useRouter();
@@ -20,6 +27,7 @@ const Summary = () => {
   const [proposalTitle, setProposalTitle] = useState('');
   const [proposalDate, setProposalDate] = useState('');
   const [proposalMessage, setProposalMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -37,9 +45,26 @@ const Summary = () => {
     if (storedLastName) setLastName(storedLastName);
     if (storedEmail) setLastName(storedEmail);
     if (storedProposalTitle) setProposalTitle(storedProposalTitle);
-    if (storedProposalDate) setProposalDate(storedProposalDate);
     if (storedProposalMessage) setProposalMessage(storedProposalMessage);
     if (storedDeliverables) setSelectedDeliverables(storedDeliverables);
+    if (storedProposalDate) {
+      const date = new Date(storedProposalDate);
+      const formattedDate = new Intl.DateTimeFormat('en-GB', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(date);
+
+      setProposalDate(formattedDate);
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleDeleteDeliverable = (index) => {
@@ -47,16 +72,35 @@ const Summary = () => {
   };
 
   const handleSaveForLater = async () => {
+    setIsLoading(true);
+
+    let { projectTotal, recurringTotal, proposalTotal } = selectedDeliverables.reduce((acc, item) => {
+      const pricePerUnit = parseFloat(item.price?.$numberDecimal || item.price);
+      const productCost = pricePerUnit * item.quantity;
+
+      if (item.is_recurring) {
+        const multiplier = recurringMultipliers[item.recurring_option.toLowerCase()] || 0;
+        acc.recurringTotal += productCost * multiplier;
+      } else {
+        acc.projectTotal += productCost;
+      }
+
+      return acc;
+    }, { projectTotal: 0, recurringTotal: 0, proposalTotal: 0 });
+
+    proposalTotal = projectTotal + recurringTotal;
+
     const proposalData = {
       proposal_title: proposalTitle,
       message: proposalMessage,
-      attachment: "", 
+      proposal_date: proposalDate,
+      attachment: "",
       status: "Draft",
       suggestions: "",
       is_archived: false,
-      proposal_total: 7000,
-      recurring_total: 1500,
-      project_total: 5500,
+      proposal_total: proposalTotal,
+      recurring_total: recurringTotal,
+      project_total: projectTotal,
       notes: "",
       updated_by: "65f47450c4a67fb9c0a02510",
       client_id: "65e968488c73936a5ad21508",
@@ -73,23 +117,28 @@ const Summary = () => {
     };
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/proposal`, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(proposalData),
+      const response = await fetch(`http://localhost:3000/api/proposal`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(proposalData),
       });
 
       if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
+        throw new Error(`Error: ${response.status}`);
       }
 
       const data = await response.json();
       console.log("Success:", data);
+
       sessionStorage.clear();
+      setIsLoading(false);
+      router.push('/proposal');
+
     } catch (error) {
-        console.error("Failed to save proposal:", error);
+      console.error("Failed to save proposal:", error);
+      setIsLoading(false);
     }
   };
 
@@ -111,91 +160,101 @@ const Summary = () => {
     router.back();
   };
 
-  return ( <>
-    <Typography variant="h3" align="left" sx={{ my: 5 }} gutterBottom>
-        New Proposal
-    </Typography>
-    <NewProposalStepper activeStep={activeStep} />
-    <Container maxWidth="xl">
-      <Box sx={{ display: 'flex', gap: '25px', alignItems: 'start', mt: 1, justifyContent: 'center' }}>
-        <Box sx={{ width: '30%' }}>
-          <Paper
-              elevation={5} 
-              sx={{ p: 4, mt: 10, mb: 1, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
-          >
-            <SelectedDeliverables 
-              deliverables={selectedDeliverables}
-              onDelete={handleDeleteDeliverable}
-              onEdit={handleEditDeliverable}
-              isEditing={isEditing}
-            />
-          </Paper>
-          
-          <Paper
-              elevation={5} 
-              sx={{ p: 4, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
-          >
-            <ProposalTotal 
-              deliverables={selectedDeliverables}
-            />
-          </Paper>
-
-          {!isEditing && (
-            <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
-              <Button
-                variant="contained"
-                sx={{
-                  py: 1.5,
-                  borderRadius: 2,
-                  width: '50%',
-                }}
-                onClick={handleBack}
-              >
-                Back
-              </Button>
-
-              <Button
-                variant="contained"
-                sx={{
-                  py: 1.5,
-                  ml: 3,
-                  borderRadius: 2,
-                  width: '50%',
-                  bgcolor: '#2A987A',
-                  '&:hover': {
-                    bgcolor: '#238b6a',
-                    boxShadow: 'none'
-                  }
-                }}
-                onClick={handleSaveForLater}
-              >
-                Save For Later
-              </Button>
-            </Box>
-          )}
-        </Box>
-
-        <Box sx={{ flex: 1 }}>
-          <Paper
-            elevation={5} 
-            sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
-          >
-            {editingDeliverable ? (
-              <EditSelectedDeliverable
-                deliverable={editingDeliverable} 
-                onSave={handleSaveEditedDeliverable}
-                onCancel={() => {
-                  setEditingDeliverable(null);
-                  setIsEditing(false);
-                }}
-              />
-            ) : (
-              <ProposalSummary />
-            )}
-          </Paper>
-        </Box>      
+  return (<>
+    {isLoading && (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
       </Box>
-    </Container>
+    )}
+
+    {!isLoading && (
+      <>
+        <Typography variant="h3" align="left" sx={{ my: 5 }} gutterBottom>
+          New Proposal
+        </Typography>
+        <NewProposalStepper activeStep={activeStep} />
+        <Container maxWidth="xl">
+          <Box sx={{ display: 'flex', gap: '25px', alignItems: 'start', mt: 1, justifyContent: 'center' }}>
+            <Box sx={{ width: '30%' }}>
+              <Paper
+                elevation={5}
+                sx={{ p: 4, mt: 10, mb: 1, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
+              >
+                <SelectedDeliverables
+                  deliverables={selectedDeliverables}
+                  onDelete={handleDeleteDeliverable}
+                  onEdit={handleEditDeliverable}
+                  isEditing={isEditing}
+                />
+              </Paper>
+
+              <Paper
+                elevation={5}
+                sx={{ p: 4, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
+              >
+                <ProposalTotal
+                  deliverables={selectedDeliverables}
+                />
+              </Paper>
+
+              {!isEditing && (
+                <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      py: 1.5,
+                      borderRadius: 2,
+                      width: '50%',
+                    }}
+                    onClick={handleBack}
+                  >
+                    Back
+                  </Button>
+
+                  <Button
+                    variant="contained"
+                    sx={{
+                      py: 1.5,
+                      ml: 3,
+                      borderRadius: 2,
+                      width: '50%',
+                      bgcolor: '#2A987A',
+                      '&:hover': {
+                        bgcolor: '#238b6a',
+                        boxShadow: 'none'
+                      }
+                    }}
+                    onClick={handleSaveForLater}
+                  >
+                    Save For Later
+                  </Button>
+                </Box>
+              )}
+            </Box>
+
+            <Box sx={{ flex: 1 }}>
+              <Paper
+                elevation={5}
+                sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
+              >
+                {editingDeliverable ? (
+                  <EditSelectedDeliverable
+                    deliverable={editingDeliverable}
+                    onSave={handleSaveEditedDeliverable}
+                    onCancel={() => {
+                      setEditingDeliverable(null);
+                      setIsEditing(false);
+                    }}
+                  />
+                ) : (
+                  <ProposalSummary />
+                )}
+              </Paper>
+            </Box>
+          </Box>
+        </Container>
+      </>
+    )}
   </>
   );
 };
