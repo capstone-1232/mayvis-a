@@ -1,6 +1,6 @@
 import {
     Autocomplete, Box, Button, Card, Grid, Paper,
-    TextField, Typography, Stack, Pagination, ListItemAvatar
+    TextField, Typography, Stack, Pagination, ListItemAvatar, Tooltip
 } from "@mui/material";
 import React, { useState, useEffect } from 'react';
 
@@ -97,7 +97,9 @@ const Client = ({ clientsData }) => {
                     <Grid item>
 
                         <Link href={'/client/addclient'} >
-                            <Button variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
+                            <Button
+                                variant="contained"
+                                sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
                                 + Create New Client
                             </Button>
                         </Link>
@@ -113,7 +115,7 @@ const Client = ({ clientsData }) => {
             </Grid>
             <Paper elevation={12} sx={{ marginTop: 2, padding: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={8} md={6}>
+                    <Grid item xs={12} sm={7} md={5} lg={5}>
                         <Box
                             mt={1}
                             sx={{
@@ -127,40 +129,24 @@ const Client = ({ clientsData }) => {
                                 onInputChange={handleSearchChange}
                             />
                         </Box>
-                        {/* <Autocomplete
-                            id="searchClient"
-                            freeSolo
-                            options={clientsData?.map((client) => client.client_name)}
-                            value={searchTerm}
-                            onInputChange={handleSearchChange}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Search Client"
-                                    variant="outlined"
-                                    fullWidth
-                                    InputProps={{
-                                        ...params.InputProps,
-                                        startAdornment: (
-                                            <SearchIcon sx={{ mr: 2 }} />
-                                        ),
-                                    }}
-                                />
-                            )}
-                        /> */}
                     </Grid>
-
-                    <Box display="flex" justifyContent="flex-start">
-                        <Button onClick={() => setViewMode('list')}>
-                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
-                        </Button>
-                        <Button onClick={() => setViewMode('module')}>
-                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
-                        </Button>
-                    </Box>
-
+                    <Grid item xs={0} sm={1} md={5} lg={6}></Grid>
+                    <Grid item xs={4} sm={4} md={2} lg={1}>
+                        <Box display="flex" justifyContent="flex-start">
+                            <Tooltip title="List View">
+                                <Button onClick={() => setViewMode('list')}>
+                                    <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
+                                </Button>
+                            </Tooltip>
+                            <Tooltip title="Card View">
+                                <Button onClick={() => setViewMode('module')}>
+                                    <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
+                                </Button>
+                            </Tooltip>
+                        </Box>
+                    </Grid>
                 </Grid>
-                <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                <Grid container spacing={2}>
                     {propsData ?
                         viewMode === 'list' ?
                             <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />

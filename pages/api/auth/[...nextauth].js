@@ -1,6 +1,9 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import CredentialsProvider from "next-auth/providers/credentials"
+import CredentialsProvider from "next-auth/providers/credentials";
+import User from "@/models/user";
+
+import connectMongoDB from "@/lib/mongodb";
 
 const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
 const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
@@ -57,21 +60,47 @@ export default NextAuth({
     },
     callbacks: {
         async session({ session, token, user }) {
-            // Here, you can decide what data from the user object should be included in the session
-            // For example, if the user object includes an id, email, and name:
-            session.user.id = token.id;
-            session.user.email = token.email;
-            session.user.name = token.name;
+            await connectMongoDB();
+
+            const dbUser = await User.findOne({ email_address: token.email }).lean();
+            if (dbUser) {
+                session.user.id = dbUser._id;
+                session.user.email = dbUser.email_address;
+                session.user.name = `${dbUser.firstname} ${dbUser.lastname ?? ''}`;
+            }
             return session;
         },
-        async jwt({ token, user }) {
-            // If the user object is returned by `authorize`, it's passed here
-            if (user) {
-                token.id = user._id;
-                token.email = user.email_address;
-                token.name = user.name ?? `${user.firstname} ${user.lastname}`;
+        // async jwt({ token, user }) {
+        //     // If the user object is returned by `authorize`, it's passed here
+        //     if (user) {
+        //         token.id = user._id;
+        //         token.email = user.email_address;
+        //         token.name = user.name ?? `${user.firstname} ${user.lastname}`;
+        //     }
+        //     return token;
+        // },
+        async signIn({ user, account, profile }) {
+            if (account.provider === "google") {
+                await connectMongoDB();
+                console.log(user);
+                const { email, name } = user;
+                try {
+                    // Check if user exists, if not, create a new user
+                    await User.findOneAndUpdate(
+                        { email_address: email },
+                        {
+                            $setOnInsert: { firstname: name, email_address: email },
+                        },
+                        { upsert: true, new: true }
+                    );
+                    return true; // Sign-in successful
+                } catch (error) {
+                    console.error("Error during sign-in/sign-up:", error);
+                    return false; // Sign-in failed
+                }
             }
-            return token;
+
+            return true; // Allow sign-in for other providers
         },
     },
     secret: process.env.NEXTAUTH_SECRET,

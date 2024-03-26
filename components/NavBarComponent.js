@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { Menu, MenuItem, Badge, Typography, 
-    Toolbar, Stack, Box, AppBar, CssBaseline, 
-    Divider, Drawer, IconButton, List, ListItem, 
-    ListItemButton, ListItemText } from '@mui/material';
+import {
+    Menu, MenuItem, Badge, Typography,
+    Toolbar, Stack, Box, AppBar, CssBaseline,
+    Divider, Drawer, IconButton, List, ListItem,
+    ListItemButton, ListItemText
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -92,7 +94,7 @@ function NavBarComponent(props) {
             <MenuItem component={Link} href="/profile/letter">Setup Custom Letter</MenuItem>
             <MenuItem component={Link} href="/profile/email">Setup Email Template</MenuItem>
             <Divider />
-            <MenuItem onClick={()=> signOut()}>Logout</MenuItem>
+            <MenuItem onClick={() => signOut()}>Logout</MenuItem>
 
         </Menu >
     );
@@ -245,9 +247,11 @@ function NavBarComponent(props) {
                     >
                         <MenuIcon sx={{ fontSize: 30 }} />
                     </IconButton>
-                    <Typography variant="h3" noWrap component="div">
-                        MAYVIS
-                    </Typography>
+                    <Link href={"/"} style={{color:'white', textDecoration:'none'}}>
+                        <Typography variant="h3" noWrap component="div">
+                            MAYVIS
+                        </Typography>
+                    </Link>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                         <IconButton

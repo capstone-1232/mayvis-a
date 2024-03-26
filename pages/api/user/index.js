@@ -44,16 +44,19 @@ export default async function handler(req, res) {
             } catch (error) {
                 return res.status(500).json({ message: "Internal server error", error: error.message });
             }
-            break; // This was missing
 
         case 'GET':
             try {
+                const { id } = req.query;
+                if (id) {
+                    const user = await User.findOne({_id:id});
+                    return res.status(200).json(user);
+                }
                 const users = await User.find({});
                 return res.status(200).json(users);
             } catch (error) {
                 return res.status(500).json({ message: "Error fetching users", error: error.message });
             }
-            break; // This was missing
 
         case 'DELETE':
             try {
@@ -66,21 +69,24 @@ export default async function handler(req, res) {
             } catch (error) {
                 return res.status(500).json({ message: "Error deleting user", error: error.message });
             }
-            break; // This was missing
 
         case 'PUT':
             try {
-                const { id } = req.query;
-                const { user_name } = req.body;
-                const updatedUser = await User.findByIdAndUpdate(id, { user_name }, { new: true });
+                // Extract fields from request body
+                const { id, updateFields } = req.body;
+                const updatedUser = await User.findByIdAndUpdate(
+                    { _id: id },
+                    updateFields,
+                    { new: true, runValidators: true });
+
                 if (!updatedUser) {
                     return res.status(404).json({ message: "User not found." });
                 }
+
                 return res.status(200).json({ message: "User updated successfully.", user: updatedUser });
             } catch (error) {
                 return res.status(500).json({ message: "Error updating user", error: error.message });
             }
-            break; // This was missing
 
         default:
             res.setHeader('Allow', ['POST', 'GET', 'DELETE', 'PUT']);

@@ -21,7 +21,7 @@ export async function getServerSideProps(context) {
     // Determine the base URL based on the environment (Vercel or local)
     const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
     const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
-    const apiRoute = `${baseURL}/api/proposal`;
+    const apiRoute = `${baseURL}/api/proposal/archival`;
 
     let proposalsData = [];
     try {
@@ -60,7 +60,6 @@ const Proposal = ({ proposalsData }) => {
     };
 
     const handleSearchChange = (event, newValue) => {
-        console.log(newValue);
         setSearchTerm(newValue);
         const lowercasedValue = newValue.toLowerCase();
         const filtered = proposalsData.filter(item =>
@@ -118,9 +117,9 @@ const Proposal = ({ proposalsData }) => {
 
                     </Grid>
                     <Grid item>
-                        <Link href={'/proposal/archival'} >
+                        <Link href={'/proposal'} >
                             <Button variant="contained" startIcon={<FilterAltIcon />} sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
-                                Archival
+                                Back to Active Proposals
                             </Button>
                         </Link>
                     </Grid>
