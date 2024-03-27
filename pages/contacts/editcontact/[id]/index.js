@@ -2,19 +2,23 @@ import { useRouter } from "next/router";
 import React from "react"
 import ContactAddEditFormComponent from "@/components/ContactAddEditFormComponent";
 
+const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+const apiRoute = `${baseURL}/api/contact`;
+
 export async function getServerSideProps({ params }) {
     let contact = [{}];
     let contacts = [{}];
     try {
         const id = params.id;
-        const resContact = await fetch(`http://localhost:3000/api/contact/${id}`, { cache: "no-store" });
+        const resContact = await fetch(`${apiRoute}/${id}`, { cache: "no-store" });
         
         if (!resContact.ok) {
             throw new Error('Failed to fetch contact');
         }
         contact = await resContact.json();
 
-        const resContacts = await fetch(`http://localhost:3000/api/contact/clientcontact/${contact[0].client_id}`, { cache: "no-store" });
+        const resContacts = await fetch(`${apiRoute}/clientcontact/${contact[0].client_id}`, { cache: "no-store" });
 
         if (!resContacts.ok) {
             throw new Error('Failed to fetch contact');
@@ -32,7 +36,7 @@ const EditContact = ({ contact, contacts }) => {
     const router = useRouter();
     const updateContact = async (newdata) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/contact/${data._id}`,
+            const res = await fetch(`${apiRoute}/${data._id}`,
                 {
                     method: 'PUT',
                     headers: { "Content-type": "application/json" },

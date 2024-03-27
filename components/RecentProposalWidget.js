@@ -1,123 +1,195 @@
 import {
-    Card, CardContent, CardActions, Typography, Button, List, ListItem,
-    Divider, ListItemText, ListItemAvatar, Avatar, Grid
+    Card, CardContent, Typography, Button, List, ListItem,
+    Divider, ListItemText, ListItemAvatar, Avatar, Grid, CardActions
 } from "@mui/material";
+import ProposalIcon from '@mui/icons-material/Description';
 import React from "react";
-import styles from '@/styles/RecentProposalWidget.module.css';
 import Link from "next/link";
 
-const RecentProposalWidget = ({ elev }) => {
+const RecentProposalWidget = ({ elev, proposalsData }) => {
+    function stripHtml(html) {
+        return html.replace(/<[^>]*>?/gm, '');
+    }
     return (
-        <Card elevation={elev} className={styles.cardHeight}>
-            <CardContent className={styles.cardContentHeight}>
-                <Typography gutterBottom variant="h4" component="div" sx={{fontWeight:"bold"}}>
-                    Recent Proposal
+        <Card elevation={elev} sx={{ boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)', maxHeight:'100%', minHeight:'100%' }}>
+            <CardContent>
+                <Typography gutterBottom variant="h4" component="div" sx={{ fontWeight: "bold" }}>
+                    Recent Proposals
                 </Typography>
-                <div className={`${styles.justifyContentCenter} ${styles.content}`}>
-                    <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                        <ListItem alignItems="flex-start">
+                <List sx={{ width: '100%' }}>
+                    {proposalsData?.map((proposal, index) => (
+                        <ListItem key={index} alignItems="flex-start" sx={{
+                            py: 0.5,
+                            '& .MuiListItemText-root': {
+                                margin: 0,
+                            }
+                        }}>
                             <ListItemAvatar>
-                            <Avatar sx={{ backgroundColor: 'green' }}>{" "}</Avatar>
+                                <ProposalIcon />
                             </ListItemAvatar>
                             <ListItemText
                                 primary={
                                     <React.Fragment>
                                         <Grid container>
                                             <Grid item xs>
-                                                {"Proposal Name 1"}
+                                                <Link href={`/proposal]/viewproposal/${proposal.proposal_id}`} className="link" >
+                                                    <Typography variant="h6" component="h4" style={{ fontWeight: 'bold', color: 'black', textDecoration: 'underline', lineHeight: '1.25' }}>
+                                                        {proposal.proposal_title}
+                                                    </Typography>
+                                                </Link>
                                             </Grid>
-                                            <Grid item xs={5}>
-                                                {"Jan 22, 2024"}
+                                            <Grid
+                                                item
+                                                sx={{
+                                                    fontSize: '0.875rem', // Smaller font size if needed
+                                                    lineHeight: '1.25', // Adjust line height as needed
+                                                }}
+                                            >
+                                                {new Date(proposal.createdAt).toISOString().split('T')[0]}
                                             </Grid>
-                                        </Grid>    
+                                        </Grid>
                                     </React.Fragment>
                                 }
                                 secondary={
-                                    <React.Fragment>
-                                        <Typography
-                                            sx={{ display: 'inline' }}
-                                            component="span"
-                                            variant="body2"
-                                            color="text.primary"
-                                        >
-                                            {"Lorem Ipsum dolor sit amet, consectetur adipiscing elit,"}
-                                        </Typography>
-                                    </React.Fragment>
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                        color="text.primary"
+                                    >
+                                        <div style={{width: '35rem',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis', 
+                                            whiteSpace: 'nowrap'}}>{stripHtml(proposal.message)}</div>
+                                    </Typography>
                                 }
                             />
                         </ListItem>
-                        <Divider variant="inset" component="li" />
-                        <ListItem alignItems="flex-start">
-                            <ListItemAvatar>
-                                <Avatar sx={{ backgroundColor: 'orange' }}>{" "}</Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={
-                                    <React.Fragment>
-                                        <Grid container>
-                                            <Grid item xs>
-                                                {"Proposal Name 2"}
-                                            </Grid>
-                                            <Grid item xs={5}>
-                                                {"Jan 22, 2024"}
-                                            </Grid>
-                                        </Grid>    
-                                    </React.Fragment>
-                                }
-                                secondary={
-                                    <React.Fragment>
-                                        <Typography
-                                            sx={{ display: 'inline' }}
-                                            component="span"
-                                            variant="body2"
-                                            color="text.primary"
-                                        >
-                                            {"Lorem Ipsum dolor sit amet, consectetur adipiscing elit,"}
-                                        </Typography>
-                                    </React.Fragment>
-                                }
-                            />
-                        </ListItem>
-                        <Divider variant="inset" component="li" />
-                        <ListItem alignItems="flex-start">
-                            <ListItemAvatar>
-                            <Avatar sx={{ backgroundColor: 'red' }}>{" "}</Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={
-                                    <React.Fragment>
-                                        <Grid container>
-                                            <Grid item xs>
-                                                {"Proposal Name 3"}
-                                            </Grid>
-                                            <Grid item xs={5}>
-                                                {"Jan 22, 2024"}
-                                            </Grid>
-                                        </Grid>    
-                                    </React.Fragment>
-                                }
-                                secondary={
-                                    <React.Fragment>
-                                        <Typography
-                                            sx={{ display: 'inline' }}
-                                            component="span"
-                                            variant="body2"
-                                            color="text.primary"
-                                        >
-                                            {"Lorem Ipsum dolor sit amet, consectetur adipiscing elit,"}
-                                        </Typography>
-                                    </React.Fragment>
-                                }
-                            />
-                        </ListItem>
-                    </List>
-                </div>
+                    ))}
+                    {/* <ListItemAvatar>
+                            <Avatar sx={{ backgroundColor: 'green' }} />
+                        </ListItemAvatar> */}
+                    {/* <ListItemText
+                            primary={
+                                <React.Fragment>
+                                    <Grid container>
+                                        <Grid item xs>
+                                            Proposal Name 1
+                                        </Grid>
+                                        <Grid item>
+                                            Jan 22, 2024
+                                        </Grid>
+                                    </Grid>
+                                </React.Fragment>
+                            }
+                            secondary={
+                                <Typography
+                                    component="span"
+                                    variant="body2"
+                                    color="text.primary"
+                                >
+                                    Lorem Ipsum dolor sit amet, consectetur adipiscing elit,
+                                </Typography>
+                            }
+                        /> */}
+
+
+                    {/* <ListItem alignItems="flex-start">
+                        <ListItemAvatar>
+                            <Avatar sx={{ backgroundColor: 'green' }} />
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={
+                                <React.Fragment>
+                                    <Grid container>
+                                        <Grid item xs>
+                                            Proposal Name 1
+                                        </Grid>
+                                        <Grid item>
+                                            Jan 22, 2024
+                                        </Grid>
+                                    </Grid>
+                                </React.Fragment>
+                            }
+                            secondary={
+                                <Typography
+                                    component="span"
+                                    variant="body2"
+                                    color="text.primary"
+                                >
+                                    Lorem Ipsum dolor sit amet, consectetur adipiscing elit,
+                                </Typography>
+                            }
+                        />
+
+                    </ListItem>
+                    <ListItem alignItems="flex-start">
+                        <ListItemAvatar>
+                            <Avatar sx={{ backgroundColor: 'green' }} />
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={
+                                <React.Fragment>
+                                    <Grid container>
+                                        <Grid item xs>
+                                            Proposal Name 1
+                                        </Grid>
+                                        <Grid item>
+                                            Jan 22, 2024
+                                        </Grid>
+                                    </Grid>
+                                </React.Fragment>
+                            }
+                            secondary={
+                                <Typography
+                                    component="span"
+                                    variant="body2"
+                                    color="text.primary"
+                                >
+                                    Lorem Ipsum dolor sit amet, consectetur adipiscing elit,
+                                </Typography>
+                            }
+                        />
+
+                    </ListItem>
+                    <ListItem alignItems="flex-start">
+                        <ListItemAvatar>
+                            <Avatar sx={{ backgroundColor: 'green' }} />
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={
+                                <React.Fragment>
+                                    <Grid container>
+                                        <Grid item xs>
+                                            Proposal Name 1
+                                        </Grid>
+                                        <Grid item>
+                                            Jan 22, 2024
+                                        </Grid>
+                                    </Grid>
+                                </React.Fragment>
+                            }
+                            secondary={
+                                <Typography
+                                    component="span"
+                                    variant="body2"
+                                    color="text.primary"
+                                >
+                                    Lorem Ipsum dolor sit amet, consectetur adipiscing elit,
+                                </Typography>
+                            }
+                        />
+
+                    </ListItem> */}
+
+                    <Divider variant="inset" component="li" />
+                    {/* Repeat ListItem for each proposal */}
+                </List>
             </CardContent>
-            <CardActions className={"justifyContentCenter"}>
-                <Link href={"/proposal"}>
-                <Button variant='contained' sx={{ backgroundColor: '#405CAA', color: 'white', margin: '0 1rem 1rem', alignItems: 'center', width: '15rem' }} size="large">
-                    View All Proposals
-                </Button>
+            <CardActions sx={{ justifyContent: 'center' }}>
+                <Link href="/proposal" passHref>
+                    <Button variant='contained' sx={{ backgroundColor: '#253C7C', borderRadius: '15px', color: 'white' }} size="large">
+                        View All Proposals
+                    </Button>
                 </Link>
             </CardActions>
         </Card>

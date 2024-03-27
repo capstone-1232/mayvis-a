@@ -8,10 +8,13 @@ export default async function handler(req, res) {
         case 'GET':
             try {
                 const { id } = req.query;
-                const contact = await Contact.find({ _id: id });
+                const contact = await Contact.findById(id);
+                if (!contact) {
+                    return res.status(404).json({ message: "Contact not found" });
+                }
                 return res.status(200).json(contact);
             } catch (error) {
-                return res.status(500).json({ message: "Error fetching contacts", error: error.message });
+                return res.status(500).json({ message: "Error fetching contact", error: error.message });
             }
 
         case 'PUT':

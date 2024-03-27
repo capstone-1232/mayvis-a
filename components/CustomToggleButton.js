@@ -1,20 +1,14 @@
 import { useState } from 'react';
 import { Switch, FormGroup, FormControlLabel, Typography } from '@mui/material';
 
-export default function CustomToggleButton({label}) {
-  const [checked, setChecked] = useState(false);
-
-  const handleChange = (event) => {
-    setChecked(event.target.checked);
-  };
-
+export default function CustomToggleButton({ label, checked, onChange }) {
   return (
     <FormGroup row>
       <FormControlLabel
         control={
           <Switch
             checked={checked}
-            onChange={handleChange}
+            onChange={onChange}
             color="default"
             sx={{
               height: '46px',

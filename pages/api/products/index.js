@@ -9,13 +9,16 @@ export default async function productHandler(req, res) {
             // Create a new product
             try {
                 // const { product_name, description, price, is_recurring, is_archived, notes, quantity, created_by, updated_by } = req.body;
-                const { product_name, description, price, is_archived, category_id } = req.body;
+                const { product_name, description, price, is_recurring, recurring_option, quantity, is_archived, category_id } = req.body;
                 const newProduct = await Product.create({
-                  product_name,
-                  description,
-                  price,
-                  is_archived,
-                  category_id
+                    product_name,
+                    description,
+                    price,
+                    is_recurring,
+                    recurring_option,
+                    quantity,
+                    is_archived,
+                    category_id
                 });
                 return res.status(201).json({ message: "Product created successfully.", newProduct });
             } catch (error) {
@@ -34,8 +37,14 @@ export default async function productHandler(req, res) {
                                 foreignField: "_id",
                                 as: "created_user"
                             }
-                        }]);
-                    return res.status(200).json(products);
+                        },
+                        {
+                            $match: {
+                                is_archived: false
+                            }
+                        }
+                    ]);
+                return res.status(200).json(products);
             } catch (error) {
                 return res.status(500).json({ message: "Error fetching products", error: error.message });
             }

@@ -1,11 +1,15 @@
 import React from "react"
 import ClientAddEditFormComponent from "@/components/ClientAddEditFormComponent";
 
+const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+const apiRoute = `${baseURL}/api/client`;
+
 export async function getServerSideProps({ params }) {
     let clientData = [{}];
     try {
       const id = params.id;
-      const res = await fetch(`http://localhost:3000/api/client/${id}`, { cache: "no-store" });
+      const res = await fetch(`${apiRoute}/${id}`, { cache: "no-store" });
       // res.setHeader(
       //   'Cache-Control',
       //   'public, s-maxage=10, stale-while-revalidate=59'
@@ -26,7 +30,7 @@ const EditClient = ({clientData}) => {
     const data = clientData[0];
     const updateClient = async (dataFromChild) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/client/${data._id}`,
+            const res = await fetch(`${apiRoute}/${data._id}`,
                 {
                     method: 'PUT',
                     headers: { "Content-type": "application/json" },

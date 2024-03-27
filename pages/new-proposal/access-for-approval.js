@@ -27,6 +27,10 @@ const AccessForApproval = () => {
     router.push('/new-proposal/message');
   };
 
+  const handleClientView = () => {
+    router.push('/new-proposal/client-view-page');
+  };
+
   const handleBack = () => {
     router.back();
   };
@@ -38,7 +42,7 @@ const AccessForApproval = () => {
       <Container sx={{ mt: 1 }} maxWidth={'100vh'}>
         <Paper
           elevation={5} 
-          sx={{ p: 4, mt: 5, mb: 5, borderRadius: 2 }}
+          sx={{ p: 4, mt: 5, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
         >
           <Typography variant='h6' sx={{ mb: 2, fontWeight: 'bold' }} gutterBottom>
             Link for the Proposal
@@ -65,7 +69,7 @@ const AccessForApproval = () => {
                     py: 1.5,
                     px: 10,
                     borderRadius: 5,
-                    bgcolor: '#405CAA',
+                    bgcolor: '#253C7C',
                   }}
                   onClick={handleDeactivateLink}
                 >
@@ -77,7 +81,7 @@ const AccessForApproval = () => {
         </Paper>
         <Paper
           elevation={5} 
-          sx={{ p: 4, mt: 5, mb: 5, borderRadius: 2 }}
+          sx={{ p: 4, mt: 5, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
         >
           <Box sx={{ display: 'flex', gap: '5%' }}>
             <Box width={'55%'}>
@@ -115,7 +119,7 @@ const AccessForApproval = () => {
                         py: 1.5,
                         px: 8,
                         borderRadius: 3,
-                        bgcolor: '#405CAA',
+                        bgcolor: '#253C7C',
                       }}
                     >
                       Add To List
@@ -144,11 +148,11 @@ const AccessForApproval = () => {
               sx={{
                 py: 1.5,
                 borderRadius: 3,
-                bgcolor: '#405CAA',
+                bgcolor: '#253C7C',
                 width: '15%',
                 marginRight: '40px'
               }}
-              onClick={handleBack}
+              onClick={handleClientView}
             >
               Client View
             </Button>
@@ -157,7 +161,7 @@ const AccessForApproval = () => {
               sx={{
                 py: 1.5,
                 borderRadius: 3,
-                bgcolor: '#405CAA',
+                bgcolor: '#253C7C',
                 width: '15%',
               }}
               onClick={handleBack}

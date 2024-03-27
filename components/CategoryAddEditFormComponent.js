@@ -32,6 +32,7 @@ const CategoryAddEditFormComponent = ({ category }) => {
                 categoryName: categoryName,
                 archived: archive,
                 description: description,
+                //productId: _id
             })
 
             if (data.error) {
@@ -58,7 +59,7 @@ const CategoryAddEditFormComponent = ({ category }) => {
     return (
         <form onSubmit={handleSubmit}>
             <Box sx={{ flexGrow: 1, padding: 2 }}>
-                <Paper elevation={12} sx={{ marginTop: 2, padding: 5 }}>
+                <Paper elevation={12} sx={{ marginTop: 2, padding: 5, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
                     <Grid container spacing={5} alignItems="center">
                         <Grid item xs={12}>
                             <Typography variant="h4" component="div" gutterBottom>
@@ -66,16 +67,16 @@ const CategoryAddEditFormComponent = ({ category }) => {
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                            <FormControlLabel control={<Switch checked={archive} onChange={(e) => setArchive(e.target.checked)} disabled = {(category.disableFields ? true: false)}/>} label="Archive Category" />
+                            <FormControlLabel control={<Switch checked={archive} onChange={(e) => setArchive(e.target.checked)} disabled = {(category.disableFields)}/>} label="Archive Category" />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField label="Category Name" fullWidth value={categoryName} onChange={(e) => setCategoryName(e.target.value)} required 
-                            disabled = {(category.disableFields ? true: false)}/>
+                            disabled = {(category.disableFields)}/>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField label="Description" fullWidth multiline
                                 rows={15} value={description} onChange={(e) => setDescription(e.target.value)} required 
-                                disabled = {(category.disableFields ? true: false)}/>
+                                disabled = {(category.disableFields)}/>
                         </Grid>
                         <Grid item xs={12} container justifyContent="flex-end" spacing={2}>
                             <Grid item>
@@ -86,7 +87,7 @@ const CategoryAddEditFormComponent = ({ category }) => {
                                 </Link>
                             </Grid>
                             <Grid item>
-                                <Button variant="contained" type="submit" disabled={isLoading || (category.disableFields ? true: false)}>
+                                <Button variant="contained" type="submit" disabled={isLoading || (category.disableFields)}>
                                     {isLoading ? 'Saving...' : 'Save'}
                                 </Button>
                             </Grid>

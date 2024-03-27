@@ -1,7 +1,46 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 
-const ProposalTotalComponent = ({ deliverables, projectTotal, recurringTotal, proposalTotal }) => {
+const recurringMultipliers = {
+    weekly: 4,
+    monthly: 1,
+    quarterly: 3 / 12,
+    yearly: 1 / 12,
+};
+
+const ProposalTotal = ({ deliverables }) => {
+    const [projectTotal, setProjectTotal] = useState(0);
+    const [recurringTotal, setRecurringTotal] = useState(0);
+    const [proposalTotal, setProposalTotal] = useState(0);
+
+    useEffect(() => {
+        const { projectTotal, recurringTotal } = deliverables.reduce((acc, item) => {
+            const pricePerUnit = parseFloat(item.price?.$numberDecimal || item.price);
+            const productCost = pricePerUnit * item.quantity;
+
+            if (item.is_recurring) {
+                const multiplier = recurringMultipliers[item.recurring_option] || 1;
+                acc.recurringTotal += productCost * multiplier;
+                setRecurringTotal(acc.recurringTotal);
+
+            } else {
+                acc.projectTotal += productCost;
+                setProjectTotal(acc.projectTotal);
+            }
+
+            return acc;
+        }, { projectTotal: 0, recurringTotal: 0 });
+
+        const proposalTotal = projectTotal + recurringTotal;
+
+        setProposalTotal(proposalTotal);
+
+        sessionStorage.setItem('projectTotal', projectTotal);
+        sessionStorage.setItem('recurringTotal', recurringTotal);
+        sessionStorage.setItem('proposalTotal', proposalTotal);
+
+    }, [deliverables]);
+
     return (
         <Box sx={{ bgcolor: 'background.paper', p: 1 }}>
             <Box>
@@ -31,27 +70,6 @@ const ProposalTotalComponent = ({ deliverables, projectTotal, recurringTotal, pr
                 </Box>
             </Box>
         </Box>
-    )
-}
-
-const deliverablesData = [
-    { name: 'Digital Ads and Marketing', price: 1500 },
-    { name: 'Face Photoshoot', price: 2000 },
-    { name: 'Logo Branding', price: 2000 },
-];
-
-const ProposalTotal = () => {
-    const [deliverables, setDeliverables] = useState(deliverablesData);
-    const projectTotal = deliverables.reduce((acc, item) => acc + item.price, 0);
-    const recurringTotal = 1500;
-    const proposalTotal = projectTotal + recurringTotal;
-
-    return (
-        <ProposalTotalComponent
-            projectTotal={projectTotal}
-            recurringTotal={recurringTotal}
-            proposalTotal={proposalTotal}
-        />
     );
 }
 

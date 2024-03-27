@@ -2,11 +2,15 @@ import { useRouter } from "next/router";
 import React from "react"
 import ContactAddEditFormComponent from "@/components/ContactAddEditFormComponent";
 
+const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+const apiRoute = `${baseURL}/api/contact`;
+
 export async function getServerSideProps({ params }) {
     let contactData = [{}];
     try {
         const id = params.id;
-        const res = await fetch(`http://localhost:3000/api/contact/clientcontact/${id}`, { cache: "no-store" });
+        const res = await fetch(`${apiRoute}/clientcontact/${id}`, { cache: "no-store" });
 
         if (!res.ok) {
             throw new Error('Failed to fetch contact');
@@ -23,7 +27,7 @@ const AddContact = ({ contactData }) => {
     const router = useRouter();
     const addNewContact = async (newdata) => {
         try {
-            const res = await fetch('http://localhost:3000/api/contact',
+            const res = await fetch(apiRoute,
                 {
                     method: 'POST',
                     headers: { "Content-type": "application/json" },

@@ -5,9 +5,14 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import loginLogo from "../../public/assets/images/login_head.png";
-import { GoogleLogin } from '@react-oauth/google';
-import { GoogleOAuthProvider } from "@react-oauth/google";
+// import { GoogleLogin } from '@react-oauth/google';
+// import { GoogleOAuthProvider } from "@react-oauth/google";
+import { signIn, signOut, useSession } from "next-auth/react"
 import { useRouter } from 'next/router';
+
+const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+const apiRoute = `${baseURL}/api/user`;
 
 const slideshowImages = [
     "/assets/images/login-slideshow-one.webp",
@@ -17,7 +22,7 @@ const slideshowImages = [
 
 const LoginSignup = () => {
     const paperStyle = { padding: 20, width: 600, margin: "0 auto", borderRadius: 20, position: 'relative', zIndex: 2 }
-    const avatarStyle = { backgroundColor: '#1bbd7e' }
+    const avatarStyle = { backgroundColor: '#253C7C' }
     const btnstyle = { margin: '8px 0', borderRadius: 5, height: 40 }
 
     const [currentImage, setCurrentImage] = useState(0);
@@ -31,14 +36,9 @@ const LoginSignup = () => {
     const [msg, setMsg] = useState('');
     const [severity, setSeverity] = useState('error')
 
+    const { data: session } = useSession();
     const router = useRouter();
-    const AuthLogin = () => {
-        let isAuth = true;
-        // do authentication here
-        if (isAuth) {
-            router.push('/');
-        }
-    }
+    const { callbackUrl } = router.query; // Capture the callbackUrl from the query
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -53,7 +53,7 @@ const LoginSignup = () => {
 
     const addUser = async (user) => {
         try {
-            const res = await fetch('http://localhost:3000/api/user',
+            const res = await fetch(apiRoute,
                 {
                     method: 'POST',
                     headers: { "Content-type": "application/json" },
@@ -76,28 +76,28 @@ const LoginSignup = () => {
     const loginUser = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('http://localhost:3000/api/user',
-                {
-                    method: 'POST',
-                    headers: { "Content-type": "application/json" },
-                    body: JSON.stringify({
-                        'email_address': emailAddress,
-                        'password': password,
-                        'type': "Log In"
-                    })
-                });
+            // Attempt to sign in
+            const result = await signIn('credentials', {
+                redirect: false, // Prevent NextAuth from redirecting
+                emailAddress,
+                password,
+                'type': "Log In",
+            });
 
-            const jsonRes = await res.json();
-
-            if (jsonRes.message == "Login successful") {
-                router.push('/');
+            if (result.error) {
+                // Handle error messages
+                //throw new Error(`Failed to log in, Error: ${result.error}`);
+                setMsg('Authentication Failed.')
+                setShowMsg(true);
+                return;
             }
-            console.log(jsonRes)
+            // Redirect to the secure page after sign in
+            router.push(callbackUrl || '/');
+
         }
         catch (e) {
             throw e;
         }
-
     }
 
     const handleMsg = (msg) => {
@@ -143,8 +143,25 @@ const LoginSignup = () => {
         }
     }
 
+    const loginButtonOAuth = () => {
+        if (session) {
+            return (
+                //for testing only
+                <>
+                    <p>Signed in as {session.user.email}</p>
+                    <Button onClick={() => signOut()} color='primary' variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }} style={btnstyle} fullWidth>Sign out</Button>
+                </>
+            );
+        }
+        else {
+            return (
+                <Button onClick={() => signIn('google', { callbackUrl: callbackUrl || '/' })} color='primary' variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }} style={btnstyle} fullWidth>Sign in with Google</Button>
+            );
+        }
+    }
+
     return (
-        <GoogleOAuthProvider>
+        <>
             <Grid container style={{
                 position: 'absolute',
                 top: 0,
@@ -168,7 +185,7 @@ const LoginSignup = () => {
                 </div>
 
                 {/* Login & Signup Paper */}
-                <Paper elevation={10} style={paperStyle}>
+                <Paper elevation={10} style={paperStyle} sx={{ boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
                     <Tabs
                         value={activeTab}
                         onChange={handleChangeTab}
@@ -189,15 +206,15 @@ const LoginSignup = () => {
                                 },
                             },
                             '.Mui-selected': {
-                                backgroundColor: '#1976d2',
+                                backgroundColor: '#253C7C',
                                 color: '#ffffff !important',
-                                borderColor: '#1976d2',
+                                borderColor: '#253C7C',
                                 zIndex: 1,
                                 '&:not(:first-of-type)': {
-                                    borderLeft: '1px solid #1976d2',
+                                    borderLeft: '1px solid #253C7C',
                                 },
                                 '&:not(:last-child)': {
-                                    borderRight: '1px solid #1976d2',
+                                    borderRight: '1px solid #253C7C',
                                 },
                             },
                             '.MuiTabs-indicator': {
@@ -217,9 +234,9 @@ const LoginSignup = () => {
                         </Grid>
                         <Stack spacing={2}>
                             <form onSubmit={loginUser}>
-                                <TextField label='Email' placeholder='Enter email' variant="outlined" fullWidth required onChange={(e) => setEmailAddress(e.target.value)} sx={{marginBottom:"10px"}}/>
+                                <TextField label='Email' placeholder='Enter email' variant="outlined" fullWidth required onChange={(e) => setEmailAddress(e.target.value)} sx={{ marginBottom: "10px" }} />
                                 <TextField label='Password' placeholder='Enter password' type='password' variant="outlined" fullWidth required onChange={(e) => setPassword(e.target.value)} />
-                                <Button type='submit' color='primary' variant="contained" style={btnstyle} fullWidth>Sign in</Button>
+                                <Button type='submit' color='primary' variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }} style={btnstyle} fullWidth>Sign in</Button>
                             </form>
                             <Typography>
                                 <Link href="#">Forgot password?</Link>
@@ -229,7 +246,7 @@ const LoginSignup = () => {
                                 <span style={{ margin: '0 10px', fontWeight: 'bold', color: '#000' }}>or</span>
                                 <span style={{ flexGrow: 1, height: '1px', backgroundColor: '#000' }}></span>
                             </div>
-                            <GoogleLogin
+                            {/* <GoogleLogin
                                 onSuccess={(credentialResponse) => {
                                     console.log(credentialResponse);
                                 }}
@@ -237,7 +254,10 @@ const LoginSignup = () => {
                                     console.log('Login Failed');
                                 }}
                                 theme='filled_blue'
-                            />
+                            /> */}
+
+                            {loginButtonOAuth()}
+
                             <Typography style={{ paddingTop: '8px' }}> Do you have an account?
                                 <Link href="#" onClick={() => setActiveTab(1)}>Sign Up</Link>
                             </Typography>
@@ -259,7 +279,7 @@ const LoginSignup = () => {
                                 <TextField label='Password' placeholder='Enter password' type='password' variant="outlined" fullWidth required onChange={(e) => setPassword(e.target.value)} />
                                 <TextField label='Confirm Password' placeholder='Confirm password' type='password' variant="outlined" fullWidth required onChange={(e) => setConfirmPassword(e.target.value)} />
                                 {/* <Link href={'/login/signup/'} > */}
-                                <Button type='submit' color='primary' variant="contained" style={{ btnstyle, paddingTop: '15px' }} fullWidth>Sign up</Button>
+                                <Button type='submit' color='primary' variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }} style={{ btnstyle, paddingTop: '15px' }} fullWidth>Sign up</Button>
                                 {/* </Link> */}
                                 <Typography style={{ paddingTop: '15px' }}> Already have an account?
                                     <Link href="#" onClick={() => setActiveTab(0)}>Login</Link>
@@ -283,7 +303,7 @@ const LoginSignup = () => {
                     {msg}
                 </Alert>
             </Snackbar>
-        </GoogleOAuthProvider>
+        </>
     );
 };
 

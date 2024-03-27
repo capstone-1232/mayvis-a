@@ -1,12 +1,15 @@
 import React from "react"
 import CategoryAddEditFormComponent from "@/components/CategoryAddEditFormComponent";
 
+const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+const apiRoute = `${baseURL}/api/category`;
 
 export async function getServerSideProps({ params }) {
   let categoryData = [{}];
   try {
     const id = params.id;
-    const res = await fetch(`http://localhost:3000/api/category/${id}`, { cache: "no-store" });
+    const res = await fetch(`${apiRoute}/${id}`, { cache: "no-store" });
     // res.setHeader(
     //   'Cache-Control',
     //   'public, s-maxage=10, stale-while-revalidate=59'
@@ -24,46 +27,47 @@ export async function getServerSideProps({ params }) {
 }
 
 
-const EditCategory = ({categoryData}) => {
+const EditCategory = ({ categoryData }) => {
   const data = categoryData[0];
   console.log(categoryData);
-  
-    const updateCategory = async (dataFromChild) => {
-        try {
-            console.log(dataFromChild);
-            // const res = await fetch(process.env.VERCEL_URL + '/api/category',
-            const res = await fetch(`http://localhost:3000/api/category/${data._id}`,
-                {
-                    method: 'PUT',
-                    headers: { "Content-type": "application/json" },
-                    body: JSON.stringify({
-                        'category_name': dataFromChild.categoryName,
-                        'is_archived': dataFromChild.archived,
-                        'description': dataFromChild.description
-                    })
-                });
-            return await res.json();
-        }
-        catch (e) {
-            throw e;
-        }
 
+  const updateCategory = async (dataFromChild) => {
+    try {
+      console.log(dataFromChild);
+      // const res = await fetch(process.env.VERCEL_URL + '/api/category',
+      const res = await fetch(`${apiRoute}/${data._id}`,
+        {
+          method: 'PUT',
+          headers: { "Content-type": "application/json" },
+          body: JSON.stringify({
+            'category_name': dataFromChild.categoryName,
+            'is_archived': dataFromChild.archived,
+            'description': dataFromChild.description
+          })
+        });
+      return await res.json();
+    }
+    catch (e) {
+      throw e;
     }
 
-    return (
-        <CategoryAddEditFormComponent
-            category={{
-                processCategory: updateCategory,
-                categoryName: data?.category_name,
-                archived: data?.is_archived,
-                description: data?.description,
-                isLoading: false,
-                showMsg: false,
-                msg: '',
-                disableFields: false
-            }}
-        />
-    );
-} 
+  }
+
+  return (
+    <CategoryAddEditFormComponent
+      category={{
+        processCategory: updateCategory,
+        categoryName: data?.category_name,
+        archived: data?.is_archived,
+        description: data?.description,
+        productId: data?._id,
+        isLoading: false,
+        showMsg: false,
+        msg: '',
+        disableFields: false
+      }}
+    />
+  );
+}
 
 export default EditCategory;
