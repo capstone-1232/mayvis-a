@@ -1,19 +1,24 @@
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import 'react-quill/dist/quill.snow.css';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
-function RTextEditor({ value, handleMessageChange}) {
+function RTextEditor({ props }) {
+  const [value, setValue] = useState(props.content);
+
+  useEffect(() => {
+    props.setContent(value);
+  }, [value]);
 
   const toolbarOptions = [
     [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
     [{ 'font': [] }],
     ['bold', 'italic', 'underline', 'strike'],
     ['blockquote', 'code-block'],
-    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-    [{ 'script': 'sub'}, { 'script': 'super' }],
+    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+    [{ 'script': 'sub' }, { 'script': 'super' }],
     [{ 'color': [] }, { 'background': [] }],
     [{ 'align': [] }],
     ['link', 'image', 'video', 'formula']
@@ -25,21 +30,21 @@ function RTextEditor({ value, handleMessageChange}) {
 
   return <>
     <Box
-        className="myQuillContainer"
-        sx={{
-            height: "100%",
-            py: "30px",
-        }}
+      className="myQuillContainer"
+      sx={{
+        height: "100%",
+        py: "30px",
+      }}
     >
-        <ReactQuill
-            theme="snow"
-            modules={modules}
-            value={value} 
-            onChange={handleMessageChange} 
-        />
+      <ReactQuill
+        theme="snow"
+        modules={modules}
+        value={value}
+        onChange={setValue}
+      />
     </Box>
   </>
-  
+
 }
 
 export default RTextEditor;

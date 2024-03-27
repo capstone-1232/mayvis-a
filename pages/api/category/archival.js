@@ -16,23 +16,23 @@ export default async function handler(req, res) {
 
         case 'GET':
             try {
-                const categories = await Category//.find({is_archived: true});
-                    .aggregate([
-                        {
-                            $lookup: {
-                                localField: "_id",
-                                from: "categories",
-                                foreignField: "category_id",
-                                as: "category_info"
-                            }
-                        }
-                        ,
-                        {
-                            $match: {
-                                is_archived: true
-                            }
-                        }
-                    ]);
+                const categories = await Category.find({is_archived: true});
+                    // .aggregate([
+                    //     {
+                    //         $lookup: {
+                    //             localField: "_id",
+                    //             from: "categories",
+                    //             foreignField: "category_id",
+                    //             as: "category_info"
+                    //         }
+                    //     }
+                    //     ,
+                    //     {
+                    //         $match: {
+                    //             is_archived: true
+                    //         }
+                    //     }
+                    // ]);
                 return res.status(200).json(categories);
             } catch (error) {
                 return res.status(500).json({ message: "Error fetching categories", error: error.message });

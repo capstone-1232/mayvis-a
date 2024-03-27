@@ -1,6 +1,6 @@
 import {
     Autocomplete, Box, Button, Card, Grid, Paper,
-    TextField, Typography, Stack, Pagination, ListItemAvatar
+    TextField, Typography, Stack, Pagination, ListItemAvatar, Tooltip
 } from "@mui/material";
 import React, { useState, useEffect } from 'react';
 
@@ -15,9 +15,10 @@ import SearchField from "@/components/SearchField";
 export async function getServerSideProps() {
     let clientsData = [{}];
     try {
-        //console.log(process.env.VERCEL_URL);
-        // const res = await fetch(process.env.VERCEL_URL + '/api/client', { cache: "no-store" });
-        const res = await fetch('http://localhost:3000/api/client/archival', { cache: "no-store" });
+        const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+        const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+        const apiRoute = `${baseURL}/api/client/archival`;
+        const res = await fetch(apiRoute, { cache: "no-store" });
 
         // res.setHeader(
         //     'Cache-Control',
@@ -89,14 +90,14 @@ const Client = ({ clientsData }) => {
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
                     <Typography variant="h4" component="div" gutterBottom>
-                       Archived Clients
+                        Archived Clients
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
 
                         <Link href={'/client/addclient'} >
-                            <Button variant="contained" sx={{backgroundColor: '#253C7C', borderRadius: '15px'}}>
+                            <Button variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
                                 + Create New Client
                             </Button>
                         </Link>
@@ -112,7 +113,7 @@ const Client = ({ clientsData }) => {
             </Grid>
             <Paper elevation={12} sx={{ marginTop: 2, padding: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={8} md={6}>
+                    <Grid item xs={12} sm={7} md={5} lg={5}>
                         <Box
                             mt={1}
                             sx={{
@@ -126,40 +127,24 @@ const Client = ({ clientsData }) => {
                                 onInputChange={handleSearchChange}
                             />
                         </Box>
-                        {/* <Autocomplete
-                            id="searchClient"
-                            freeSolo
-                            options={clientsData?.map((client) => client.client_name)}
-                            value={searchTerm}
-                            onInputChange={handleSearchChange}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Search Client"
-                                    variant="outlined"
-                                    fullWidth
-                                    InputProps={{
-                                        ...params.InputProps,
-                                        startAdornment: (
-                                            <SearchIcon sx={{ mr: 2 }} />
-                                        ),
-                                    }}
-                                />
-                            )}
-                        /> */}
                     </Grid>
-
-                    <Box display="flex" justifyContent="flex-start">
-                        <Button onClick={() => setViewMode('list')}>
-                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
-                        </Button>
-                        <Button onClick={() => setViewMode('module')}>
-                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
-                        </Button>
-                    </Box>
-
+                    <Grid item xs={0} sm={1} md={5} lg={6}></Grid>
+                    <Grid item xs={4} sm={4} md={2} lg={1}>
+                        <Box display="flex" justifyContent="flex-start">
+                            <Tooltip title="List View">
+                                <Button onClick={() => setViewMode('list')}>
+                                    <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
+                                </Button>
+                            </Tooltip>
+                            <Tooltip title="Card View">
+                                <Button onClick={() => setViewMode('module')}>
+                                    <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
+                                </Button>
+                            </Tooltip>
+                        </Box>
+                    </Grid>
                 </Grid>
-                <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                <Grid container spacing={2}>
                     {propsData ?
                         viewMode === 'list' ?
                             <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
@@ -173,7 +158,7 @@ const Client = ({ clientsData }) => {
                                 ))
                         :
                         <Grid item xs={12}>
-                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center', boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)'}}>No Record(s) Found</Card>
+                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center', boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>No Record(s) Found</Card>
                         </Grid>
                     }
                 </Grid>

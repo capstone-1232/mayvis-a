@@ -8,11 +8,15 @@ import PersonIcon from '@mui/icons-material/Person';
 import EditIcon from '@mui/icons-material/Edit';
 import CircleIcon from '@mui/icons-material/Circle';
 
+const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+const apiRoute = `${baseURL}/api/client`;
+
 export async function getServerSideProps({ params }) {
   let clientData = [{}];
   try {
     const id = params.id;
-    const res = await fetch(`http://localhost:3000/api/client/${id}`, { cache: "no-store" });
+    const res = await fetch(`${apiRoute}/${id}`, { cache: "no-store" });
     // res.setHeader(
     //   'Cache-Control',
     //   'public, s-maxage=10, stale-while-revalidate=59'
@@ -70,7 +74,7 @@ const ViewClient = ({ clientData }) => {
           </Grid>
         </Grid>
       </Grid>
-      <Paper elevation={12} sx={{ marginTop: 2, padding: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
+      <Paper elevation={12} sx={{ marginTop: 2, padding: 2 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={8} md={6}>
             <Autocomplete
@@ -175,7 +179,7 @@ const ViewClient = ({ clientData }) => {
               </React.Fragment>
             )) :
             <Grid item xs={12}>
-              <Card elevation={0} sx={{ padding: 2, textAlign: 'center', boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>No Record(s) Found</Card>
+              <Card elevation={0} sx={{ padding: 2, textAlign: 'center' }}>No Record(s) Found</Card>
             </Grid>
           }
         </Grid>

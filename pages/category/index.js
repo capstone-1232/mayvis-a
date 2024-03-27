@@ -1,6 +1,6 @@
 import {
     Autocomplete, Box, Button, Card, Grid, Paper,
-    TextField, Typography, Stack, Pagination
+    TextField, Typography, Stack, Pagination, Tooltip
 } from "@mui/material";
 import React, { useState, useEffect } from 'react';
 
@@ -107,7 +107,7 @@ const Category = ({ categoriesData }) => {
 
                         <Link href={'/category/addcategory'} >
                             <Button variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
-                               + Create New Category
+                                + Create New Category
                             </Button>
                         </Link>
                     </Grid>
@@ -122,7 +122,7 @@ const Category = ({ categoriesData }) => {
             </Grid>
             <Paper elevation={12} sx={{ marginTop: 2, padding: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={8} md={6}>
+                    <Grid item xs={12} sm={7} md={5} lg={5}>
                         <Box
                             sx={{
                                 width: '70%'
@@ -136,19 +136,26 @@ const Category = ({ categoriesData }) => {
                             />
                         </Box>
                     </Grid>
-                    <Box display="flex" justifyContent="flex-start">
-                        <Button onClick={() => setViewMode('list')}>
-                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px'}} />
-                        </Button>
-                        <Button onClick={() => setViewMode('module')}>
-                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px'}} />
-                        </Button>
-                    </Box>
+                    <Grid item xs={0} sm={1} md={5} lg={6}></Grid>
+                    <Grid item xs={4} sm={4} md={2} lg={1}>
+                        <Box display="flex" justifyContent="flex-start">
+                            <Tooltip title="List View">
+                                <Button onClick={() => setViewMode('list')}>
+                                    <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
+                                </Button>
+                            </Tooltip>
+                            <Tooltip title="Card View">
+                                <Button onClick={() => setViewMode('module')}>
+                                    <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
+                                </Button>
+                            </Tooltip>
+                        </Box>
+                    </Grid>
                 </Grid>
-                <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                <Grid container spacing={2}>
                     {propsData ?
                         viewMode === 'list' ?
-                            <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                            <Grid container spacing={2}>
                                 <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
                             </Grid>
                             :
@@ -161,7 +168,7 @@ const Category = ({ categoriesData }) => {
                                 ))
                         :
                         <Grid item xs={12}>
-                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center', boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)'}}>No Record(s) Found</Card>
+                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center', boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>No Record(s) Found</Card>
                         </Grid>
                     }
                 </Grid>
