@@ -1,9 +1,71 @@
-import React from 'react';
 import { Container, Typography, TextField, Button, Paper, Stack, Box, Accordion, AccordionSummary, AccordionDetails,Radio, FormControlLabel } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
-import RTextEditor from '@/components/RTextEditor';
+import React, { useState, useEffect, } from 'react';
+import { useRouter } from 'next/router';
 
 export default function Profile() {
+  const [userEmail, setUserEmail] = useState('');
+  const [userFirstName, setUserFirstName] = useState('');
+  const [userLastName, setUserLastName] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const router = useRouter();
+  const [userId, setUserId] = useState('');
+  const getUserData = () => {
+      if (window === undefined)
+          return () => {};
+      (async () => {
+  
+          const res = await fetch('http://localhost:3000/api/user', {
+              method: 'GET',
+              headers: {
+                  "Content-type": "application/json"
+              },
+          });
+          const categoriesData = await res.json();
+          let profileInfo = null;
+          for (const user of categoriesData) {
+              if (user.email_address == window.localStorage.getItem("userEmail")) {
+                  profileInfo = user;
+                  break;
+              }
+          }
+          if (profileInfo == null) {
+              router.push("/login");
+              return;
+          }
+          setUserEmail(profileInfo.email_address);
+          setUserFirstName(profileInfo.firstname);
+          setUserLastName(profileInfo.lastname);
+          setPassword(profileInfo.password);
+          setConfirmPassword(profileInfo.password);
+          setUserId(profileInfo._id)
+          console.log(profileInfo)
+      })();
+      return () => {};
+  }
+  useEffect(getUserData, []);
+  const onApprove = () => {
+    if (password != confirmPassword){
+      return;
+    }
+    (async () => {
+  
+      const res = await fetch('http://localhost:3000/api/user?' + new URLSearchParams({id: userId}),{
+        method: 'PUT',
+        headers: {
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify({
+          email_address: userEmail,
+          firstname: userFirstName,
+          lastname:  userLastName,
+          password: password,
+        })
+      });
+    })();
+  };
+  
     const paperStyle = {
         padding: '2rem',
         borderRadius: '8px',
@@ -33,7 +95,8 @@ export default function Profile() {
                 <TextField
                 required
                 id="outlined-required"
-                defaultValue="Shengpeng"
+                value={userFirstName}
+                onChange={e => setUserFirstName(e.target.value)}
                 fullWidth
                 margin="normal"
                 />
@@ -42,7 +105,8 @@ export default function Profile() {
                 <TextField
                 required
                 id="outlined-required"
-                defaultValue="Wang"
+                value={userLastName}
+                onChange={e => setUserLastName(e.target.value)}
                 fullWidth
                 margin="normal"
                 />
@@ -51,7 +115,8 @@ export default function Profile() {
                 <TextField
                 required
                 id="outlined-required"
-                defaultValue="swang55@nait.ca"
+                value={userEmail}
+                onChange={e => setUserEmail(e.target.value)}
                 fullWidth
                 margin="normal"
                 />
@@ -60,7 +125,8 @@ export default function Profile() {
                 <TextField
                 id="outlined-password-input"
                 type="password"
-                autoComplete="current-password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
                 fullWidth
                 margin="normal"
                 />
@@ -69,12 +135,14 @@ export default function Profile() {
                 <TextField
                 id="outlined-password-input"
                 type="password"
-                autoComplete="current-password"
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
                 fullWidth
                 margin="normal"
                 />
                 
-<Box sx={{display:'flex',justifyContent:'center'}}>      <Button variant="outlined" sx={{bgcolor:'#253C7C',color: 'white'}}>
+    <Box sx={{display:'flex',justifyContent:'center'}}>      
+      <Button onClick={onApprove} variant="outlined" sx={{bgcolor:'#253C7C',color: 'white'}}>
         Approve
       </Button></Box>
         </Paper>
