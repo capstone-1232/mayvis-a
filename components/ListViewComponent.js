@@ -77,7 +77,7 @@ const columnSwitch = (param, value, data, key, index) => {
 
 const ListViewComponent = ({ data }) => {
     return (
-        <><TableContainer component={Paper} sx={{ padding: 8 }}>
+        <><TableContainer component={Paper} sx={{ padding: '2rem 3rem', margin: 1 }}>
             <Table aria-label="customized table">
                 <TableHead>
                     <TableRow>

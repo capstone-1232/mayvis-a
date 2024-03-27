@@ -16,16 +16,23 @@ import ProposalListViewComponent from "@/components/ProposalListViewComponent";
 import SearchField from "@/components/SearchField";
 const itemsPerPage = 8;
 
-export async function getServerSideProps(context) {
-    const { req } = context;
-    // Determine the base URL based on the environment (Vercel or local)
-    const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
-    const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
-    const apiRoute = `${baseURL}/api/proposal`;
+const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+const apiRoute = `${baseURL}/api/proposal`;
 
+export async function getServerSideProps(context) {
+    const { userid } = context.query;
+    // Determine the base URL based on the environment (Vercel or local)
+
+    let res = null;
     let proposalsData = [];
     try {
-        const res = await fetch(apiRoute, { cache: "no-cache" });
+        if (userid) {
+            res = await fetch(`${apiRoute}?userid=${userid}`, { cache: "no-cache" });
+        }
+        else {
+            res = await fetch(apiRoute, { cache: "no-cache" });
+        }
 
         if (!res.ok) {
             const errorText = await res.text(); // or use `res.json()` if your API returns a JSON response
@@ -50,6 +57,8 @@ const Proposal = ({ proposalsData }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [propsData, setPropsData] = useState([]);
     const [viewMode, setViewMode] = useState('module');
+    const [pageTitle, setPageTitle] = useState('');
+    const { userid } = router.query;
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -60,16 +69,33 @@ const Proposal = ({ proposalsData }) => {
     };
 
     const handleSearchChange = (event, newValue) => {
-        console.log(newValue);
         setSearchTerm(newValue);
         const lowercasedValue = newValue.toLowerCase();
         const filtered = proposalsData.filter(item =>
-            item.proposal_name.toLowerCase().includes(lowercasedValue)
+            item.proposal_title.toLowerCase().includes(lowercasedValue)
         );
         setFilteredData(filtered);
         setPropsData(tranformPropData(filtered));
         setPage(1);
     };
+
+    const handleArchive = async (id) => {
+        const res = await fetch(`${apiRoute}?id=${id}`, {
+            method: 'PUT',
+            headers: { "Content-type": "application/json" },
+            body: JSON.stringify({
+                is_archived: true,
+            })
+        })
+
+        if (!res.ok) {
+            console.error('Failed to archive record!');
+            return;
+        }
+        const updatedList = proposalsData.filter(item => item._id !== id);
+        setFilteredData(updatedList);
+        setPropsData(tranformPropData(updatedList));
+    }
 
     const noOfPages = Math.ceil(filteredData ? filteredData.length / itemsPerPage : 0);
 
@@ -92,6 +118,7 @@ const Proposal = ({ proposalsData }) => {
                     { key: '_id', column: '_id', value: c._id, show: false },
                     { key: 'editUrlPath', column: 'Edit', value: 'proposal/editproposal', show: viewMode === 'module' ? false : true },
                     { key: 'viewUrlPath', column: 'View', value: 'proposal/viewproposal', show: viewMode === 'module' ? false : true },
+                    { key: 'archive', column: 'Archive', action: () => confirm (`Are you sure you want to archive ${c.proposal_title}?`) ? handleArchive(c._id) : null, show: false },
                 ];
             });
     }
@@ -99,13 +126,21 @@ const Proposal = ({ proposalsData }) => {
     useEffect(() => {
         setPropsData(tranformPropData(filteredData));
     }, [viewMode]);
+    useEffect(() => {
+        setFilteredData(proposalsData);
+        setPropsData(tranformPropData(proposalsData));
+        if (userid)
+            setPageTitle('My Proposal');
+        else
+            setPageTitle('All Proposal');
+    }, [userid]);
 
     return (
         <Box sx={{ flexGrow: 1, padding: 2 }}>
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
                     <Typography variant="h4" component="div" gutterBottom>
-                        All Proposals
+                        {pageTitle}
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>

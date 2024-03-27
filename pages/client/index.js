@@ -60,6 +60,24 @@ const Client = ({ clientsData }) => {
         setPage(1);
     };
 
+    const handleArchive = async (id) => {
+        const res = await fetch(`${apiRoute}?id=${id}`, {
+            method: 'PUT',
+            headers: { "Content-type": "application/json" },
+            body: JSON.stringify({
+                is_archived: true,
+            })
+        })
+
+        if (!res.ok) {
+            console.error('Failed to archive record!');
+            return;
+        }
+        const updatedList = clientsData.filter(item => item._id !== id);
+        setFilteredData(updatedList);
+        setPropsData(tranformPropData(updatedList));
+    }
+
     const noOfPages = Math.ceil(filteredData?.length / itemsPerPage);
 
     const tranformPropData = (data) => {
@@ -77,6 +95,7 @@ const Client = ({ clientsData }) => {
                     { key: '_id', column: '_id', value: c._id, show: false },
                     { key: 'editUrlPath', column: 'Edit', value: 'client/editclient', show: viewMode === 'module' ? false : true },
                     { key: 'viewUrlPath', column: 'View', value: 'client/viewclient', show: viewMode === 'module' ? false : true },
+                    { key: 'archive', column: 'Archive', action: () => handleArchive(c._id), show: false },
                 ];
             });
     }
