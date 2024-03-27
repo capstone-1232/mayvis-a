@@ -1,6 +1,6 @@
 import {
     Autocomplete, Box, Button, Card, Grid, Paper,
-    TextField, Typography, Stack, Pagination
+    TextField, Typography, Stack, Pagination, Tooltip
 } from "@mui/material";
 import React, { useState, useEffect } from 'react';
 
@@ -14,12 +14,16 @@ import Link from "next/link";
 import ViewListIcon from '@mui/icons-material/ViewList';
 import SearchField from "@/components/SearchField";
 
+const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+const apiRoute = `${baseURL}/api/products/archival`;
+
 export async function getServerSideProps() {
     let productsData = [{}];
     try {
         //console.log(process.env.VERCEL_URL);
         // const res = await fetch(process.env.VERCEL_URL + '/api/client', { cache: "no-store" });
-        const res = await fetch('http://localhost:3000/api/products/archival', { cache: "no-store" });
+        const res = await fetch(apiRoute, { cache: "no-store" });
 
         // res.setHeader(
         //     'Cache-Control',
@@ -95,8 +99,8 @@ const Products = ({ productsData }) => {
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
                         <Link href={'/products/addproduct'} >
-                            <Button variant="contained" sx={{backgroundColor: '#253C7C', borderRadius: '15px'}}>
-                               + Add New Products
+                            <Button variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
+                                + Add New Products
                             </Button>
                         </Link>
                     </Grid>
@@ -126,15 +130,19 @@ const Products = ({ productsData }) => {
                         </Box>
                     </Grid>
                     <Box display="flex" justifyContent="flex-start">
-                        <Button onClick={() => setViewMode('list')}>
-                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
-                        </Button>
-                        <Button onClick={() => setViewMode('module')}>
-                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
-                        </Button>
+                        <Tooltip title="List View">
+                            <Button onClick={() => setViewMode('list')}>
+                                <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
+                            </Button>
+                        </Tooltip>
+                        <Tooltip title="Card View">
+                            <Button onClick={() => setViewMode('module')}>
+                                <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
+                            </Button>
+                        </Tooltip>
                     </Box>
                 </Grid>
-                <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                <Grid container spacing={2}>
                     {propsData ?
                         viewMode === 'list' ?
                             <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />

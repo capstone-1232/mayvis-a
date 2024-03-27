@@ -16,23 +16,23 @@ export default async function handler(req, res) {
 
         case 'GET':
             try {
-                const categories = await Category//.find({is_archived: true});
-                    .aggregate([
-                        {
-                            $lookup: {
-                                localField: "_id",
-                                from: "categories",
-                                foreignField: "category_id",
-                                as: "category_info"
-                            }
-                        }
-                        ,
-                        {
-                            $match: {
-                                is_archived: true
-                            }
-                        }
-                    ]);
+                const categories = await Category.find({is_archived: true});
+                    // .aggregate([
+                    //     {
+                    //         $lookup: {
+                    //             localField: "_id",
+                    //             from: "categories",
+                    //             foreignField: "category_id",
+                    //             as: "category_info"
+                    //         }
+                    //     }
+                    //     ,
+                    //     {
+                    //         $match: {
+                    //             is_archived: true
+                    //         }
+                    //     }
+                    // ]);
                 return res.status(200).json(categories);
             } catch (error) {
                 return res.status(500).json({ message: "Error fetching categories", error: error.message });
@@ -53,8 +53,8 @@ export default async function handler(req, res) {
         case 'PUT':
             try {
                 const { id } = req.query;
-                const { category_name } = req.body;
-                const updatedCategory = await Category.findByIdAndUpdate(id, { category_name }, { new: true });
+                const updatedFields = req.body;
+                const updatedCategory = await Category.findByIdAndUpdate(id, updatedFields, { new: true });
                 if (!updatedCategory) {
                     return res.status(404).json({ message: "Category not found." });
                 }

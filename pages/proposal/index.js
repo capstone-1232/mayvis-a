@@ -1,6 +1,6 @@
 import {
     Autocomplete, Box, Button, Card, Grid, Paper,
-    TextField, Typography, Stack, Pagination
+    TextField, Typography, Stack, Pagination, Tooltip
 } from "@mui/material";
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
@@ -16,25 +16,23 @@ import ListViewComponent from "@/components/ListViewComponent";
 import SearchField from "@/components/SearchField";
 const itemsPerPage = 8;
 
-export async function getServerSideProps(context) {
-    const { req } = context;
-    // Determine the base URL based on the environment (Vercel or local)
-    const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
-    const host = req ? req.headers.host : window.location.hostname;
-    const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
-    const apiRoute = `${baseURL}/api/proposal`;
+const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+const apiRoute = `${baseURL}/api/proposal`;
 
+export async function getServerSideProps(context) {
+    const { userid } = context.query;
+    // Determine the base URL based on the environment (Vercel or local)
+
+    let res = null;
     let proposalsData = [];
     try {
-        const res = await fetch(apiRoute, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                //'Authorization': `Basic ${Buffer.from('techcoders.nait@gmail.com:techCoders1234').toString('base64')}`,
-                // Include Authorization header if needed
-            },
-            // Additional options if needed
-        });
+        if (userid) {
+            res = await fetch(`${apiRoute}?userid=${userid}`, { cache: "no-cache" });
+        }
+        else {
+            res = await fetch(apiRoute, { cache: "no-cache" });
+        }
 
         if (!res.ok) {
             const errorText = await res.text(); // or use `res.json()` if your API returns a JSON response
@@ -51,8 +49,6 @@ export async function getServerSideProps(context) {
     return { props: { proposalsData } };
 }
 
-
-
 const Proposal = ({ proposalsData }) => {
     const [page, setPage] = useState(1);
     const router = useRouter();
@@ -61,6 +57,8 @@ const Proposal = ({ proposalsData }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [propsData, setPropsData] = useState([]);
     const [viewMode, setViewMode] = useState('module');
+    const [pageTitle, setPageTitle] = useState('');
+    const { userid } = router.query;
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -74,25 +72,50 @@ const Proposal = ({ proposalsData }) => {
         setSearchTerm(newValue);
         const lowercasedValue = newValue.toLowerCase();
         const filtered = proposalsData.filter(item =>
-            item.proposal_name.toLowerCase().includes(lowercasedValue)
+            item.proposal_title.toLowerCase().includes(lowercasedValue)
         );
         setFilteredData(filtered);
         setPropsData(tranformPropData(filtered));
         setPage(1);
     };
 
+    const handleArchive = async (id) => {
+        const res = await fetch(`${apiRoute}?id=${id}`, {
+            method: 'PUT',
+            headers: { "Content-type": "application/json" },
+            body: JSON.stringify({
+                is_archived: true,
+            })
+        })
+
+        if (!res.ok) {
+            console.error('Failed to archive record!');
+            return;
+        }
+        const updatedList = proposalsData.filter(item => item._id !== id);
+        setFilteredData(updatedList);
+        setPropsData(tranformPropData(updatedList));
+    }
+
     const noOfPages = Math.ceil(filteredData ? filteredData.length / itemsPerPage : 0);
 
+    function stripHtml(html) {
+        return html.replace(/<[^>]*>?/gm, '');
+    }
+
     const tranformPropData = (data) => {
+
         return data
             ?.map(c => {
                 return [
-                    { key: 'Title', column: 'Proposal Name', value: c.proposal_name, show: true },
-                    { key: 'Description', column: 'Description', value: c.description, show: true },
-                    { key: 'Archived', column: 'Archived Name', value: c.is_archived ? 'Yes' : 'No', show: true },
+                    { key: 'Title', column: 'Proposal Name', value: c.proposal_title, show: true },
+                    { key: 'Proposal Total', column: 'Proposal Total', value: `$${c.proposal_total.$numberDecimal}`, show: true },
+                    { key: 'Status', column: 'Status', value: c.status, show: true },
+                    { key: 'Description', column: 'Description', value: stripHtml(c.message), show: true },
                     { key: '_id', column: '_id', value: c._id, show: false },
                     { key: 'editUrlPath', column: 'Edit', value: 'proposal/editproposal', show: viewMode === 'module' ? false : true },
                     { key: 'viewUrlPath', column: 'View', value: 'proposal/viewproposal', show: viewMode === 'module' ? false : true },
+                    { key: 'archive', column: 'Archive', action: () => confirm (`Are you sure you want to archive ${c.proposal_title}?`) ? handleArchive(c._id) : null, show: false },
                 ];
             });
     }
@@ -100,13 +123,21 @@ const Proposal = ({ proposalsData }) => {
     useEffect(() => {
         setPropsData(tranformPropData(filteredData));
     }, [viewMode]);
+    useEffect(() => {
+        setFilteredData(proposalsData);
+        setPropsData(tranformPropData(proposalsData));
+        if (userid)
+            setPageTitle('My Proposal');
+        else
+            setPageTitle('All Proposal');
+    }, [userid]);
 
     return (
         <Box sx={{ flexGrow: 1, padding: 2 }}>
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
                     <Typography variant="h4" component="div" gutterBottom>
-                        All Proposals
+                        {pageTitle}
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
@@ -115,7 +146,6 @@ const Proposal = ({ proposalsData }) => {
                         <Button
                             sx={{ backgroundColor: '#253C7C', borderRadius: '15px', color: 'white', margin: '0 1rem 1rem', alignItems: 'center', width: '20rem' }}
                             variant='contained'
-                            size="large"
                             onClick={navigateToClientDetails}
                         >
                             + Create New Proposal
@@ -133,7 +163,7 @@ const Proposal = ({ proposalsData }) => {
             </Grid>
             <Paper elevation={12} sx={{ marginTop: 2, padding: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={8} md={6}>
+                    <Grid item xs={12} sm={7} md={5} lg={5}>
                         <Box
                             sx={{
                                 width: '70%'
@@ -141,25 +171,32 @@ const Proposal = ({ proposalsData }) => {
                         >
                             <SearchField
                                 id={"searchProposal"}
-                                options={proposalsData?.map((proposal) => proposal.proposal_name)}
+                                options={proposalsData?.map((proposal) => proposal.proposal_title)}
                                 value={searchTerm}
                                 onInputChange={handleSearchChange}
                             />
                         </Box>
                     </Grid>
-                    <Box display="flex" justifyContent="flex-start">
-                        <Button onClick={() => setViewMode('list')}>
-                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
-                        </Button>
-                        <Button onClick={() => setViewMode('module')}>
-                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
-                        </Button>
-                    </Box>
+                    <Grid item xs={0} sm={1} md={5} lg={6}></Grid>
+                    <Grid item xs={4} sm={4} md={2} lg={1}>
+                        <Box display="flex" justifyContent="flex-start">
+                            <Tooltip title="List View">
+                                <Button onClick={() => setViewMode('list')}>
+                                    <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
+                                </Button>
+                            </Tooltip>
+                            <Tooltip title="Card View">
+                                <Button onClick={() => setViewMode('module')}>
+                                    <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
+                                </Button>
+                            </Tooltip>
+                        </Box>
+                    </Grid>
                 </Grid>
-                <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                <Grid container spacing={2}>
                     {propsData ?
                         viewMode === 'list' ?
-                            <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                            <Grid container>
                                 <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
                             </Grid>
                             :

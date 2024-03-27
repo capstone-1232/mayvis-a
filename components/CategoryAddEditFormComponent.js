@@ -32,7 +32,7 @@ const CategoryAddEditFormComponent = ({ category }) => {
                 categoryName: categoryName,
                 archived: archive,
                 description: description,
-                productId: _id
+                //productId: _id
             })
 
             if (data.error) {

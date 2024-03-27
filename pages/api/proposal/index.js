@@ -16,23 +16,22 @@ export default async function handler(req, res) {
 
         case 'GET':
             try {
-                const proposals = await Proposal//.find({is_archived: false});
-                .aggregate([
-                    {
-                        $lookup: {
-                            localField: "_id",
-                            from: "proposals",
-                            foreignField: "proposal_id",
-                            as: "proposal_info"
-                        }
-                    }
-                    ,
-                    {
-                        $match: {
-                            is_archived: false
-                        }
-                    }
-                ]);
+                const { top, userid } = req.query;
+                if (top) {
+                    // Fetch top 5 proposals ordered by date
+                    const topProposals = await Proposal.find({ is_archived: false })
+                        .sort({ createdAt: -1 }) // Assuming 'createdAt' is your date field
+                        .limit(top);
+                    return res.status(200).json(topProposals);
+                }
+
+                if(userid){
+                    // Fetch proposals by user id
+                    const proposals = await Proposal.find({ proposed_by: userid });
+                    return res.status(200).json(proposals);
+                }
+
+                const proposals = await Proposal.find({ is_archived: false });
                 return res.status(200).json(proposals);
             } catch (error) {
                 return res.status(500).json({ message: "Error fetching proposals", error: error.message });
@@ -53,8 +52,8 @@ export default async function handler(req, res) {
         case 'PUT':
             try {
                 const { id } = req.query;
-                const { proposal_name } = req.body;
-                const updatedProposal = await Proposal.findByIdAndUpdate(id, { proposal_name }, { new: true });
+                const updateFields = req.body;
+                const updatedProposal = await Proposal.findByIdAndUpdate(id, updateFields, { new: true });
                 if (!updatedProposal) {
                     return res.status(404).json({ message: "Proposal not found." });
                 }

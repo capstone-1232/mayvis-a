@@ -16,27 +16,21 @@ export default async function handler(req, res) {
 
         case 'GET':
             try {
-                const proposals = await Proposal//.find({is_archived: false});
-                .aggregate([
-                    {
-                        $lookup: {
-                            localField: "_id",
-                            from: "proposals",
-                            foreignField: "proposal_id",
-                            as: "proposal_info"
-                        }
-                    }
-                    ,
-                    {
-                        $match: {
-                            is_archived: true
-                        }
-                    }
-                ]);
-                return res.status(200).json(proposals);
+                const { top } = req.query;
+                if (top) {
+                    // Fetch top 5 proposals ordered by date
+                    const topProposals = await Proposal.find({ is_archived: true })
+                        .sort({ createdAt: -1 }) // Assuming 'createdAt' is your date field
+                        .limit(top);
+                    return res.status(200).json(topProposals);
+                } else {
+                    const proposals = await Proposal.find({ is_archived: true });
+                    return res.status(200).json(proposals);
+                }
             } catch (error) {
                 return res.status(500).json({ message: "Error fetching proposals", error: error.message });
             }
+
 
         case 'DELETE':
             try {

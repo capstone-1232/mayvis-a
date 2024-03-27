@@ -1,46 +1,52 @@
 import {
     Autocomplete, Box, Button, Card, Grid, Paper,
-    TextField, Typography, Stack, Pagination, ListItemAvatar, Tooltip
+    TextField, Typography, Stack, Pagination, Tooltip
 } from "@mui/material";
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import Link from "next/link";
+import SearchIcon from '@mui/icons-material/Search';
 import ViewListIcon from '@mui/icons-material/ViewList';
+import Link from "next/link";
 import GridViewIcon from '@mui/icons-material/GridView';
 import ModuleViewComponent from "@/components/ModuleViewComponent";
 import ListViewComponent from "@/components/ListViewComponent";
+
 import SearchField from "@/components/SearchField";
-
-export async function getServerSideProps() {
-    let clientsData = [{}];
-    try {
-        const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
-        const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
-        const apiRoute = `${baseURL}/api/client/archival`;
-        const res = await fetch(apiRoute, { cache: "no-store" });
-
-        // res.setHeader(
-        //     'Cache-Control',
-        //     'public, s-maxage=10, stale-while-revalidate=59'
-        //   )
-        if (!res.ok) {
-            throw new Error('Failed to fetch clients');
-        }
-        clientsData = await res.json();
-
-    }
-    catch (error) {
-        console.log('Error loading clients', error);
-    }
-    return { props: { clientsData } };
-}
-
 const itemsPerPage = 8;
 
-const Client = ({ clientsData }) => {
+export async function getServerSideProps(context) {
+    const { req } = context;
+    // Determine the base URL based on the environment (Vercel or local)
+    const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+    const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+    const apiRoute = `${baseURL}/api/proposal/archival`;
+
+    let proposalsData = [];
+    try {
+        const res = await fetch(apiRoute, { cache: "no-cache" });
+
+        if (!res.ok) {
+            const errorText = await res.text(); // or use `res.json()` if your API returns a JSON response
+            throw new Error(`Failed to fetch proposal: ${errorText}`);
+        }
+
+        proposalsData = await res.json();
+    } catch (error) {
+        console.error('Error loading proposals', error);
+        // Pass the error message to the page's props or handle it as needed
+        return { props: { proposalsData, error: error.message } };
+    }
+
+    return { props: { proposalsData } };
+}
+
+const Proposal = ({ proposalsData }) => {
     const [page, setPage] = useState(1);
-    const [filteredData, setFilteredData] = useState(clientsData);
+    const router = useRouter();
+
+    const [filteredData, setFilteredData] = useState(proposalsData);
     const [searchTerm, setSearchTerm] = useState('');
     const [propsData, setPropsData] = useState([]);
     const [viewMode, setViewMode] = useState('module');
@@ -49,34 +55,39 @@ const Client = ({ clientsData }) => {
         setPage(newPage);
     };
 
+    const navigateToClientDetails = () => {
+        router.push('/new-proposal/client-details');
+    };
+
     const handleSearchChange = (event, newValue) => {
         setSearchTerm(newValue);
         const lowercasedValue = newValue.toLowerCase();
-        const filtered = clientsData?.filter(item =>
-            item.client_name.toLowerCase().includes(lowercasedValue)
+        const filtered = proposalsData.filter(item =>
+            item.proposal_name.toLowerCase().includes(lowercasedValue)
         );
         setFilteredData(filtered);
         setPropsData(tranformPropData(filtered));
         setPage(1);
     };
 
-    const noOfPages = Math.ceil(filteredData?.length / itemsPerPage);
+    const noOfPages = Math.ceil(filteredData ? filteredData.length / itemsPerPage : 0);
+
+    function stripHtml(html) {
+        return html.replace(/<[^>]*>?/gm, '');
+    }
 
     const tranformPropData = (data) => {
+
         return data
             ?.map(c => {
-                const primaryContact = c.contact_info?.find(contact => contact.is_primary === true);
-
                 return [
-                    { key: 'Title', column: 'Client Name', value: c.client_name, show: true },
-                    { key: 'Contact Name', column: 'Contact Name', value: primaryContact ? `${primaryContact.contact_firstname} ${primaryContact.contact_lastname}` : 'N/A', show: true },
-                    { key: 'Contact Email', column: 'Contact Email', value: primaryContact?.email || 'N/A', show: true },
-                    { key: 'Contact No', column: 'Contact No', value: primaryContact?.contact_no || 'N/A', show: true },
-                    { key: 'Active', column: 'Active', value: c.is_active ? 'Yes' : 'No', show: true },
-                    { key: 'Description', column: 'Description', value: c.description, show: viewMode === 'module' ? true : false },
+                    { key: 'Title', column: 'Proposal Name', value: c.proposal_title, show: true },
+                    { key: 'Proposal Total', column: 'Proposal Total', value: `$${c.proposal_total.$numberDecimal}`, show: true },
+                    { key: 'Status', column: 'Status', value: c.status, show: true },
+                    { key: 'Description', column: 'Description', value: stripHtml(c.message), show: true },
                     { key: '_id', column: '_id', value: c._id, show: false },
-                    { key: 'editUrlPath', column: 'Edit', value: 'client/editclient', show: viewMode === 'module' ? false : true },
-                    { key: 'viewUrlPath', column: 'View', value: 'client/viewclient', show: viewMode === 'module' ? false : true },
+                    { key: 'editUrlPath', column: 'Edit', value: 'proposal/editproposal', show: viewMode === 'module' ? false : true },
+                    { key: 'viewUrlPath', column: 'View', value: 'proposal/viewproposal', show: viewMode === 'module' ? false : true },
                 ];
             });
     }
@@ -90,22 +101,25 @@ const Client = ({ clientsData }) => {
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
                     <Typography variant="h4" component="div" gutterBottom>
-                        Archived Clients
+                        All Proposals
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
 
-                        <Link href={'/client/addclient'} >
-                            <Button variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
-                                + Create New Client
-                            </Button>
-                        </Link>
+                        <Button
+                            sx={{ backgroundColor: '#253C7C', borderRadius: '15px', color: 'white', margin: '0 1rem 1rem', alignItems: 'center', width: '20rem' }}
+                            variant='contained'
+                            onClick={navigateToClientDetails}
+                        >
+                            + Create New Proposal
+                        </Button>
+
                     </Grid>
                     <Grid item>
-                        <Link href={'/client'} >
-                            <Button variant="contained" startIcon={<FilterAltIcon />}>
-                                Back to Active Clients
+                        <Link href={'/proposal'} >
+                            <Button variant="contained" startIcon={<FilterAltIcon />} sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
+                                Back to Active Proposals
                             </Button>
                         </Link>
                     </Grid>
@@ -115,14 +129,13 @@ const Client = ({ clientsData }) => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={7} md={5} lg={5}>
                         <Box
-                            mt={1}
                             sx={{
-                                width: '70%',
+                                width: '70%'
                             }}
                         >
                             <SearchField
-                                id={"searchClient"}
-                                options={clientsData?.map((client) => client.client_name)}
+                                id={"searchProposal"}
+                                options={proposalsData?.map((proposal) => proposal.proposal_title)}
                                 value={searchTerm}
                                 onInputChange={handleSearchChange}
                             />
@@ -147,7 +160,9 @@ const Client = ({ clientsData }) => {
                 <Grid container spacing={2}>
                     {propsData ?
                         viewMode === 'list' ?
-                            <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
+                            <Grid container spacing={2}>
+                                <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
+                            </Grid>
                             :
                             propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
                                 ?.map((data, index) =>
@@ -177,8 +192,8 @@ const Client = ({ clientsData }) => {
                 </Box>
             </Paper>
 
-        </Box >
+        </Box>
     );
 };
 
-export default Client;
+export default Proposal;

@@ -4,7 +4,7 @@ const ProposalSchema = new Schema({
     proposal_title: { type: String, required: true },
     message: { type: String, required: true },
     attachment: { type: String },
-    status: { type: Schema.Types.ObjectId, ref: 'Status' },
+    status: { type: String, required: true },
     suggestions: { type: String },
     is_archived: { type: Boolean, default: false },
     proposal_total: { type: mongoose.Types.Decimal128 },
@@ -18,6 +18,6 @@ const ProposalSchema = new Schema({
     }, { timestamps: true }
 );
 
-const Proposal = mongoose.models.Proposal || mongoose.model('Proposal', ProposalSchema);
+const Proposal = mongoose.models.proposals || mongoose.model('proposals', ProposalSchema);
 
 module.exports = Proposal;

@@ -1,6 +1,6 @@
 import {
     Autocomplete, Box, Button, Card, Grid, Paper,
-    TextField, Typography, Stack, Pagination
+    TextField, Typography, Stack, Pagination, Tooltip
 } from "@mui/material";
 import React, { useState, useEffect } from 'react';
 
@@ -14,14 +14,12 @@ import ListViewComponent from "@/components/ListViewComponent";
 
 import SearchField from "@/components/SearchField";
 const itemsPerPage = 8;
+const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+const apiRoute = `${baseURL}/api/category`;
 
 export async function getServerSideProps(context) {
-    const { req } = context;
     // Determine the base URL based on the environment (Vercel or local)
-    const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
-    const host = req ? req.headers.host : window.location.hostname;
-    const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
-    const apiRoute = `${baseURL}/api/category`;
 
     let categoriesData = [];
     try {
@@ -74,6 +72,24 @@ const Category = ({ categoriesData }) => {
         setPage(1);
     };
 
+    const handleArchive = async (id) => {
+        const res = await fetch(`${apiRoute}?id=${id}`, {
+            method: 'PUT',
+            headers: { "Content-type": "application/json" },
+            body: JSON.stringify({
+                is_archived: true,
+            })
+        })
+
+        if (!res.ok) {
+            console.error('Failed to archive record!');
+            return;
+        }
+        const updatedList = categoriesData.filter(item => item._id !== id);
+        setFilteredData(updatedList);
+        setPropsData(tranformPropData(updatedList));
+    }
+
     const noOfPages = Math.ceil(filteredData ? filteredData.length / itemsPerPage : 0);
 
     const tranformPropData = (data) => {
@@ -82,10 +98,11 @@ const Category = ({ categoriesData }) => {
                 return [
                     { key: 'Title', column: 'Category Name', value: c.category_name, show: true },
                     { key: 'Description', column: 'Description', value: c.description, show: true },
-                    { key: 'Archived', column: 'Archived Name', value: c.is_archived ? 'Yes' : 'No', show: true },
+                    { key: 'Archived', column: 'Archived', value: c.is_archived ? 'Yes' : 'No', show: true },
                     { key: '_id', column: '_id', value: c._id, show: false },
                     { key: 'editUrlPath', column: 'Edit', value: 'category/editcategory', show: viewMode === 'module' ? false : true },
                     { key: 'viewUrlPath', column: 'View', value: 'category/viewcategory', show: viewMode === 'module' ? false : true },
+                    { key: 'archive', column: 'Archive', action: () => handleArchive(c._id), show: false },
                 ];
             });
     }
@@ -104,10 +121,9 @@ const Category = ({ categoriesData }) => {
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
-
                         <Link href={'/category/addcategory'} >
                             <Button variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
-                               + Create New Category
+                                + Create New Category
                             </Button>
                         </Link>
                     </Grid>
@@ -122,7 +138,7 @@ const Category = ({ categoriesData }) => {
             </Grid>
             <Paper elevation={12} sx={{ marginTop: 2, padding: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={8} md={6}>
+                    <Grid item xs={12} sm={7} md={5} lg={5}>
                         <Box
                             sx={{
                                 width: '70%'
@@ -136,21 +152,26 @@ const Category = ({ categoriesData }) => {
                             />
                         </Box>
                     </Grid>
-                    <Box display="flex" justifyContent="flex-start">
-                        <Button onClick={() => setViewMode('list')}>
-                            <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px'}} />
-                        </Button>
-                        <Button onClick={() => setViewMode('module')}>
-                            <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px'}} />
-                        </Button>
-                    </Box>
+                    <Grid item xs={0} sm={1} md={5} lg={6}></Grid>
+                    <Grid item xs={4} sm={4} md={2} lg={1}>
+                        <Box display="flex" justifyContent="flex-start">
+                            <Tooltip title="List View">
+                                <Button onClick={() => setViewMode('list')}>
+                                    <ViewListIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
+                                </Button>
+                            </Tooltip>
+                            <Tooltip title="Card View">
+                                <Button onClick={() => setViewMode('module')}>
+                                    <GridViewIcon sx={{ fontSize: '40px', marginTop: 1, marginBottom: 1, color: '#253C7C', borderRadius: '15px' }} />
+                                </Button>
+                            </Tooltip>
+                        </Box>
+                    </Grid>
                 </Grid>
-                <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                <Grid container spacing={2}>
                     {propsData ?
                         viewMode === 'list' ?
-                            <Grid container spacing={2} sx={{ marginTop: 2 }}>
-                                <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
-                            </Grid>
+                            <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
                             :
                             propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
                                 ?.map((data, index) =>
@@ -161,7 +182,7 @@ const Category = ({ categoriesData }) => {
                                 ))
                         :
                         <Grid item xs={12}>
-                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center', boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)'}}>No Record(s) Found</Card>
+                            <Card elevation={0} sx={{ padding: 2, textAlign: 'center', boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}>No Record(s) Found</Card>
                         </Grid>
                     }
                 </Grid>

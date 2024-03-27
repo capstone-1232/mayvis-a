@@ -15,23 +15,33 @@ import TableRow from '@mui/material/TableRow';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white,
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+      fontSize: '0.875rem', // Smaller font size
+      padding: theme.spacing(1), // Adjusted padding
     },
     [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
+      fontSize: '0.875rem', // Smaller font size
+      padding: theme.spacing(1), // Adjusted padding
     },
-}));
+    lineHeight: 1, // Adjusted line height for text content
+  }));
+  
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.action.hover,
+      backgroundColor: theme.palette.action.hover,
     },
     // hide last border
     '&:last-child td, &:last-child th': {
-        border: 0,
+      border: 0,
     },
-}));
+    '& td, & th': {
+      padding: theme.spacing(1), // Adjust padding if needed
+    },
+    height: '40px', // Example fixed height
+  }));
+  
 
 const columnSwitch = (param, value, data, key, index) => {
     //console.log(data.find(item => item.key === '_id')?.value);
@@ -67,7 +77,7 @@ const columnSwitch = (param, value, data, key, index) => {
 
 const ListViewComponent = ({ data }) => {
     return (
-        <><TableContainer component={Paper} sx={{ padding: 10 }}>
+        <><TableContainer component={Paper} sx={{ padding: '2rem 3rem', margin: 1 }}>
             <Table aria-label="customized table">
                 <TableHead>
                     <TableRow>

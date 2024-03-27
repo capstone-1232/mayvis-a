@@ -6,8 +6,10 @@ export async function getServerSideProps({ params }) {
   let categoryData = [{}];
   try {
     const id = params.id;
-    console.log(id);
-    const res = await fetch(`http://localhost:3000/api/category/${id}`, { cache: "no-store" });
+    const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+    const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+    const apiRoute = `${baseURL}/api/category/${id}`;
+    const res = await fetch(apiRoute, { cache: "no-store" });
     // res.setHeader(
     //   'Cache-Control',
     //   'public, s-maxage=10, stale-while-revalidate=59'
@@ -25,21 +27,21 @@ export async function getServerSideProps({ params }) {
 }
 
 
-const ViewCategory = ({categoryData}) => {
-  const data = categoryData[0];  
-    return (
-        <CategoryAddEditFormComponent
-            category={{
-                categoryName: data?.category_name,
-                archived: data?.is_archived,
-                description: data?.description,
-                isLoading: false,
-                showMsg: false,
-                msg: '',
-                disableFields: true
-            }}
-        />
-    );
-} 
+const ViewCategory = ({ categoryData }) => {
+  const data = categoryData[0];
+  return (
+    <CategoryAddEditFormComponent
+      category={{
+        categoryName: data?.category_name,
+        archived: data?.is_archived,
+        description: data?.description,
+        isLoading: false,
+        showMsg: false,
+        msg: '',
+        disableFields: true
+      }}
+    />
+  );
+}
 
 export default ViewCategory;
