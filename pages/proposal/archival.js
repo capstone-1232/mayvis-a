@@ -10,8 +10,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import Link from "next/link";
 import GridViewIcon from '@mui/icons-material/GridView';
-import ModuleViewComponent from "@/components/ModuleViewComponent";
-import ListViewComponent from "@/components/ListViewComponent";
+import ProposalModuleViewComponent from "@/components/ProposalModuleViewComponent";
+import ProposalListViewComponent from "@/components/ProposalListViewComponent";
 
 import SearchField from "@/components/SearchField";
 const itemsPerPage = 8;
@@ -80,9 +80,12 @@ const Proposal = ({ proposalsData }) => {
 
         return data
             ?.map(c => {
+                const proposalTotal = c.proposal_total?.$numberDecimal 
+                            ? parseFloat(c.proposal_total.$numberDecimal) 
+                            : c.proposal_total;
                 return [
                     { key: 'Title', column: 'Proposal Name', value: c.proposal_title, show: true },
-                    { key: 'Proposal Total', column: 'Proposal Total', value: `$${c.proposal_total.$numberDecimal}`, show: true },
+                    { key: 'Proposal Total', column: 'Proposal Total', value: `$${proposalTotal}`, show: true },
                     { key: 'Status', column: 'Status', value: c.status, show: true },
                     { key: 'Description', column: 'Description', value: stripHtml(c.message), show: true },
                     { key: '_id', column: '_id', value: c._id, show: false },
@@ -161,14 +164,14 @@ const Proposal = ({ proposalsData }) => {
                     {propsData ?
                         viewMode === 'list' ?
                             <Grid container spacing={2}>
-                                <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
+                                <ProposalListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
                             </Grid>
                             :
                             propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
                                 ?.map((data, index) =>
                                 (
                                     <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-                                        <ModuleViewComponent key={index} data={data} />
+                                        <ProposalModuleViewComponent key={index} data={data} />
                                     </Grid>
                                 ))
                         :

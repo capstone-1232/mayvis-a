@@ -25,7 +25,7 @@ const Summary = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [proposalTitle, setProposalTitle] = useState('');
-  const [proposalDate, setProposalDate] = useState('');
+  const [proposalDate, setProposalDate] = useState(new Date());
   const [proposalMessage, setProposalMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -47,16 +47,7 @@ const Summary = () => {
     if (storedProposalTitle) setProposalTitle(storedProposalTitle);
     if (storedProposalMessage) setProposalMessage(storedProposalMessage);
     if (storedDeliverables) setSelectedDeliverables(storedDeliverables);
-    if (storedProposalDate) {
-      const date = new Date(storedProposalDate);
-      const formattedDate = new Intl.DateTimeFormat('en-GB', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      }).format(date);
-
-      setProposalDate(formattedDate);
-    }
+    if (storedProposalDate) setProposalDate(new Date(storedProposalDate));
   }, []);
 
   useEffect(() => {
@@ -79,7 +70,7 @@ const Summary = () => {
       const productCost = pricePerUnit * item.quantity;
 
       if (item.is_recurring) {
-        const multiplier = recurringMultipliers[item.recurring_option.toLowerCase()] || 0;
+        const multiplier = recurringMultipliers[item.recurring_option] || 0;
         acc.recurringTotal += productCost * multiplier;
       } else {
         acc.projectTotal += productCost;

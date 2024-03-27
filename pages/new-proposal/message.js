@@ -44,62 +44,62 @@ const Message = () => {
   };
 
   return (<>
-      <Typography variant="h3" align="left" sx={{ my: 5 }} gutterBottom>
-        New Proposal
-      </Typography>
-      <NewProposalStepper activeStep={activeStep} />
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Paper
-          elevation={5} 
-          sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
+    <Typography variant="h3" align="left" sx={{ my: 5 }} gutterBottom>
+      New Proposal
+    </Typography>
+    <NewProposalStepper activeStep={activeStep} />
+    <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Paper
+        elevation={5}
+        sx={{ p: 4, mt: 10, mb: 5, borderRadius: 2, boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.30)' }}
+      >
+        <Typography variant='h5' gutterBottom>
+          Write a Message
+        </Typography>
+        <Typography variant='p' gutterBottom>
+          This message will appear on the client proposal. Feel free to customize.
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <Box sx={{ height: '35vh', paddingBottom: '20px' }}>
+            <RTextEditor props={{
+              content: proposalMessage,
+              setContent: handleMessageChange
+            }} />
+          </Box>
+        </form>
+      </Paper>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+        <Button
+          variant="contained"
+          sx={{
+            py: 1.5,
+            borderRadius: 2,
+            width: '15%',
+          }}
+          onClick={handleBack}
         >
-          <Typography variant='h5' gutterBottom>
-            Write a Message
-          </Typography>
-          <Typography variant='p' gutterBottom>
-            This message will appear on the client proposal. Feel free to customize.
-          </Typography>
-          <form onSubmit={handleSubmit}>
-            <Box sx={{height:'35vh', paddingBottom: '20px' }}>
-              <RTextEditor
-                value={proposalMessage}
-                handleMessageChange={handleMessageChange}
-              />
-            </Box>
-          </form>
-        </Paper>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-          <Button
-            variant="contained"
-            sx={{
-              py: 1.5,
-              borderRadius: 2,
-              width: '15%',
-            }}
-            onClick={handleBack}
-          >
-            Back
-          </Button>
+          Back
+        </Button>
 
-          <Button
-            variant="contained"
-            sx={{
-              py: 1.5,
-              ml: 3,
-              borderRadius: 2,
-              width: '15%',
-              bgcolor: '#2A987A',
-              '&:hover': {
-                bgcolor: '#238b6a',
-                boxShadow: 'none'
-              }
-            }}
-            onClick={handleNext}
-          >
-            Next
-          </Button>
-        </Box>
-      </Container>
+        <Button
+          variant="contained"
+          sx={{
+            py: 1.5,
+            ml: 3,
+            borderRadius: 2,
+            width: '15%',
+            bgcolor: '#2A987A',
+            '&:hover': {
+              bgcolor: '#238b6a',
+              boxShadow: 'none'
+            }
+          }}
+          onClick={handleNext}
+        >
+          Next
+        </Button>
+      </Box>
+    </Container>
   </>
   );
 };
