@@ -18,7 +18,7 @@ import ProductsServicesIcon from '@mui/icons-material/LocalMall';
 import ReportsIcon from '@mui/icons-material/Assessment';
 import LogoutIcon from '@mui/icons-material/ExitToApp';
 import Link from 'next/link';
-import { signOut } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 
 const drawerWidth = 140;
 
@@ -30,6 +30,7 @@ function NavBarComponent(props) {
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+    const { data: session } = useSession();
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -68,7 +69,7 @@ function NavBarComponent(props) {
         { text: 'Categories', icon: <CategoriesIcon />, href: '/category' },
         { text: <>Products/<br />Services</>, icon: <ProductsServicesIcon />, href: '/products' },
         { text: 'Reports', icon: <ReportsIcon />, href: '/' },
-        { text: 'Logout', icon: <LogoutIcon onClick={() => signOut()} /> },
+        { text: 'Logout', icon: <LogoutIcon /> },
     ];
 
     const menuId = 'primary-search-account-menu';
@@ -88,11 +89,11 @@ function NavBarComponent(props) {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem component={Link} href="/">Home</MenuItem>
-            <MenuItem component={Link} href="/profile/edit-profile">My Profile</MenuItem>
-            <MenuItem component={Link} href="/proposal/">My Proposals</MenuItem>
-            <MenuItem component={Link} href="/profile/letter">Setup Custom Letter</MenuItem>
-            <MenuItem component={Link} href="/profile/email">Setup Email Template</MenuItem>
+            <MenuItem onClick={handleMenuClose} component={Link} href="/">Home</MenuItem>
+            <MenuItem onClick={handleMenuClose} component={Link} href="/profile/edit-profile">My Profile</MenuItem>
+            <MenuItem onClick={handleMenuClose} component={Link} href={`/proposal?userid=${session.user.id}`}>My Proposals</MenuItem>
+            <MenuItem onClick={handleMenuClose} component={Link} href="/profile/letter">Setup Custom Letter</MenuItem>
+            <MenuItem onClick={handleMenuClose} component={Link} href="/profile/email">Setup Email Template</MenuItem>
             <Divider />
             <MenuItem onClick={() => signOut()}>Logout</MenuItem>
 
@@ -192,7 +193,7 @@ function NavBarComponent(props) {
                         {/* This section is for the Logout item */}
                         <a style={{ textDecoration: 'none' }}>
                             <ListItem disablePadding sx={{ justifyContent: 'center' }}>
-                                <ListItemButton
+                                <ListItemButton onClick={() => signOut()}
                                     sx={{
                                         flexDirection: 'column',
                                         alignItems: 'center',
@@ -247,7 +248,7 @@ function NavBarComponent(props) {
                     >
                         <MenuIcon sx={{ fontSize: 30 }} />
                     </IconButton>
-                    <Link href={"/"} style={{color:'white', textDecoration:'none'}}>
+                    <Link href={"/"} style={{ color: 'white', textDecoration: 'none' }}>
                         <Typography variant="h3" noWrap component="div">
                             MAYVIS
                         </Typography>

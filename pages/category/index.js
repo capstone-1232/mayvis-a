@@ -14,14 +14,12 @@ import ListViewComponent from "@/components/ListViewComponent";
 
 import SearchField from "@/components/SearchField";
 const itemsPerPage = 8;
+const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://localhost:3000`;
+const apiRoute = `${baseURL}/api/category`;
 
 export async function getServerSideProps(context) {
-    const { req } = context;
     // Determine the base URL based on the environment (Vercel or local)
-    const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
-    const host = req ? req.headers.host : window.location.hostname;
-    const baseURL = process.env.VERCEL_URL ? `${protocol}://${process.env.VERCEL_URL}` : `${protocol}://${host}`;
-    const apiRoute = `${baseURL}/api/category`;
 
     let categoriesData = [];
     try {
@@ -74,6 +72,24 @@ const Category = ({ categoriesData }) => {
         setPage(1);
     };
 
+    const handleArchive = async (id) => {
+        const res = await fetch(`${apiRoute}?id=${id}`, {
+            method: 'PUT',
+            headers: { "Content-type": "application/json" },
+            body: JSON.stringify({
+                is_archived: true,
+            })
+        })
+
+        if (!res.ok) {
+            console.error('Failed to archive record!');
+            return;
+        }
+        const updatedList = categoriesData.filter(item => item._id !== id);
+        setFilteredData(updatedList);
+        setPropsData(tranformPropData(updatedList));
+    }
+
     const noOfPages = Math.ceil(filteredData ? filteredData.length / itemsPerPage : 0);
 
     const tranformPropData = (data) => {
@@ -82,10 +98,11 @@ const Category = ({ categoriesData }) => {
                 return [
                     { key: 'Title', column: 'Category Name', value: c.category_name, show: true },
                     { key: 'Description', column: 'Description', value: c.description, show: true },
-                    { key: 'Archived', column: 'Archived Name', value: c.is_archived ? 'Yes' : 'No', show: true },
+                    { key: 'Archived', column: 'Archived', value: c.is_archived ? 'Yes' : 'No', show: true },
                     { key: '_id', column: '_id', value: c._id, show: false },
                     { key: 'editUrlPath', column: 'Edit', value: 'category/editcategory', show: viewMode === 'module' ? false : true },
                     { key: 'viewUrlPath', column: 'View', value: 'category/viewcategory', show: viewMode === 'module' ? false : true },
+                    { key: 'archive', column: 'Archive', action: () => handleArchive(c._id), show: false },
                 ];
             });
     }
@@ -104,7 +121,6 @@ const Category = ({ categoriesData }) => {
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" spacing={2}>
                     <Grid item>
-
                         <Link href={'/category/addcategory'} >
                             <Button variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
                                 + Create New Category
@@ -155,9 +171,7 @@ const Category = ({ categoriesData }) => {
                 <Grid container spacing={2}>
                     {propsData ?
                         viewMode === 'list' ?
-                            <Grid container spacing={2}>
-                                <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
-                            </Grid>
+                            <ListViewComponent data={propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)} />
                             :
                             propsData?.slice((page - 1) * itemsPerPage, page * itemsPerPage)
                                 ?.map((data, index) =>
