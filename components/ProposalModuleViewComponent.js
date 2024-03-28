@@ -40,7 +40,10 @@ const ProposalModuleViewComponent = ({ data }) => {
                         </Grid>
                         {!isArchivalPage && (
                             <Grid item>
-                                <Link href={`/${data.find(item => item.key === 'editUrlPath')?.value}/${data.find(item => item.key === '_id')?.value}`} className="link">
+                                <Link
+                                    href={`/new-proposal/summary/${data.find(item => item.key === '_id')?.value}`} 
+                                    passHref
+                                >
                                     <Button variant="contained" sx={{ backgroundColor: '#253C7C', borderRadius: '15px' }}>
                                         Edit
                                     </Button>
