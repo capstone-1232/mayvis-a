@@ -39,7 +39,7 @@ export default NextAuth({
                     }),
                 });
                 const user = await res.json();
-                console.log(user);
+                
                 // Assuming your API returns a status code of 200 for successful authentication
                 if (res.ok && user) {
                     return user;
@@ -59,30 +59,31 @@ export default NextAuth({
         strategy: "jwt",
     },
     callbacks: {
-        async session({ session, token, user }) {
+        async session({ session, token }) {
             await connectMongoDB();
 
-            const dbUser = await User.findOne({ email_address: token.email }).lean();
-            if (dbUser) {
-                session.user.id = dbUser._id;
-                session.user.email = dbUser.email_address;
-                session.user.name = `${dbUser.firstname} ${dbUser.lastname ?? ''}`;
+            const userEmail = token.email;
+            if (userEmail) {
+                const dbUser = await User.findOne({ email_address: token.email }).lean();
+                if (dbUser) {
+                    session.user.id = dbUser._id;
+                    session.user.email = dbUser.email_address;
+                    session.user.name = `${dbUser.firstname} ${dbUser.lastname ?? ''}`;
+                }
             }
             return session;
         },
-        // async jwt({ token, user }) {
-        //     // If the user object is returned by `authorize`, it's passed here
-        //     if (user) {
-        //         token.id = user._id;
-        //         token.email = user.email_address;
-        //         token.name = user.name ?? `${user.firstname} ${user.lastname}`;
-        //     }
-        //     return token;
-        // },
-        async signIn({ user, account, profile }) {
+
+        async jwt({ token, user }) {
+            if (user) {
+                token.email = user.email_address; // Make sure this matches how email is stored in your database
+            }
+            return token;
+        },
+
+        async signIn({ user, account }) {
             if (account.provider === "google") {
                 await connectMongoDB();
-                console.log(user);
                 const { email, name } = user;
                 try {
                     // Check if user exists, if not, create a new user

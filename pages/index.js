@@ -41,6 +41,7 @@ export async function getServerSideProps(context) {
 export default function DashboardComponent({ proposalsData }) {
     const router = useRouter();
     const { data: session } = useSession();
+    
     const theme = useTheme();
     const isXsScreen = useMediaQuery(theme.breakpoints.down('xs'));
 
